@@ -7,6 +7,6 @@ class { 'brocadevtm':
 
 brocadevtm::rules { 'testRule':
    ensure => present,
-	file => "puppet:///brocadevtm/testrule.zts"
+	file => "puppet:///modules/brocadevtm/testrule.zts",
 }
 

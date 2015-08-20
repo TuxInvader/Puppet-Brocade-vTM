@@ -3,7 +3,7 @@
 
 class brocadevtm::monitor_scripts_dns.pl (
   $ensure = present,
-  $file,
+  $file = 'puppet:///modules/brocadevtm/monitor_scripts_dns.pl.data',
 ){
   include brocadevtm
   $ip   = $brocadevtm::rest_ip
@@ -17,7 +17,7 @@ class brocadevtm::monitor_scripts_dns.pl (
     ensure => $ensure,
     username => $user,
     password => $pass,
-    content => 'puppet:///brocadevtm/monitor_scripts_dns.pl.data',
+    content => file($file),
     type => 'application/octet-stream',
     debug => 0,
   }

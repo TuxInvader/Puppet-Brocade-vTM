@@ -3,7 +3,7 @@
 
 class brocadevtm::rules_Application%20Firewall%20Enforcer (
   $ensure = present,
-  $file,
+  $file = 'puppet:///modules/brocadevtm/rules_Application%20Firewall%20Enforcer.data',
 ){
   include brocadevtm
   $ip   = $brocadevtm::rest_ip
@@ -17,7 +17,7 @@ class brocadevtm::rules_Application%20Firewall%20Enforcer (
     ensure => $ensure,
     username => $user,
     password => $pass,
-    content => 'puppet:///brocadevtm/rules_Application%20Firewall%20Enforcer.data',
+    content => file($file),
     type => 'application/octet-stream',
     debug => 0,
   }

@@ -83,8 +83,12 @@ class PuppetManifest
 			code = "define brocadevtm::#{type_} (\n"
 			code += "  \$ensure,\n"
 		end
-		if @isBinary
-			code += "  \$file,\n){\n"
+		if @isBinary 
+			if isClass 
+				code += "  \$file = 'puppet:///modules/brocadevtm/#{type_}.data',\n){\n"
+			else
+				code += "  \$file,\n){\n"
+			end
 		else
 		
 			decodeJSON()
@@ -121,11 +125,7 @@ class PuppetManifest
 		code += "    username => $user,\n"
 		code += "    password => $pass,\n"
 		if @isBinary
-			if isClass
-				code += "    content => 'puppet:///brocadevtm/#{type_}.data',\n"
-			else
-				code += "    content => file($file),\n"
-			end
+			code += "    content => file($file),\n"
 			code += "    type => 'application/octet-stream',\n"
 		else
 			code += "    type => 'application/json',\n"
