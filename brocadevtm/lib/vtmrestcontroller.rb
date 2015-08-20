@@ -223,6 +223,8 @@ class BrocadeVTMRestController
 			@objects.each do |name,manifest|
 				manifest.dump()
 				if outputDir != nil
+					if name.start_with?("traffic_managers_")
+						next;
 					manifest.genManifest(outputDir, true)
 				end
 			end
