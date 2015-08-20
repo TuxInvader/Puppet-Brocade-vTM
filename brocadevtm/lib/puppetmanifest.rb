@@ -121,7 +121,11 @@ class PuppetManifest
 		code += "    username => $user,\n"
 		code += "    password => $pass,\n"
 		if @isBinary
-			code += "    content => file($file),\n"
+			if isClass
+				code += "    content => 'puppet:///brocadevtm/#{type_}.data',\n"
+			else
+				code += "    content => file($file),\n"
+			end
 			code += "    type => 'application/octet-stream',\n"
 		else
 			code += "    type => 'application/json',\n"
@@ -180,6 +184,19 @@ class PuppetManifest
 		template = File.open(filename, "w")
 		template.puts erb
 		template.close
+
+	end
+
+	def genBinary(outputDir)
+
+		if ( ! @isBinary )
+			return true
+		end
+
+		filename = "#{outputDir}/" + @type.gsub("/","_") + ".data"
+		binary = File.open(filename, "w")
+		binary.puts @data
+		binary.close
 
 	end
 

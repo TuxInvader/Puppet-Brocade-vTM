@@ -192,6 +192,7 @@ class BrocadeVTMRestController
 		return name
 	end
 
+	# Dump out the Object templates/data to the console, and outputDir if provided
 	def dumpTemplates(type=:manifests, outputDir=nil )
 		if (type == :manifests) or ( type == :all )
 			@manifests.each do |name,manifest|
@@ -204,12 +205,13 @@ class BrocadeVTMRestController
 			@objects.each do |name,manifest|
 				manifest.dump()
 				if outputDir != nil
-					manifest.genManifest(outputDir)
+					manifest.genBinary(outputDir)
 				end
 			end
 		end
 	end
 
+	# Dump out the Manifests to the console, and outputDir if provided
 	def dumpManifests(type=:manifests, outputDir=nil )
 		if (type == :manifests) or ( type == :all )
 			@manifests.each do |name,manifest|
@@ -225,6 +227,7 @@ class BrocadeVTMRestController
 				if outputDir != nil
 					if name.start_with?("traffic_managers_")
 						next;
+					end
 					manifest.genManifest(outputDir, true)
 				end
 			end

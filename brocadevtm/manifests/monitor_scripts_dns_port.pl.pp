@@ -17,7 +17,7 @@ class brocadevtm::monitor_scripts_dns_port.pl (
     ensure => $ensure,
     username => $user,
     password => $pass,
-    content => file($file),
+    content => 'puppet:///brocadevtm/monitor_scripts_dns_port.pl.data',
     type => 'application/octet-stream',
     debug => 0,
   }

@@ -17,7 +17,7 @@ class brocadevtm::rules_Application%20Firewall%20Enforcer (
     ensure => $ensure,
     username => $user,
     password => $pass,
-    content => file($file),
+    content => 'puppet:///brocadevtm/rules_Application%20Firewall%20Enforcer.data',
     type => 'application/octet-stream',
     debug => 0,
   }
