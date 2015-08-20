@@ -1,0 +1,122 @@
+#!/usr/bin/ruby
+
+require 'io/console'
+require 'optparse'
+require 'ostruct'
+
+require_relative '../lib/vtmrestcontroller'
+require_relative '../lib/puppetmanifest'
+
+class GetOptions
+
+	def self.parse(args)
+		options = OpenStruct.new
+		options.debug = 0
+		options.host = "127.0.0.1"
+		options.port = 9070
+
+		opt_parser = OptionParser.new do |opts|
+
+			opts.banner = "Usage: genManifests [options]"
+
+			opts.separator ""
+			opts.separator "Specific options:"
+
+			opts.on("-h", "--host <vTM Host>", "The hostname or ip address of the vTM to probe") do |host|
+				options.host = host
+      	end
+
+			opts.on("-p", "--port <vTM Port>", "The REST API port of the vTM to probe") do |port|
+				options.port = port
+      	end
+
+			opts.on("-v", "--version <REST Version>", "The REST Version") do |version|
+				options.version = version
+      	end
+
+			opts.on("-U", "--user <username>", "The REST API User") do |user|
+				options.user = user
+      	end
+
+			opts.on("-P", "--pass <password>", "The REST API Password") do |pass|
+				options.pass = pass
+      	end
+
+			opts.on("-d", "--debug <vTM Port>", "The Debug level, 0 (lowest) to 5 (highest)") do |debug|
+				options.debug = Integer(debug)
+      	end
+
+			opts.on_tail("-?", "--help", "Show this message") do
+				puts opts
+				exit
+			end
+
+		end
+
+		opt_parser.parse!(args)
+		options
+
+	end
+end
+
+options = GetOptions.parse(ARGV)
+
+puts("===============================================================")
+puts(" This script will probe the REST API of the provided vTM ")
+puts("")
+puts(" It will create testobjects during probing and is intended to run")
+puts(" against a blank/fresh/clean install of the Traffic Manager")
+puts("")
+puts("     !!!!  DO NOT USE AGAINST A PRODUCTION SYSEM  !!!!")
+puts("")
+puts(" The script will create/overite manifests and templates in this")
+puts(" Puppet Module. ONLY RUN if you UNDERSTAND what you are doing!!")
+puts("")
+puts(" vTM Host:    \t\t#{options.host}:#{options.port}")
+puts(" API Version: \t\t#{options.version}")
+puts(" User:        \t\t#{options.user}")
+puts(" Debug Level: \t\t#{options.debug}")
+puts("")
+puts(" Are you sure you wish to continue (YES)?? ")
+puts("===============================================================")
+print "Type \"YES\" -> "
+$stdin.iflush
+continue=gets.chomp
+if continue != "YES"
+	exit
+end
+
+raise 'You must supply a -v or --version parameter' if options.version.nil?
+raise 'You must supply a -U or --user parameter' if options.user.nil?
+raise 'You must supply a -P or --pass parameter' if options.pass.nil?
+
+puts("===============================================================")
+puts(" OK - Walking....")
+puts("===============================================================")
+
+vtmrc = BrocadeVTMRestController.new(options.host, options.port, options.version, options.user, options.pass, options.debug)
+vtmrc.setType( WalkTypes::PROBE )
+vtmrc.walk( )
+puts("")
+
+puts("===============================================================")
+puts(" API Walked and Test objects created.")
+puts(" Press <RETURN> to dump Manifests and Templates")
+$stdin.iflush
+gets()
+vtmrc.dumpManifests(:all, "manifests")
+vtmrc.dumpTemplates(:all, "templates")
+puts("")
+puts("===============================================================")
+puts(" Press <RETURN> to dump Objects...")
+$stdin.iflush
+gets()
+vtmrc.dumpManifests(:objects)
+puts("")
+puts("===============================================================")
+puts("    Press <RETURN> to clean up.")
+$stdin.iflush
+gets()
+vtmrc.setType( WalkTypes::DELETE )
+vtmrc.walk( )
+
