@@ -25,19 +25,19 @@
 #
 
 class brocadevtm (
-   $rest_user     = undef,
-   $rest_pass     = undef,
-	$rest_ip 		= '127.0.0.1',
-	$rest_port 		= '9070',
+   $rest_user   = undef,
+   $rest_pass   = undef,
+   $rest_ip     = '127.0.0.1',
+   $rest_port   = '9070',
 ) {
 
-	if ( $rest_user == undef ) {
-		fail('You must provide a $rest_user')
-	} 
+   if ( $rest_user == undef ) {
+      fail('You must provide a $rest_user')
+   } 
 
-	if ( $rest_pass == undef) {
-		fail('You must provide a $rest_pass')
-	}
+   if ( $rest_pass == undef) {
+      fail('You must provide a $rest_pass')
+   }
 
 }
 
