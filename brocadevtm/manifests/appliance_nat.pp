@@ -20,8 +20,8 @@ class brocadevtm::appliance_nat (
     ensure => $ensure,
     username => $user,
     password => $pass,
-    type => 'application/json',
     content => template('brocadevtm/appliance_nat.erb'),
+    type => 'application/json',
     internal => 'appliance_nat',
     debug => 0,
   }

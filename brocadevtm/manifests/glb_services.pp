@@ -35,8 +35,8 @@ define brocadevtm::glb_services (
     ensure => $ensure,
     username => $user,
     password => $pass,
-    type => 'application/json',
     content => template('brocadevtm/glb_services.erb'),
+    type => 'application/json',
     internal => 'glb_services',
     debug => 0,
   }

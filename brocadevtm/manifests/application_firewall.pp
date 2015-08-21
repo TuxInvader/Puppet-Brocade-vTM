@@ -16,8 +16,8 @@ class brocadevtm::application_firewall (
     ensure => $ensure,
     username => $user,
     password => $pass,
-    type => 'application/json',
     content => template('brocadevtm/application_firewall.erb'),
+    type => 'application/json',
     internal => 'application_firewall',
     debug => 0,
   }

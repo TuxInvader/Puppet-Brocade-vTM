@@ -29,8 +29,8 @@ define brocadevtm::traffic_ip_groups (
     ensure => $ensure,
     username => $user,
     password => $pass,
-    type => 'application/json',
     content => template('brocadevtm/traffic_ip_groups.erb'),
+    type => 'application/json',
     internal => 'traffic_ip_groups',
     debug => 0,
   }

@@ -197,8 +197,8 @@ class brocadevtm::global_settings (
     ensure => $ensure,
     username => $user,
     password => $pass,
-    type => 'application/json',
     content => template('brocadevtm/global_settings.erb'),
+    type => 'application/json',
     internal => 'global_settings',
     debug => 0,
   }

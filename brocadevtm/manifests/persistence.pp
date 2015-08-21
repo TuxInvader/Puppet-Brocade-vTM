@@ -22,8 +22,8 @@ define brocadevtm::persistence (
     ensure => $ensure,
     username => $user,
     password => $pass,
-    type => 'application/json',
     content => template('brocadevtm/persistence.erb'),
+    type => 'application/json',
     internal => 'persistence',
     debug => 0,
   }

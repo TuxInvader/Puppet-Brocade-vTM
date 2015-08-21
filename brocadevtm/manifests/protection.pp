@@ -37,8 +37,8 @@ define brocadevtm::protection (
     ensure => $ensure,
     username => $user,
     password => $pass,
-    type => 'application/json',
     content => template('brocadevtm/protection.erb'),
+    type => 'application/json',
     internal => 'protection',
     debug => 0,
   }

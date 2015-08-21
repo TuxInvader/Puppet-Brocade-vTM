@@ -44,8 +44,8 @@ define brocadevtm::monitors (
     ensure => $ensure,
     username => $user,
     password => $pass,
-    type => 'application/json',
     content => template('brocadevtm/monitors.erb'),
+    type => 'application/json',
     internal => 'monitors',
     debug => 0,
   }

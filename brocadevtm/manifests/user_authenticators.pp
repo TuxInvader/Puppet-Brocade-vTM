@@ -49,8 +49,8 @@ define brocadevtm::user_authenticators (
     ensure => $ensure,
     username => $user,
     password => $pass,
-    type => 'application/json',
     content => template('brocadevtm/user_authenticators.erb'),
+    type => 'application/json',
     internal => 'user_authenticators',
     debug => 0,
   }

@@ -20,8 +20,8 @@ define brocadevtm::ssl_client_keys (
     ensure => $ensure,
     username => $user,
     password => $pass,
-    type => 'application/json',
     content => template('brocadevtm/ssl_client_keys.erb'),
+    type => 'application/json',
     internal => 'ssl_client_keys',
     debug => 0,
   }

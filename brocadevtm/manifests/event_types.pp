@@ -48,8 +48,8 @@ define brocadevtm::event_types (
     ensure => $ensure,
     username => $user,
     password => $pass,
-    type => 'application/json',
     content => template('brocadevtm/event_types.erb'),
+    type => 'application/json',
     internal => 'event_types',
     debug => 0,
   }

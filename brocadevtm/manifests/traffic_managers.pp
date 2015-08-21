@@ -79,8 +79,8 @@ define brocadevtm::traffic_managers (
     ensure => $ensure,
     username => $user,
     password => $pass,
-    type => 'application/json',
     content => template('brocadevtm/traffic_managers.erb'),
+    type => 'application/json',
     internal => 'traffic_managers',
     debug => 0,
   }

@@ -21,8 +21,8 @@ define brocadevtm::kerberos_principals (
     ensure => $ensure,
     username => $user,
     password => $pass,
-    type => 'application/json',
     content => template('brocadevtm/kerberos_principals.erb'),
+    type => 'application/json',
     internal => 'kerberos_principals',
     debug => 0,
   }

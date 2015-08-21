@@ -19,8 +19,8 @@ define brocadevtm::rate (
     ensure => $ensure,
     username => $user,
     password => $pass,
-    type => 'application/json',
     content => template('brocadevtm/rate.erb'),
+    type => 'application/json',
     internal => 'rate',
     debug => 0,
   }

@@ -20,8 +20,8 @@ define brocadevtm::user_groups (
     ensure => $ensure,
     username => $user,
     password => $pass,
-    type => 'application/json',
     content => template('brocadevtm/user_groups.erb'),
+    type => 'application/json',
     internal => 'user_groups',
     debug => 0,
   }

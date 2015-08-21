@@ -20,8 +20,8 @@ define brocadevtm::aptimizer_profiles (
     ensure => $ensure,
     username => $user,
     password => $pass,
-    type => 'application/json',
     content => template('brocadevtm/aptimizer_profiles.erb'),
+    type => 'application/json',
     internal => 'aptimizer_profiles',
     debug => 0,
   }

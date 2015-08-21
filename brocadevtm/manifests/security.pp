@@ -17,8 +17,8 @@ class brocadevtm::security (
     ensure => $ensure,
     username => $user,
     password => $pass,
-    type => 'application/json',
     content => template('brocadevtm/security.erb'),
+    type => 'application/json',
     internal => 'security',
     debug => 0,
   }

@@ -20,8 +20,8 @@ define brocadevtm::service_level_monitors (
     ensure => $ensure,
     username => $user,
     password => $pass,
-    type => 'application/json',
     content => template('brocadevtm/service_level_monitors.erb'),
+    type => 'application/json',
     internal => 'service_level_monitors',
     debug => 0,
   }

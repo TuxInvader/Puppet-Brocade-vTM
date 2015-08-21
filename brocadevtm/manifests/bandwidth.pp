@@ -19,8 +19,8 @@ define brocadevtm::bandwidth (
     ensure => $ensure,
     username => $user,
     password => $pass,
-    type => 'application/json',
     content => template('brocadevtm/bandwidth.erb'),
+    type => 'application/json',
     internal => 'bandwidth',
     debug => 0,
   }

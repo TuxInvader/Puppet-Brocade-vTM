@@ -21,8 +21,8 @@ define brocadevtm::locations (
     ensure => $ensure,
     username => $user,
     password => $pass,
-    type => 'application/json',
     content => template('brocadevtm/locations.erb'),
+    type => 'application/json',
     internal => 'locations',
     debug => 0,
   }

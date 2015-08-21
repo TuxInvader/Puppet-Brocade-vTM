@@ -19,8 +19,8 @@ define brocadevtm::aptimizer_scopes (
     ensure => $ensure,
     username => $user,
     password => $pass,
-    type => 'application/json',
     content => template('brocadevtm/aptimizer_scopes.erb'),
+    type => 'application/json',
     internal => 'aptimizer_scopes',
     debug => 0,
   }

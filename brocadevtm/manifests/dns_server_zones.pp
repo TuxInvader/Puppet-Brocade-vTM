@@ -18,8 +18,8 @@ define brocadevtm::dns_server_zones (
     ensure => $ensure,
     username => $user,
     password => $pass,
-    type => 'application/json',
     content => template('brocadevtm/dns_server_zones.erb'),
+    type => 'application/json',
     internal => 'dns_server_zones',
     debug => 0,
   }

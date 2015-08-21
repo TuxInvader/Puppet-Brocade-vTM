@@ -20,8 +20,8 @@ class brocadevtm::user_groups_admin (
     ensure => $ensure,
     username => $user,
     password => $pass,
+    content => template('brocadevtm/user_groups.erb'),
     type => 'application/json',
-    content => template('brocadevtm/user_groups_admin.erb'),
     internal => 'user_groups_admin',
     debug => 0,
   }

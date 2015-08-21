@@ -27,8 +27,8 @@ define brocadevtm::rule_authenticators (
     ensure => $ensure,
     username => $user,
     password => $pass,
-    type => 'application/json',
     content => template('brocadevtm/rule_authenticators.erb'),
+    type => 'application/json',
     internal => 'rule_authenticators',
     debug => 0,
   }

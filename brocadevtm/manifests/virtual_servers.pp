@@ -142,8 +142,8 @@ define brocadevtm::virtual_servers (
     ensure => $ensure,
     username => $user,
     password => $pass,
-    type => 'application/json',
     content => template('brocadevtm/virtual_servers.erb'),
+    type => 'application/json',
     internal => 'virtual_servers',
     debug => 0,
   }

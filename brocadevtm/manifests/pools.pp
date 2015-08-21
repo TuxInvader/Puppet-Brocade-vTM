@@ -85,8 +85,8 @@ define brocadevtm::pools (
     ensure => $ensure,
     username => $user,
     password => $pass,
-    type => 'application/json',
     content => template('brocadevtm/pools.erb'),
+    type => 'application/json',
     internal => 'pools',
     debug => 0,
   }

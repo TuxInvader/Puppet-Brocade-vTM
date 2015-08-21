@@ -39,8 +39,8 @@ define brocadevtm::actions (
     ensure => $ensure,
     username => $user,
     password => $pass,
-    type => 'application/json',
     content => template('brocadevtm/actions.erb'),
+    type => 'application/json',
     internal => 'actions',
     debug => 0,
   }

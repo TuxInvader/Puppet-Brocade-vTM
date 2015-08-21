@@ -17,8 +17,8 @@ define brocadevtm::custom (
     ensure => $ensure,
     username => $user,
     password => $pass,
-    type => 'application/json',
     content => template('brocadevtm/custom.erb'),
+    type => 'application/json',
     internal => 'custom',
     debug => 0,
   }

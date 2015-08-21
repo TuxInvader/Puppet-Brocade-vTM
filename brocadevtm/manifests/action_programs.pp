@@ -3,7 +3,7 @@
 
 define brocadevtm::action_programs (
   $ensure,
-  $file,
+  $content,
 ){
   include brocadevtm
   $ip   = $brocadevtm::rest_ip
@@ -17,7 +17,7 @@ define brocadevtm::action_programs (
     ensure => $ensure,
     username => $user,
     password => $pass,
-    content => file($file),
+    content => $content,
     type => 'application/octet-stream',
     debug => 0,
   }
