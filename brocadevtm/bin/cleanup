@@ -1,0 +1,72 @@
+#!/usr/bin/ruby
+
+require 'io/console'
+require 'optparse'
+require 'ostruct'
+require 'fileutils'
+
+class GetOptions
+
+	def self.parse(args)
+		options = OpenStruct.new
+		options.jfdi = false
+
+		opt_parser = OptionParser.new do |opts|
+
+			opts.banner = "Usage: cleanup [options]"
+
+			opts.separator ""
+			opts.separator "Specific options:"
+
+			opts.on("-y", "--jfdi", "Just do it, don't ask me") do |jfdi|
+				options.jfdi = true
+      	end
+
+			opts.on_tail("-?", "--help", "Show this message") do
+				puts opts
+				exit
+			end
+
+		end
+
+		opt_parser.parse!(args)
+		options
+
+	end
+end
+
+options = GetOptions.parse(ARGV)
+
+puts("===============================================================")
+puts(" This script will DELETE all files in the following dirs:")
+puts("")
+puts("     manifests")
+puts("     files")
+puts("     templates")
+puts("")
+puts(" It will then copy the base files in from the skel folder.")
+puts("")
+puts("===============================================================")
+if options.jfdi == false
+	puts(" Are you sure you wish to continue (YES)?? ")
+	puts("===============================================================")
+	print "Type \"YES\" -> "
+	$stdin.iflush
+	continue=gets.chomp
+	if continue != "YES"
+		exit
+	end
+end
+
+puts("Cleaning Manifests")
+FileUtils.rm Dir.glob('manifests/*')
+FileUtils.cp Dir.glob('skel/manifests/*'), 'manifests' 
+
+puts("Cleaning Templates")
+FileUtils.rm Dir.glob('templates/*')
+FileUtils.cp Dir.glob('skel/templates/*.pp'), 'templates' 
+
+puts("Cleaning Files")
+FileUtils.rm Dir.glob('files/*')
+FileUtils.cp Dir.glob('skel/files/*'), 'files' 
+
