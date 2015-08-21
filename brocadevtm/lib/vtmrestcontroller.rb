@@ -192,43 +192,36 @@ class BrocadeVTMRestController
 		return name
 	end
 
-	# Dump out the Object templates/data to the console, and outputDir if provided
-	def dumpTemplates(type=:manifests, outputDir=nil )
+	# Dump out the Manifests to the console, and write to outputDir if provided
+	def dumpConfig(type=:manifests, manOut=nil, tmpOut=nil, binOut=nil )
 		if (type == :manifests) or ( type == :all )
 			@manifests.each do |name,manifest|
-				if outputDir != nil
-					manifest.genTemplate(outputDir)
+				manifest.dump()
+				if tmpOut != nil
+					manifest.genTemplate(tmpOut)
+				end
+				if manOut != nil
+					manifest.genManifest(manOut)
+				end
+				if binOut != nil
+					manifest.genBinary(binOut)
 				end
 			end
 		end
 		if ( type == :objects ) or ( type == :all )
 			@objects.each do |name,manifest|
 				manifest.dump()
-				if outputDir != nil
-					manifest.genBinary(outputDir)
+				if name.start_with?("traffic_managers_")
+					next;
 				end
-			end
-		end
-	end
-
-	# Dump out the Manifests to the console, and outputDir if provided
-	def dumpManifests(type=:manifests, outputDir=nil )
-		if (type == :manifests) or ( type == :all )
-			@manifests.each do |name,manifest|
-				manifest.dump()
-				if outputDir != nil
-					manifest.genManifest(outputDir)
+				if tmpOut != nil
+					manifest.genTemplate(tmpOut)
 				end
-			end
-		end
-		if ( type == :objects ) or ( type == :all )
-			@objects.each do |name,manifest|
-				manifest.dump()
-				if outputDir != nil
-					if name.start_with?("traffic_managers_")
-						next;
-					end
-					manifest.genManifest(outputDir, true)
+				if manOut != nil
+					manifest.genManifest(manOut, true)
+				end
+				if binOut != nil
+					manifest.genBinary(binOut)
 				end
 			end
 		end

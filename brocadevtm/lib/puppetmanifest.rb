@@ -2,6 +2,7 @@
 
 require 'json'
 require 'uri'
+require 'fileutils'
 
 class PuppetManifest
 
@@ -16,6 +17,7 @@ class PuppetManifest
 		@params = {}
 		@required = {}
 		@maxKeyLength = 0
+		@template = nil;
 	end
 
 	def addRequiredParam(name, example)
@@ -72,7 +74,7 @@ class PuppetManifest
 	end	
 
 	def genManifest(outputDir,isClass=false)
-		type_ = @type.gsub(/[\/\.]|%20/, "_")
+		type_ = @type.gsub(/[\/\.]|%20/, "_").downcase
 		example = ""
 		if isClass
 			desc = "# === Class: brocadevtm::#{type_}\n#\n"
@@ -85,9 +87,9 @@ class PuppetManifest
 		end
 		if @isBinary 
 			if isClass 
-				code += "  \$file = 'puppet:///modules/brocadevtm/#{type_}.data',\n){\n"
+				code += "  \$content = file('brocadevtm/#{type_}.data'),\n){\n"
 			else
-				code += "  \$file,\n){\n"
+				code += "  \$content,\n){\n"
 			end
 		else
 		
@@ -125,11 +127,15 @@ class PuppetManifest
 		code += "    username => $user,\n"
 		code += "    password => $pass,\n"
 		if @isBinary
-			code += "    content => file($file),\n"
+			code += "    content => $content,\n"
 			code += "    type => 'application/octet-stream',\n"
 		else
+			if @template == nil
+				code += "    content => template('brocadevtm/#{type_}.erb'),\n"
+			else
+				code += "    content => template('brocadevtm/#{@template}'),\n"
+			end
 			code += "    type => 'application/json',\n"
-			code += "    content => template('brocadevtm/#{type_}.erb'),\n"
 			code += "    internal => '#{type_}',\n"
 		end
 		code += "    debug => 0,\n"
@@ -179,11 +185,13 @@ class PuppetManifest
 		erb = erb.gsub(',}', '}')
 		erb = erb.gsub('},}','}}')
 
-		type_ = @type.gsub(/[\/\.]|%20/, "_")
+		type_ = @type.gsub(/[\/\.]|%20/, "_").downcase
 		filename = "#{outputDir}/#{type_}.erb"
 		template = File.open(filename, "w")
 		template.puts erb
 		template.close
+
+		dedupe(filename)
 
 	end
 
@@ -193,12 +201,44 @@ class PuppetManifest
 			return true
 		end
 
-		type_ = @type.gsub(/[\/\.]|%20/, "_")
+		if ( @data == nil || @data == "" )
+			return true
+		end
+
+		type_ = @type.gsub(/[\/\.]|%20/, "_").downcase
 		filename = "#{outputDir}/#{type_}.data"
 		binary = File.open(filename, "w")
 		binary.puts @data
 		binary.close
 
+	end
+
+	# static objects can cause us to generate lots of duplicate templates.
+        # Remove any duplicates and store the parent template in @template
+	def dedupe(filename)
+		template = nil
+		parent = nil
+		filetree = filename.chomp(".erb").split("_")
+		filetree.each do |test|
+			if parent == nil
+				parent = test
+			else
+				parent += "_" + test
+			end
+			test = parent+".erb"
+			if ( test == filename )
+				break
+			elsif ( File.exist?(test) )
+				if FileUtils.compare_file(test,filename)
+					template=test;
+				end
+			end
+		end
+		if template != nil
+			puts ("Deleting duplicate template: #{filename}. Using #{template}\n")
+			FileUtils.rm filename
+			@template = File.basename template
+		end
 	end
 
 	def dump()
