@@ -14,6 +14,7 @@ class GetOptions
 		options.debug = 0
 		options.host = "127.0.0.1"
 		options.port = 9070
+		options.jfdi = false
 
 		opt_parser = OptionParser.new do |opts|
 
@@ -46,6 +47,10 @@ class GetOptions
 				options.debug = Integer(debug)
       	end
 
+			opts.on("-y", "--[no-]jfdi", "Don't print warning, just do it") do |jfdi|
+				options.jfdi = jfdi
+			end
+
 			opts.on_tail("-?", "--help", "Show this message") do
 				puts opts
 				exit
@@ -77,13 +82,21 @@ puts(" API Version: \t\t#{options.version}")
 puts(" User:        \t\t#{options.user}")
 puts(" Debug Level: \t\t#{options.debug}")
 puts("")
-puts(" Are you sure you wish to continue (YES)?? ")
-puts("===============================================================")
-print "Type \"YES\" -> "
-$stdin.iflush
-continue=gets.chomp
-if continue != "YES"
-	exit
+
+if ( ! options.jfdi )
+	puts("===============================================================")
+	puts(" Are you sure you wish to continue (YES)?? ")
+	puts("===============================================================")
+	print "Type \"YES\" -> "
+	$stdin.iflush
+	continue=gets.chomp
+	if continue != "YES"
+		exit
+	end
+else
+	puts("===============================================================")
+	puts(" J.F.D.I - Roger")
+	puts("===============================================================")
 end
 
 raise 'You must supply a -v or --version parameter' if options.version.nil?
