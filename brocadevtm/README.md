@@ -65,6 +65,6 @@ initial configuration from the skel folder.
 
 	./bin/cleanup
 
-The initial configuration contains only contains init.pp, you will need
-to execute genManifests after running cleanup
+The initial configuration only contains init.pp, you will need to execute
+genManifests after running cleanup
 
