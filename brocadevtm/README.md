@@ -56,5 +56,15 @@ default configuration that you want included. For example, you can have
 custom class for your FLA key created by simply uploading the FLA key
 prior to running genManifests.
 
-./bin/genManifests -h 172.17.42.4 -v 3.3 -U admin -P DOXQg05SPzi -d 1
+	./bin/genManifests -h <vTM Host> -v <API Version> -U <User> -P <Pass> -d <debug level>
+
+## Tools (cleanup)
+
+Delete the files in manifests, templates, and files, and then copy in the
+initial configuration from the skel folder.
+
+	./bin/cleanup
+
+The initial configuration contains only contains init.pp, you will need
+to execute genManifests after running cleanup
 
