@@ -5,8 +5,13 @@ class { 'brocadevtm':
 	rest_ip => '10.1.1.22',
 }
 
-brocadevtm::rules { 'testRule':
+brocadevtm::rules { 'testRuleCorrect':
    ensure => present,
-	file => "puppet:///modules/brocadevtm/testrule.zts",
+	file => 'brocadevtm/testrule.zts',
 }
+
+#brocadevtm::rules { 'testRule':
+#   ensure => present,
+#	file => "puppet:///modules/brocadevtm/testrule.zts",
+#}
 
