@@ -103,12 +103,12 @@ The tool generates manifests by walking the API. Any types it finds (eg
 Virtual Servers, Pools, Monitors) get defined types created so that you
 can deploy instances of those types. Any configuration it finds will be
 used to generate Classes. For example the Default Monitors are created as
-classes, so you can simply "include brocadevtm::Moinitors_Simple%20HTTP".
+classes, so you can simply "include brocadevtm::moinitors_simple_http".
 
 This has a nice side affect in that it can also generate classes for any
-default configuration that you want included. For example, you can have 
-custom class for your FLA key created by simply uploading the FLA key
-prior to running genManifests.
+default configuration that you want included. For example, you could have 
+a custom class for your FLA key created by simply uploading the FLA key
+prior to running genManifests. Then you would just "include brocadevtm::licenses_myfla"
 
 	./bin/genManifests -h <vTM Host> -v <API Version> -U <User> -P <Pass> -d <debug level>
 
