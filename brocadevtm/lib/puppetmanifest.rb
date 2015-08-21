@@ -72,7 +72,7 @@ class PuppetManifest
 	end	
 
 	def genManifest(outputDir,isClass=false)
-		type_ = @type.gsub("/","_")
+		type_ = @type.gsub(/[\/\.]|%20/, "_")
 		example = ""
 		if isClass
 			desc = "# === Class: brocadevtm::#{type_}\n#\n"
@@ -135,7 +135,7 @@ class PuppetManifest
 		code += "    debug => 0,\n"
 		code += "  }\n}\n"
 
-		filename = "#{outputDir}/" + @type.gsub("/","_") + ".pp"
+		filename = "#{outputDir}/#{type_}.pp"
 		manifest = File.open(filename, "w")
 		manifest.puts desc
 		manifest.puts example
@@ -179,8 +179,8 @@ class PuppetManifest
 		erb = erb.gsub(',}', '}')
 		erb = erb.gsub('},}','}}')
 
-		type_ = @type.gsub("/","_")
-		filename = "#{outputDir}/" + @type.gsub("/","_") + ".erb"
+		type_ = @type.gsub(/[\/\.]|%20/, "_")
+		filename = "#{outputDir}/#{type_}.erb"
 		template = File.open(filename, "w")
 		template.puts erb
 		template.close
@@ -193,7 +193,8 @@ class PuppetManifest
 			return true
 		end
 
-		filename = "#{outputDir}/" + @type.gsub("/","_") + ".data"
+		type_ = @type.gsub(/[\/\.]|%20/, "_")
+		filename = "#{outputDir}/#{type_}.data"
 		binary = File.open(filename, "w")
 		binary.puts @data
 		binary.close
