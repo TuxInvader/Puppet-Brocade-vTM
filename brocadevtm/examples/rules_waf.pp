@@ -4,8 +4,5 @@ class { 'brocadevtm':
    rest_ip   => '10.1.1.22',
 }
 
-brocadevtm::rules { 'testRule':
-   ensure => present,
-   content => file('brocadevtm/testrule.zts'),
-}
+include brocadevtm::rules_application_firewall_enforcer
 
