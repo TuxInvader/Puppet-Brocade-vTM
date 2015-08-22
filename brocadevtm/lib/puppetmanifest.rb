@@ -75,13 +75,25 @@ class PuppetManifest
 
 	def genManifest(outputDir,isClass=false)
 		type_ = @type.gsub(/[\/\.]|%20/, "_").downcase
-		example = ""
+
+		docfile = "skel/docs/#{type_}.doc"
+		if ( File.exist?(docfile) )
+			documentation = File.read(docfile)
+			if isClass
+				documentation.sub!("<CLASS-OR-TYPE-DECLARATION>","class {'brocadevtm::#{type_}':")
+			else 
+				documentation.sub!("<CLASS-OR-TYPE-DECLARATION>","brocadevtm::#{type_} { 'example':")
+			end
+		else
+			documentation = ""
+		end
+
 		if isClass
-			desc = "# === Class: brocadevtm::#{type_}\n#\n"
+			desc = "# === Class: brocadevtm::#{type_}\n"
 			code = "class brocadevtm::#{type_} (\n"
 			code += "  \$ensure = present,\n"
 		else
-			desc = "# === Define: brocadevtm::#{type_}\n#\n"
+			desc = "# === Define: brocadevtm::#{type_}\n"
 			code = "define brocadevtm::#{type_} (\n"
 			code += "  \$ensure,\n"
 		end
@@ -144,7 +156,7 @@ class PuppetManifest
 		filename = "#{outputDir}/#{type_}.pp"
 		manifest = File.open(filename, "w")
 		manifest.puts desc
-		manifest.puts example
+		manifest.puts documentation
 		manifest.puts code
 		manifest.close
 	end
