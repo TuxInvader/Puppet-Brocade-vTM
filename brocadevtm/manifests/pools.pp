@@ -238,8 +238,8 @@
 # 
 define brocadevtm::pools (
   $ensure,
-  $basic__bandwidth_class                   = "",
-  $basic__failure_pool                      = "",
+  $basic__bandwidth_class                   = undef,
+  $basic__failure_pool                      = undef,
   $basic__max_connection_attempts           = 0,
   $basic__max_idle_connections_pernode      = 50,
   $basic__max_timed_out_connection_attempts = 2,
@@ -247,30 +247,30 @@ define brocadevtm::pools (
   $basic__node_close_with_rst               = false,
   $basic__node_connection_attempts          = 3,
   $basic__nodes_table                       = [],
-  $basic__note                              = "",
+  $basic__note                              = undef,
   $basic__passive_monitoring                = true,
-  $basic__persistence_class                 = "",
+  $basic__persistence_class                 = undef,
   $basic__transparent                       = false,
-  $auto_scaling__cloud_credentials          = "",
-  $auto_scaling__cluster                    = "",
-  $auto_scaling__data_center                = "",
-  $auto_scaling__data_store                 = "",
+  $auto_scaling__cloud_credentials          = undef,
+  $auto_scaling__cluster                    = undef,
+  $auto_scaling__data_center                = undef,
+  $auto_scaling__data_store                 = undef,
   $auto_scaling__enabled                    = false,
   $auto_scaling__external                   = true,
   $auto_scaling__hysteresis                 = 20,
-  $auto_scaling__imageid                    = "",
+  $auto_scaling__imageid                    = undef,
   $auto_scaling__ips_to_use                 = "publicips",
   $auto_scaling__last_node_idle_time        = 3600,
   $auto_scaling__max_nodes                  = 4,
   $auto_scaling__min_nodes                  = 1,
-  $auto_scaling__name                       = "",
+  $auto_scaling__name                       = undef,
   $auto_scaling__port                       = 80,
   $auto_scaling__refractory                 = 180,
   $auto_scaling__response_time              = 1000,
   $auto_scaling__scale_down_level           = 95,
   $auto_scaling__scale_up_level             = 40,
   $auto_scaling__securitygroupids           = [],
-  $auto_scaling__size_id                    = "",
+  $auto_scaling__size_id                    = undef,
   $auto_scaling__subnetids                  = [],
   $connection__max_connect_time             = 4,
   $connection__max_connections_per_node     = 0,
@@ -283,8 +283,8 @@ define brocadevtm::pools (
   $ftp__support_rfc_2428                    = false,
   $http__keepalive                          = true,
   $http__keepalive_non_idempotent           = false,
-  $kerberos_protocol_transition__principal  = "",
-  $kerberos_protocol_transition__target     = "",
+  $kerberos_protocol_transition__principal  = undef,
+  $kerberos_protocol_transition__target     = undef,
   $load_balancing__algorithm                = "round_robin",
   $load_balancing__priority_enabled         = false,
   $load_balancing__priority_nodes           = 1,
@@ -296,8 +296,8 @@ define brocadevtm::pools (
   $ssl__enhance                             = false,
   $ssl__send_close_alerts                   = true,
   $ssl__server_name                         = false,
-  $ssl__signature_algorithms                = "",
-  $ssl__ssl_ciphers                         = "",
+  $ssl__signature_algorithms                = undef,
+  $ssl__ssl_ciphers                         = undef,
   $ssl__ssl_support_ssl2                    = "use_default",
   $ssl__ssl_support_ssl3                    = "use_default",
   $ssl__ssl_support_tls1                    = "use_default",
@@ -306,23 +306,23 @@ define brocadevtm::pools (
   $ssl__strict_verify                       = false,
   $tcp__nagle                               = true,
   $udp__accept_from                         = "dest_only",
-  $udp__accept_from_mask                    = "",
+  $udp__accept_from_mask                    = undef,
 ){
   include brocadevtm
-  $ip   = $brocadevtm::rest_ip
-  $port = $brocadevtm::rest_port
-  $user = $brocadevtm::rest_user
-  $pass = $brocadevtm::rest_pass
+  $ip      = $brocadevtm::rest_ip
+  $port    = $brocadevtm::rest_port
+  $user    = $brocadevtm::rest_user
+  $pass    = $brocadevtm::rest_pass
 
   info ("Configuring pools ${name}")
   vtmrest { "pools/${name}":
-    endpoint => "https://${ip}:${port}/api/tm/3.3/config/active",
-    ensure => $ensure,
-    username => $user,
-    password => $pass,
-    content => template('brocadevtm/pools.erb'),
-    type => 'application/json',
-    internal => 'pools',
-    debug => 0,
+    ensure     => $ensure,
+    endpoint   => "https://${ip}:${port}/api/tm/3.3/config/active",
+    username   => $user,
+    password   => $pass,
+    content    => template('brocadevtm/pools.erb'),
+    type       => 'application/json',
+    internal   => 'pools',
+    debug      => 0,
   }
 }

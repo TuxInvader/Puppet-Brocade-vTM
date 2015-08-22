@@ -107,20 +107,20 @@ define brocadevtm::glb_services (
   $log__format                   = "%t, %s, %l, %q, %g, %n, %d, %a",
 ){
   include brocadevtm
-  $ip   = $brocadevtm::rest_ip
-  $port = $brocadevtm::rest_port
-  $user = $brocadevtm::rest_user
-  $pass = $brocadevtm::rest_pass
+  $ip      = $brocadevtm::rest_ip
+  $port    = $brocadevtm::rest_port
+  $user    = $brocadevtm::rest_user
+  $pass    = $brocadevtm::rest_pass
 
   info ("Configuring glb_services ${name}")
   vtmrest { "glb_services/${name}":
-    endpoint => "https://${ip}:${port}/api/tm/3.3/config/active",
-    ensure => $ensure,
-    username => $user,
-    password => $pass,
-    content => template('brocadevtm/glb_services.erb'),
-    type => 'application/json',
-    internal => 'glb_services',
-    debug => 0,
+    ensure     => $ensure,
+    endpoint   => "https://${ip}:${port}/api/tm/3.3/config/active",
+    username   => $user,
+    password   => $pass,
+    content    => template('brocadevtm/glb_services.erb'),
+    type       => 'application/json',
+    internal   => 'glb_services',
+    debug      => 0,
   }
 }

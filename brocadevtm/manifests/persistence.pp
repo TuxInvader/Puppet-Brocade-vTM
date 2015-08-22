@@ -40,28 +40,28 @@
 # 
 define brocadevtm::persistence (
   $ensure,
-  $basic__cookie       = "",
+  $basic__cookie       = undef,
   $basic__delete       = true,
   $basic__failure_mode = "new_node",
-  $basic__note         = "",
+  $basic__note         = undef,
   $basic__type         = "ip",
-  $basic__url          = "",
+  $basic__url          = undef,
 ){
   include brocadevtm
-  $ip   = $brocadevtm::rest_ip
-  $port = $brocadevtm::rest_port
-  $user = $brocadevtm::rest_user
-  $pass = $brocadevtm::rest_pass
+  $ip      = $brocadevtm::rest_ip
+  $port    = $brocadevtm::rest_port
+  $user    = $brocadevtm::rest_user
+  $pass    = $brocadevtm::rest_pass
 
   info ("Configuring persistence ${name}")
   vtmrest { "persistence/${name}":
-    endpoint => "https://${ip}:${port}/api/tm/3.3/config/active",
-    ensure => $ensure,
-    username => $user,
-    password => $pass,
-    content => template('brocadevtm/persistence.erb'),
-    type => 'application/json',
-    internal => 'persistence',
-    debug => 0,
+    ensure     => $ensure,
+    endpoint   => "https://${ip}:${port}/api/tm/3.3/config/active",
+    username   => $user,
+    password   => $pass,
+    content    => template('brocadevtm/persistence.erb'),
+    type       => 'application/json',
+    internal   => 'persistence',
+    debug      => 0,
   }
 }

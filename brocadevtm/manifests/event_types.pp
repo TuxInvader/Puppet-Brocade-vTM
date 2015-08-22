@@ -150,7 +150,7 @@ define brocadevtm::event_types (
   $ensure,
   $basic__actions               = [],
   $basic__built_in              = false,
-  $basic__note                  = "",
+  $basic__note                  = undef,
   $cloudcredentials__event_tags = [],
   $cloudcredentials__objects    = [],
   $config__event_tags           = [],
@@ -182,20 +182,20 @@ define brocadevtm::event_types (
   $zxtms__objects               = [],
 ){
   include brocadevtm
-  $ip   = $brocadevtm::rest_ip
-  $port = $brocadevtm::rest_port
-  $user = $brocadevtm::rest_user
-  $pass = $brocadevtm::rest_pass
+  $ip      = $brocadevtm::rest_ip
+  $port    = $brocadevtm::rest_port
+  $user    = $brocadevtm::rest_user
+  $pass    = $brocadevtm::rest_pass
 
   info ("Configuring event_types ${name}")
   vtmrest { "event_types/${name}":
-    endpoint => "https://${ip}:${port}/api/tm/3.3/config/active",
-    ensure => $ensure,
-    username => $user,
-    password => $pass,
-    content => template('brocadevtm/event_types.erb'),
-    type => 'application/json',
-    internal => 'event_types',
-    debug => 0,
+    ensure     => $ensure,
+    endpoint   => "https://${ip}:${port}/api/tm/3.3/config/active",
+    username   => $user,
+    password   => $pass,
+    content    => template('brocadevtm/event_types.erb'),
+    type       => 'application/json',
+    internal   => 'event_types',
+    debug      => 0,
   }
 }

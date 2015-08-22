@@ -40,24 +40,24 @@ define brocadevtm::ssl_server_keys (
   $ensure,
   $basic__public,
   $basic__private,
-  $basic__note    = "",
-  $basic__request = "",
+  $basic__note    = undef,
+  $basic__request = undef,
 ){
   include brocadevtm
-  $ip   = $brocadevtm::rest_ip
-  $port = $brocadevtm::rest_port
-  $user = $brocadevtm::rest_user
-  $pass = $brocadevtm::rest_pass
+  $ip      = $brocadevtm::rest_ip
+  $port    = $brocadevtm::rest_port
+  $user    = $brocadevtm::rest_user
+  $pass    = $brocadevtm::rest_pass
 
   info ("Configuring ssl_server_keys ${name}")
   vtmrest { "ssl/server_keys/${name}":
-    endpoint => "https://${ip}:${port}/api/tm/3.3/config/active",
-    ensure => $ensure,
-    username => $user,
-    password => $pass,
-    content => template('brocadevtm/ssl_server_keys.erb'),
-    type => 'application/json',
-    internal => 'ssl_server_keys',
-    debug => 0,
+    ensure     => $ensure,
+    endpoint   => "https://${ip}:${port}/api/tm/3.3/config/active",
+    username   => $user,
+    password   => $pass,
+    content    => template('brocadevtm/ssl_server_keys.erb'),
+    type       => 'application/json',
+    internal   => 'ssl_server_keys',
+    debug      => 0,
   }
 }

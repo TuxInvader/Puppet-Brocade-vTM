@@ -93,9 +93,9 @@ define brocadevtm::protection (
   $basic__debug                             = false,
   $basic__enabled                           = true,
   $basic__log_time                          = 60,
-  $basic__note                              = "",
+  $basic__note                              = undef,
   $basic__per_process_connection_count      = true,
-  $basic__rule                              = "",
+  $basic__rule                              = undef,
   $basic__testing                           = false,
   $access_restriction__allowed              = [],
   $access_restriction__banned               = [],
@@ -113,20 +113,20 @@ define brocadevtm::protection (
   $http__send_error_page                    = true,
 ){
   include brocadevtm
-  $ip   = $brocadevtm::rest_ip
-  $port = $brocadevtm::rest_port
-  $user = $brocadevtm::rest_user
-  $pass = $brocadevtm::rest_pass
+  $ip      = $brocadevtm::rest_ip
+  $port    = $brocadevtm::rest_port
+  $user    = $brocadevtm::rest_user
+  $pass    = $brocadevtm::rest_pass
 
   info ("Configuring protection ${name}")
   vtmrest { "protection/${name}":
-    endpoint => "https://${ip}:${port}/api/tm/3.3/config/active",
-    ensure => $ensure,
-    username => $user,
-    password => $pass,
-    content => template('brocadevtm/protection.erb'),
-    type => 'application/json',
-    internal => 'protection',
-    debug => 0,
+    ensure     => $ensure,
+    endpoint   => "https://${ip}:${port}/api/tm/3.3/config/active",
+    username   => $user,
+    password   => $pass,
+    content    => template('brocadevtm/protection.erb'),
+    type       => 'application/json',
+    internal   => 'protection',
+    debug      => 0,
   }
 }

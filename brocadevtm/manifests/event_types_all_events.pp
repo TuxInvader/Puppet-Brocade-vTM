@@ -8,7 +8,7 @@ class brocadevtm::event_types_all_events (
   $ensure = present,
   $basic__actions               = [],
   $basic__built_in              = true,
-  $basic__note                  = "",
+  $basic__note                  = undef,
   $cloudcredentials__event_tags = [],
   $cloudcredentials__objects    = [],
   $config__event_tags           = [],
@@ -40,20 +40,20 @@ class brocadevtm::event_types_all_events (
   $zxtms__objects               = [],
 ){
   include brocadevtm
-  $ip   = $brocadevtm::rest_ip
-  $port = $brocadevtm::rest_port
-  $user = $brocadevtm::rest_user
-  $pass = $brocadevtm::rest_pass
+  $ip      = $brocadevtm::rest_ip
+  $port    = $brocadevtm::rest_port
+  $user    = $brocadevtm::rest_user
+  $pass    = $brocadevtm::rest_pass
 
   info ("Configuring event_types_all_events ${name}")
   vtmrest { "event_types/All%20Events":
-    endpoint => "https://${ip}:${port}/api/tm/3.3/config/active",
-    ensure => $ensure,
-    username => $user,
-    password => $pass,
-    content => template('brocadevtm/event_types.erb'),
-    type => 'application/json',
-    internal => 'event_types_all_events',
-    debug => 0,
+    ensure     => $ensure,
+    endpoint   => "https://${ip}:${port}/api/tm/3.3/config/active",
+    username   => $user,
+    password   => $pass,
+    content    => template('brocadevtm/event_types.erb'),
+    type       => 'application/json',
+    internal   => 'event_types_all_events',
+    debug      => 0,
   }
 }

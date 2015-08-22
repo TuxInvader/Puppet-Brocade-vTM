@@ -32,25 +32,25 @@
 # 
 define brocadevtm::aptimizer_scopes (
   $ensure,
-  $basic__canonical_hostname = "",
+  $basic__canonical_hostname = undef,
   $basic__hostnames          = [],
   $basic__root               = "/",
 ){
   include brocadevtm
-  $ip   = $brocadevtm::rest_ip
-  $port = $brocadevtm::rest_port
-  $user = $brocadevtm::rest_user
-  $pass = $brocadevtm::rest_pass
+  $ip      = $brocadevtm::rest_ip
+  $port    = $brocadevtm::rest_port
+  $user    = $brocadevtm::rest_user
+  $pass    = $brocadevtm::rest_pass
 
   info ("Configuring aptimizer_scopes ${name}")
   vtmrest { "aptimizer/scopes/${name}":
-    endpoint => "https://${ip}:${port}/api/tm/3.3/config/active",
-    ensure => $ensure,
-    username => $user,
-    password => $pass,
-    content => template('brocadevtm/aptimizer_scopes.erb'),
-    type => 'application/json',
-    internal => 'aptimizer_scopes',
-    debug => 0,
+    ensure     => $ensure,
+    endpoint   => "https://${ip}:${port}/api/tm/3.3/config/active",
+    username   => $user,
+    password   => $pass,
+    content    => template('brocadevtm/aptimizer_scopes.erb'),
+    type       => 'application/json',
+    internal   => 'aptimizer_scopes',
+    debug      => 0,
   }
 }

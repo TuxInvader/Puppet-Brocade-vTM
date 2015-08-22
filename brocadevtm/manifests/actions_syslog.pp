@@ -6,45 +6,45 @@
 #
 class brocadevtm::actions_syslog (
   $ensure = present,
-  $basic__note                 = "",
+  $basic__note                 = undef,
   $basic__syslog_msg_len_limit = 1024,
   $basic__timeout              = 60,
   $basic__type                 = "syslog",
   $basic__verbose              = false,
-  $email__server               = "",
+  $email__server               = undef,
   $email__to                   = [],
-  $log__file                   = "",
+  $log__file                   = undef,
   $log__from                   = "stingraytrafficmanager@%hostname%",
   $program__arguments          = [],
-  $program__program            = "",
-  $soap__additional_data       = "",
-  $soap__password              = "",
-  $soap__proxy                 = "",
-  $soap__username              = "",
-  $syslog__sysloghost          = "",
-  $trap__auth_password         = "",
-  $trap__community             = "",
+  $program__program            = undef,
+  $soap__additional_data       = undef,
+  $soap__password              = undef,
+  $soap__proxy                 = undef,
+  $soap__username              = undef,
+  $syslog__sysloghost          = undef,
+  $trap__auth_password         = undef,
+  $trap__community             = undef,
   $trap__hash_algorithm        = "md5",
-  $trap__priv_password         = "",
-  $trap__traphost              = "",
-  $trap__username              = "",
+  $trap__priv_password         = undef,
+  $trap__traphost              = undef,
+  $trap__username              = undef,
   $trap__version               = "snmpv1",
 ){
   include brocadevtm
-  $ip   = $brocadevtm::rest_ip
-  $port = $brocadevtm::rest_port
-  $user = $brocadevtm::rest_user
-  $pass = $brocadevtm::rest_pass
+  $ip      = $brocadevtm::rest_ip
+  $port    = $brocadevtm::rest_port
+  $user    = $brocadevtm::rest_user
+  $pass    = $brocadevtm::rest_pass
 
   info ("Configuring actions_syslog ${name}")
   vtmrest { "actions/Syslog":
-    endpoint => "https://${ip}:${port}/api/tm/3.3/config/active",
-    ensure => $ensure,
-    username => $user,
-    password => $pass,
-    content => template('brocadevtm/actions.erb'),
-    type => 'application/json',
-    internal => 'actions_syslog',
-    debug => 0,
+    ensure     => $ensure,
+    endpoint   => "https://${ip}:${port}/api/tm/3.3/config/active",
+    username   => $user,
+    password   => $pass,
+    content    => template('brocadevtm/actions.erb'),
+    type       => 'application/json',
+    internal   => 'actions_syslog',
+    debug      => 0,
   }
 }

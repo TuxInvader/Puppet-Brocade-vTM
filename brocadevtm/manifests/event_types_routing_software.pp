@@ -40,20 +40,20 @@ class brocadevtm::event_types_routing_software (
   $zxtms__objects               = [],
 ){
   include brocadevtm
-  $ip   = $brocadevtm::rest_ip
-  $port = $brocadevtm::rest_port
-  $user = $brocadevtm::rest_user
-  $pass = $brocadevtm::rest_pass
+  $ip      = $brocadevtm::rest_ip
+  $port    = $brocadevtm::rest_port
+  $user    = $brocadevtm::rest_user
+  $pass    = $brocadevtm::rest_pass
 
   info ("Configuring event_types_routing_software ${name}")
   vtmrest { "event_types/Routing%20Software":
-    endpoint => "https://${ip}:${port}/api/tm/3.3/config/active",
-    ensure => $ensure,
-    username => $user,
-    password => $pass,
-    content => template('brocadevtm/event_types.erb'),
-    type => 'application/json',
-    internal => 'event_types_routing_software',
-    debug => 0,
+    ensure     => $ensure,
+    endpoint   => "https://${ip}:${port}/api/tm/3.3/config/active",
+    username   => $user,
+    password   => $pass,
+    content    => template('brocadevtm/event_types.erb'),
+    type       => 'application/json',
+    internal   => 'event_types_routing_software',
+    debug      => 0,
   }
 }
