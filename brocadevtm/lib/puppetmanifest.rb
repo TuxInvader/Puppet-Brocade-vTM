@@ -84,6 +84,11 @@ class PuppetManifest
 			else 
 				documentation.sub!("<CLASS-OR-TYPE-DECLARATION>","brocadevtm::#{type_} { 'example':")
 			end
+		elsif (@template != nil)
+			parent = @template.chomp(".erb")
+			documentation = "#\n# This class is a direct implementation of brocadvtm::#{parent}\n"
+			documentation += "#\n# Please refer to the documentation in that module for more information\n"
+			documentation += "#\n"
 		else
 			documentation = ""
 		end
