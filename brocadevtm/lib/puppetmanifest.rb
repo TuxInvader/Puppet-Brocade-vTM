@@ -74,7 +74,7 @@ class PuppetManifest
 	end	
 
 	def genManifest(outputDir,isClass=false)
-		type_ = @type.gsub(/[\/\.]|%20/, "_").downcase
+		type_ = @type.gsub(/[\/\.-]|%20/, "_").downcase
 
 		docfile = "skel/docs/#{type_}.doc"
 		if ( File.exist?(docfile) )
@@ -202,7 +202,7 @@ class PuppetManifest
 		erb = erb.gsub(',}', '}')
 		erb = erb.gsub('},}','}}')
 
-		type_ = @type.gsub(/[\/\.]|%20/, "_").downcase
+		type_ = @type.gsub(/[\/\.-]|%20/, "_").downcase
 		filename = "#{outputDir}/#{type_}.erb"
 		template = File.open(filename, "w")
 		template.puts erb
@@ -222,7 +222,7 @@ class PuppetManifest
 			return true
 		end
 
-		type_ = @type.gsub(/[\/\.]|%20/, "_").downcase
+		type_ = @type.gsub(/[\/\.-]|%20/, "_").downcase
 		filename = "#{outputDir}/#{type_}.data"
 		binary = File.open(filename, "w")
 		binary.puts @data

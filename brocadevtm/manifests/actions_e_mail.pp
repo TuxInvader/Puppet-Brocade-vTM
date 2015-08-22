@@ -1,10 +1,10 @@
-# === Class: brocadevtm::actions_e-mail
+# === Class: brocadevtm::actions_e_mail
 #
 # This class is a direct implementation of brocadvtm::actions
 #
 # Please refer to the documentation in that module for more information
 #
-class brocadevtm::actions_e-mail (
+class brocadevtm::actions_e_mail (
   $ensure = present,
   $basic__note                 = "",
   $basic__syslog_msg_len_limit = 1024,
@@ -36,7 +36,7 @@ class brocadevtm::actions_e-mail (
   $user = $brocadevtm::rest_user
   $pass = $brocadevtm::rest_pass
 
-  info ("Configuring actions_e-mail ${name}")
+  info ("Configuring actions_e_mail ${name}")
   vtmrest { "actions/E-Mail":
     endpoint => "https://${ip}:${port}/api/tm/3.3/config/active",
     ensure => $ensure,
@@ -44,7 +44,7 @@ class brocadevtm::actions_e-mail (
     password => $pass,
     content => template('brocadevtm/actions.erb'),
     type => 'application/json',
-    internal => 'actions_e-mail',
+    internal => 'actions_e_mail',
     debug => 0,
   }
 }
