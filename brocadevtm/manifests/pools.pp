@@ -216,7 +216,7 @@
 #
 # [*udp__accept_from*]
 # The IP addresses and ports from which responses to UDP requests should be accepted. 
- If set to accept responses from a specific set of IP addresses, you will need to enter a CIDR Mask (such as 10.100.0.0/16).
+#  If set to accept responses from a specific set of IP addresses, you will need to enter a CIDR Mask (such as 10.100.0.0/16).
 #
 # [*udp__accept_from_mask*]
 # The CIDR mask that matches IPs we want to receive responses from.

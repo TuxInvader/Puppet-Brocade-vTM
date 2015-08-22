@@ -19,7 +19,7 @@
 #
 # [*basic__per_process_connection_count*]
 # Whether simultaneous connection counting and limits are per-process. (Each Traffic Manager typically has several processes: one process per available CPU core.) 
- If "Yes", a connecting IP address may make that many connections to each process within a Traffic Manager. If "No", a connecting IP address may make that many connections to each Traffic Manager as a whole.
+#  If "Yes", a connecting IP address may make that many connections to each process within a Traffic Manager. If "No", a connecting IP address may make that many connections to each Traffic Manager as a whole.
 #
 # [*basic__rule*]
 # A TrafficScript rule that will be run on the connection after the service protection criteria have been evaluated.  This rule will be executed prior to normal rules configured for the virtual server.
@@ -37,7 +37,7 @@
 #
 # [*connection_limiting__max_10_connections*]
 # Additional limit on maximum simultaneous connections from the top 10 busiest connecting IP addresses combined.  The value should be between 1 and 10 times the "max_1_connections" limit. 
- (This limit is disabled if "per_process_connection_count" is "No", or "max_1_connections" is "0", or "min_connections" is "0".)
+#  (This limit is disabled if "per_process_connection_count" is "No", or "max_1_connections" is "0", or "min_connections" is "0".)
 #
 # [*connection_limiting__max_1_connections*]
 # Maximum simultaneous connections each connecting IP address is allowed. Set to "0" to disable this limit.
@@ -47,7 +47,7 @@
 #
 # [*connection_limiting__min_connections*]
 # Entry threshold for the "max_10_connections" limit: the "max_10_connections" limit is not applied to connecting IP addresses with this many or fewer simultaneous connections. 
- Setting to "0" disables both the "max_1_connections" and "max_10_connections" limits, if "per_process_connection_count" is "Yes". (If "per_process_connection_count" is "No", this setting is ignored.)
+#  Setting to "0" disables both the "max_1_connections" and "max_10_connections" limits, if "per_process_connection_count" is "Yes". (If "per_process_connection_count" is "No", this setting is ignored.)
 #
 # [*connection_limiting__rate_timer*]
 # How frequently the "max_connection_rate" is assessed. For example, a value of "1" (second) will impose a limit of "max_connection_rate" connections per second; a value of "60" will impose a limit of "max_connection_rate" connections per minute. The valid range is 1-99999 seconds.

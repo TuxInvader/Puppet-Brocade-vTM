@@ -188,8 +188,8 @@
 #
 # [*fault_tolerance__ospfv2_ip*]
 # The traffic manager's permanent IPv4 address which the routing software will use for peering and transit traffic, and as its OSPF router ID.
- If set to empty, then the address used to communicate with the default IPv4 gateway is used instead.
- Specifying 0.0.0.0 will stop the traffic manager routing software from running.
+#  If set to empty, then the address used to communicate with the default IPv4 gateway is used instead.
+#  Specifying 0.0.0.0 will stop the traffic manager routing software from running.
 #
 # [*fault_tolerance__ospfv2_neighbor_addrs*]
 # The IP addresses of routers which are expected to be found as OSPFv2 neighbors of the traffic manager. A warning will be reported if some of the expected routers are not peered, and an error will be reported if none of the expected routers are peered. An empty list disables monitoring. The special value %gateway% is a placeholder for the default gateway.

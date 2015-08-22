@@ -32,6 +32,7 @@ class DocBuilder
 					genParams(section,name)
 				end
 			elsif (props.has_key?("description"))
+				props["description"].gsub!("\n","\n# ")
 				if (props.has_key?("items"))
 					type = props["type"]
 					items = props["items"]["properties"]
