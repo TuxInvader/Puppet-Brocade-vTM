@@ -4,22 +4,22 @@
 # The "conf/zeusafm.conf" file contains configuration files for the application firewall. Some keys present in the "zeusafm.conf" are not documented here. Refer to the Stingray Application Firewall documentation for further details. The configuration can be edited under the "System > Application Firewall" section of the Administration Server or by using functions under the "AFM" section of the SOAP API and CLI. 
 #
 # === Parameters
-# 
+#
 # === Examples
-# 
-# class {'brocadevtm::application_firewall': 
+#
+# class {'brocadevtm::application_firewall':
 #     ensure => present,
 # }
-# 
-# 
+#
+#
 # === Authors
-# 
+#
 # Mark Boddington <mbodding@brocade>
-# 
+#
 # === Copyright
-# 
+#
 # Copyright 2015 Brocade
-# 
+#
 class brocadevtm::application_firewall (
   $ensure = present,
 ){

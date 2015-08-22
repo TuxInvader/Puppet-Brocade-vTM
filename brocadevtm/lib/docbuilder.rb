@@ -32,7 +32,7 @@ class DocBuilder
 					genParams(section,name)
 				end
 			elsif (props.has_key?("description"))
-				props["description"].gsub!("\n","\n# ")
+				props["description"].gsub!(/\s*\n/,"\n# -")
 				if (props.has_key?("items"))
 					type = props["type"]
 					items = props["items"]["properties"]
@@ -85,10 +85,10 @@ class DocBuilder
 			output.puts("# #{doc}")
 		end
 
-		output.puts("# ")
+		output.puts("#")
 		output.puts("# === Examples")
-		output.puts("# ")
-		output.puts("# <CLASS-OR-TYPE-DECLARATION> ")
+		output.puts("#")
+		output.puts("# <CLASS-OR-TYPE-DECLARATION>")
 		output.puts("#     ensure => present,")
 
 		if ( @required != nil )
@@ -106,17 +106,17 @@ class DocBuilder
 		end
 
 		output.puts("# }")
-		output.puts("# ")
+		output.puts("#")
 
-		output.puts("# ")
+		output.puts("#")
 		output.puts("# === Authors")
-		output.puts("# ")
+		output.puts("#")
 		output.puts("# Mark Boddington <mbodding@brocade>")
-		output.puts("# ")
+		output.puts("#")
 		output.puts("# === Copyright")
-		output.puts("# ")
+		output.puts("#")
 		output.puts("# Copyright 2015 Brocade")
-		output.puts("# ")
+		output.puts("#")
 		
 		output.close()
 	end

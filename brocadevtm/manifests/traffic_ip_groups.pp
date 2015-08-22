@@ -47,22 +47,22 @@
 # [*basic__slaves*]
 # A list of traffic managers that are in 'passive' mode. This means that in a fully working environment, they will not have any traffic IP addresses assigned to them.
 # Type:array, Details:
-# 
+#
 # === Examples
-# 
-# brocadevtm::traffic_ip_groups { 'example': 
+#
+# brocadevtm::traffic_ip_groups { 'example':
 #     ensure => present,
 # }
-# 
-# 
+#
+#
 # === Authors
-# 
+#
 # Mark Boddington <mbodding@brocade>
-# 
+#
 # === Copyright
-# 
+#
 # Copyright 2015 Brocade
-# 
+#
 define brocadevtm::traffic_ip_groups (
   $ensure,
   $basic__enabled                          = true,

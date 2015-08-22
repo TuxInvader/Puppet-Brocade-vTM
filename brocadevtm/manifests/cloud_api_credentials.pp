@@ -25,22 +25,22 @@
 #
 # [*basic__update_interval*]
 # The traffic manager will periodically check the status of the cloud through an API call. This setting specifies the interval between such updates.
-# 
+#
 # === Examples
-# 
-# brocadevtm::cloud_api_credentials { 'example': 
+#
+# brocadevtm::cloud_api_credentials { 'example':
 #     ensure => present,
 # }
-# 
-# 
+#
+#
 # === Authors
-# 
+#
 # Mark Boddington <mbodding@brocade>
-# 
+#
 # === Copyright
-# 
+#
 # Copyright 2015 Brocade
-# 
+#
 define brocadevtm::cloud_api_credentials (
   $ensure,
   $basic__api_server        = undef,

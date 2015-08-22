@@ -395,24 +395,24 @@
 #
 # [*web_cache__refresh_time*]
 # If a cached page is about to expire within this time, the traffic manager will start to forward some new requests on to the web servers. A maximum of one request per second will be forwarded; the remainder will continue to be served from the cache. This prevents "bursts" of traffic to your web servers when an item expires from the cache. Setting this value to "0" will stop the traffic manager updating the cache before it expires.
-# 
+#
 # === Examples
-# 
-# brocadevtm::virtual_servers { 'example': 
+#
+# brocadevtm::virtual_servers { 'example':
 #     ensure => present,
 #     basic__pool => 'foo'
 #     basic__port => 8888
 # }
-# 
-# 
+#
+#
 # === Authors
-# 
+#
 # Mark Boddington <mbodding@brocade>
-# 
+#
 # === Copyright
-# 
+#
 # Copyright 2015 Brocade
-# 
+#
 define brocadevtm::virtual_servers (
   $ensure,
   $basic__pool,

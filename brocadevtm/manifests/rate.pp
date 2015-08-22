@@ -13,22 +13,22 @@
 #
 # [*basic__note*]
 # A description of the rate class.
-# 
+#
 # === Examples
-# 
-# brocadevtm::rate { 'example': 
+#
+# brocadevtm::rate { 'example':
 #     ensure => present,
 # }
-# 
-# 
+#
+#
 # === Authors
-# 
+#
 # Mark Boddington <mbodding@brocade>
-# 
+#
 # === Copyright
-# 
+#
 # Copyright 2015 Brocade
-# 
+#
 define brocadevtm::rate (
   $ensure,
   $basic__max_rate_per_minute = 0,

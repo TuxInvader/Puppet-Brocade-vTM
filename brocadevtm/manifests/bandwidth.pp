@@ -13,22 +13,22 @@
 #
 # [*basic__sharing*]
 # The scope of the bandwidth class.
-# 
+#
 # === Examples
-# 
-# brocadevtm::bandwidth { 'example': 
+#
+# brocadevtm::bandwidth { 'example':
 #     ensure => present,
 # }
-# 
-# 
+#
+#
 # === Authors
-# 
+#
 # Mark Boddington <mbodding@brocade>
-# 
+#
 # === Copyright
-# 
+#
 # Copyright 2015 Brocade
-# 
+#
 define brocadevtm::bandwidth (
   $ensure,
   $basic__maximum = 10000,

@@ -20,22 +20,22 @@
 # [*basic__port_mapping*]
 # This is table 'port_mapping'
 # Type:array, Details:{"rule_number"=>{"description"=>"A unique rule identifier", "type"=>"string"}, "dport_first"=>{"description"=>"First port of the dest. port range of a \"port mapping\" rule.", "type"=>"integer", "minimum"=>1, "maximum"=>65535}, "dport_last"=>{"description"=>"Last port of the dest. port range of a \"port mapping\" rule.", "type"=>"integer", "minimum"=>1, "maximum"=>65535}, "virtual_server"=>{"description"=>"Target Virtual Server of a \"port mapping\" rule.", "type"=>"string"}}
-# 
+#
 # === Examples
-# 
-# class {'brocadevtm::appliance_nat': 
+#
+# class {'brocadevtm::appliance_nat':
 #     ensure => present,
 # }
-# 
-# 
+#
+#
 # === Authors
-# 
+#
 # Mark Boddington <mbodding@brocade>
-# 
+#
 # === Copyright
-# 
+#
 # Copyright 2015 Brocade
-# 
+#
 class brocadevtm::appliance_nat (
   $ensure = present,
   $basic__many_to_one_all_ports   = [],

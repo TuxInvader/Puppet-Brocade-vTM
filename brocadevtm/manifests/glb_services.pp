@@ -68,22 +68,22 @@
 #
 # [*log__format*]
 # The format of the log lines.
-# 
+#
 # === Examples
-# 
-# brocadevtm::glb_services { 'example': 
+#
+# brocadevtm::glb_services { 'example':
 #     ensure => present,
 # }
-# 
-# 
+#
+#
 # === Authors
-# 
+#
 # Mark Boddington <mbodding@brocade>
-# 
+#
 # === Copyright
-# 
+#
 # Copyright 2015 Brocade
-# 
+#
 define brocadevtm::glb_services (
   $ensure,
   $basic__algorithm              = "hybrid",

@@ -130,22 +130,22 @@
 # [*zxtms__objects*]
 # Traffic manager object names
 # Type:array, Details:
-# 
+#
 # === Examples
-# 
-# brocadevtm::event_types { 'example': 
+#
+# brocadevtm::event_types { 'example':
 #     ensure => present,
 # }
-# 
-# 
+#
+#
 # === Authors
-# 
+#
 # Mark Boddington <mbodding@brocade>
-# 
+#
 # === Copyright
-# 
+#
 # Copyright 2015 Brocade
-# 
+#
 define brocadevtm::event_types (
   $ensure,
   $basic__actions               = [],

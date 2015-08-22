@@ -17,22 +17,22 @@
 #
 # [*basic__timeout*]
 # Inactive UI sessions will timeout after this number of seconds. To disable inactivity timeouts for the group set this to "0" (zero).
-# 
+#
 # === Examples
-# 
-# brocadevtm::user_groups { 'example': 
+#
+# brocadevtm::user_groups { 'example':
 #     ensure => present,
 # }
-# 
-# 
+#
+#
 # === Authors
-# 
+#
 # Mark Boddington <mbodding@brocade>
-# 
+#
 # === Copyright
-# 
+#
 # Copyright 2015 Brocade
-# 
+#
 define brocadevtm::user_groups (
   $ensure,
   $basic__description          = undef,

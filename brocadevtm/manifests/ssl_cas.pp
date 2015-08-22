@@ -4,22 +4,22 @@
 # SSL certificate authority certificates (CAs) and certificate revocation lists (CRLs) can be used when validating server and client certificates.
 #
 # === Parameters
-# 
+#
 # === Examples
-# 
-# brocadevtm::ssl_cas { 'example': 
+#
+# brocadevtm::ssl_cas { 'example':
 #     ensure => present,
 # }
-# 
-# 
+#
+#
 # === Authors
-# 
+#
 # Mark Boddington <mbodding@brocade>
-# 
+#
 # === Copyright
-# 
+#
 # Copyright 2015 Brocade
-# 
+#
 define brocadevtm::ssl_cas (
   $ensure,
   $content,

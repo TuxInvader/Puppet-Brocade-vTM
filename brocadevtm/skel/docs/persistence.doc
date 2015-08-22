@@ -21,19 +21,19 @@
 #
 # [*basic__url*]
 # The redirect URL to send clients to if the session persistence is configured to redirect users when a node dies.
-# 
+#
 # === Examples
-# 
-# <CLASS-OR-TYPE-DECLARATION> 
+#
+# <CLASS-OR-TYPE-DECLARATION>
 #     ensure => present,
 # }
-# 
-# 
+#
+#
 # === Authors
-# 
+#
 # Mark Boddington <mbodding@brocade>
-# 
+#
 # === Copyright
-# 
+#
 # Copyright 2015 Brocade
-# 
+#

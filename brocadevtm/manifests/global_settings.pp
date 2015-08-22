@@ -123,8 +123,8 @@
 # The IP address of the nCipher Remote File System to use.
 #
 # [*appliance__return_path_routing_enabled*]
-# Whether or not the traffic manager will attempt to route response packets back to clients via the same route on which the corresponding request arrived. 
-#  Note that this applies only to the last hop of the route - the behaviour of upstream routers cannot be altered by the traffic manager.
+# Whether or not the traffic manager will attempt to route response packets back to clients via the same route on which the corresponding request arrived.
+# - Note that this applies only to the last hop of the route - the behaviour of upstream routers cannot be altered by the traffic manager.
 #
 # [*aptimizer__cache_entry_lifetime*]
 # The period of time (in seconds) that unaccessed cache entries will be retained by aptimizer.
@@ -642,11 +642,11 @@
 #
 # [*trafficscript__variable_pool_use*]
 # Allow the "pool.use" and "pool.select" TrafficScript functions to accept variables instead of requiring literal strings. <br /> Enabling this feature has the following effects
-# 1. Your traffic manager may no longer be able to know whether a pool is in use.
-# 2. Errors for pools that aren't in use will not be hidden.
-# 3. Some settings displayed for a Pool may not be appropriate for the type of traffic being managed.
-# 4. Pool usage information on the pool edit pages and config summary may not be accurate.
-# 5. Monitors will run for all pools (with this option disabled monitors will only run for Pools that are used).
+# -1. Your traffic manager may no longer be able to know whether a pool is in use.
+# -2. Errors for pools that aren't in use will not be hidden.
+# -3. Some settings displayed for a Pool may not be appropriate for the type of traffic being managed.
+# -4. Pool usage information on the pool edit pages and config summary may not be accurate.
+# -5. Monitors will run for all pools (with this option disabled monitors will only run for Pools that are used).
 #
 # [*web_cache__avg_path_length*]
 # The estimated average length of the path (including query string) for resources being cached. An amount of memory equal to this figure multiplied by max_file_num will be allocated for storing the paths for cache entries. This setting can be increased if your web site makes extensive use of long URLs.
@@ -674,22 +674,22 @@
 #
 # [*web_cache__verbose*]
 # Add an X-Cache-Info header to every HTTP response, showing whether the request and/or the response was cacheable.
-# 
+#
 # === Examples
-# 
-# class {'brocadevtm::global_settings': 
+#
+# class {'brocadevtm::global_settings':
 #     ensure => present,
 # }
-# 
-# 
+#
+#
 # === Authors
-# 
+#
 # Mark Boddington <mbodding@brocade>
-# 
+#
 # === Copyright
-# 
+#
 # Copyright 2015 Brocade
-# 
+#
 class brocadevtm::global_settings (
   $ensure = present,
   $basic__accepting_delay                      = 50,

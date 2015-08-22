@@ -16,22 +16,22 @@
 #
 # [*basic__warning_threshold*]
 # When the percentage of conforming responses drops below this level, a warning message will be emitted.
-# 
+#
 # === Examples
-# 
-# brocadevtm::service_level_monitors { 'example': 
+#
+# brocadevtm::service_level_monitors { 'example':
 #     ensure => present,
 # }
-# 
-# 
+#
+#
 # === Authors
-# 
+#
 # Mark Boddington <mbodding@brocade>
-# 
+#
 # === Copyright
-# 
+#
 # Copyright 2015 Brocade
-# 
+#
 define brocadevtm::service_level_monitors (
   $ensure,
   $basic__note              = undef,

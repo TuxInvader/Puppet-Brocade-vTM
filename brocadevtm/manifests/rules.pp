@@ -4,22 +4,22 @@
 # TrafficScript rules allow traffic inspection and modification.
 #
 # === Parameters
-# 
+#
 # === Examples
-# 
-# brocadevtm::rules { 'example': 
+#
+# brocadevtm::rules { 'example':
 #     ensure => present,
 # }
-# 
-# 
+#
+#
 # === Authors
-# 
+#
 # Mark Boddington <mbodding@brocade>
-# 
+#
 # === Copyright
-# 
+#
 # Copyright 2015 Brocade
-# 
+#
 define brocadevtm::rules (
   $ensure,
   $content,

@@ -22,22 +22,22 @@
 #
 # [*basic__url*]
 # The redirect URL to send clients to if the session persistence is configured to redirect users when a node dies.
-# 
+#
 # === Examples
-# 
-# brocadevtm::persistence { 'example': 
+#
+# brocadevtm::persistence { 'example':
 #     ensure => present,
 # }
-# 
-# 
+#
+#
 # === Authors
-# 
+#
 # Mark Boddington <mbodding@brocade>
-# 
+#
 # === Copyright
-# 
+#
 # Copyright 2015 Brocade
-# 
+#
 define brocadevtm::persistence (
   $ensure,
   $basic__cookie       = undef,

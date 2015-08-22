@@ -89,22 +89,22 @@
 #
 # [*udp__accept_all*]
 # If this monitor uses UDP, should it accept responses from any IP and port?
-# 
+#
 # === Examples
-# 
-# brocadevtm::monitors { 'example': 
+#
+# brocadevtm::monitors { 'example':
 #     ensure => present,
 # }
-# 
-# 
+#
+#
 # === Authors
-# 
+#
 # Mark Boddington <mbodding@brocade>
-# 
+#
 # === Copyright
-# 
+#
 # Copyright 2015 Brocade
-# 
+#
 define brocadevtm::monitors (
   $ensure,
   $basic__back_off       = true,

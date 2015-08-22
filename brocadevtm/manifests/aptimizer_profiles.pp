@@ -19,22 +19,22 @@
 #
 # [*basic__show_info_bar*]
 # Show the Aptimizer information bar on aptimized web pages. This requires HTML optimization to be enabled in the Acceleration settings.
-# 
+#
 # === Examples
-# 
-# brocadevtm::aptimizer_profiles { 'example': 
+#
+# brocadevtm::aptimizer_profiles { 'example':
 #     ensure => present,
 # }
-# 
-# 
+#
+#
 # === Authors
-# 
+#
 # Mark Boddington <mbodding@brocade>
-# 
+#
 # === Copyright
-# 
+#
 # Copyright 2015 Brocade
-# 
+#
 define brocadevtm::aptimizer_profiles (
   $ensure,
   $basic__background_after                   = 0,

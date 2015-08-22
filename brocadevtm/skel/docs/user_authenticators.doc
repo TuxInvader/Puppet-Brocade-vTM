@@ -102,20 +102,20 @@
 #
 # [*tacacs_plus__timeout*]
 # Connection timeout in seconds.
-# 
+#
 # === Examples
-# 
-# <CLASS-OR-TYPE-DECLARATION> 
+#
+# <CLASS-OR-TYPE-DECLARATION>
 #     ensure => present,
 #     basic__type => 'foo'
 # }
-# 
-# 
+#
+#
 # === Authors
-# 
+#
 # Mark Boddington <mbodding@brocade>
-# 
+#
 # === Copyright
-# 
+#
 # Copyright 2015 Brocade
-# 
+#

@@ -215,27 +215,27 @@
 # Whether or not Nagle's algorithm should be used for TCP connections to the back-end nodes.
 #
 # [*udp__accept_from*]
-# The IP addresses and ports from which responses to UDP requests should be accepted. 
-#  If set to accept responses from a specific set of IP addresses, you will need to enter a CIDR Mask (such as 10.100.0.0/16).
+# The IP addresses and ports from which responses to UDP requests should be accepted.
+# - If set to accept responses from a specific set of IP addresses, you will need to enter a CIDR Mask (such as 10.100.0.0/16).
 #
 # [*udp__accept_from_mask*]
 # The CIDR mask that matches IPs we want to receive responses from.
-# 
+#
 # === Examples
-# 
-# brocadevtm::pools { 'example': 
+#
+# brocadevtm::pools { 'example':
 #     ensure => present,
 # }
-# 
-# 
+#
+#
 # === Authors
-# 
+#
 # Mark Boddington <mbodding@brocade>
-# 
+#
 # === Copyright
-# 
+#
 # Copyright 2015 Brocade
-# 
+#
 define brocadevtm::pools (
   $ensure,
   $basic__bandwidth_class                   = undef,

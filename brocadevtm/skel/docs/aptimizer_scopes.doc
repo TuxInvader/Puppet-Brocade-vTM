@@ -13,19 +13,19 @@
 #
 # [*basic__root*]
 # The root path of the application defined by this application scope.
-# 
+#
 # === Examples
-# 
-# <CLASS-OR-TYPE-DECLARATION> 
+#
+# <CLASS-OR-TYPE-DECLARATION>
 #     ensure => present,
 # }
-# 
-# 
+#
+#
 # === Authors
-# 
+#
 # Mark Boddington <mbodding@brocade>
-# 
+#
 # === Copyright
-# 
+#
 # Copyright 2015 Brocade
-# 
+#

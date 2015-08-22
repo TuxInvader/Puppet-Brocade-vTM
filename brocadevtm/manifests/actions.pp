@@ -75,23 +75,23 @@
 #
 # [*trap__version*]
 # The SNMP version to use to send the Trap/Notify.
-# 
+#
 # === Examples
-# 
-# brocadevtm::actions { 'example': 
+#
+# brocadevtm::actions { 'example':
 #     ensure => present,
 #     basic__type => 'foo'
 # }
-# 
-# 
+#
+#
 # === Authors
-# 
+#
 # Mark Boddington <mbodding@brocade>
-# 
+#
 # === Copyright
-# 
+#
 # Copyright 2015 Brocade
-# 
+#
 define brocadevtm::actions (
   $ensure,
   $basic__type,

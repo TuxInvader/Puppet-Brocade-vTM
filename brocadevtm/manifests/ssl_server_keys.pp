@@ -16,26 +16,26 @@
 #
 # [*basic__note*]
 # Notes for this certificate
-# 
+#
 # === Examples
-# 
-# brocadevtm::ssl_server_keys { 'example': 
+#
+# brocadevtm::ssl_server_keys { 'example':
 #     ensure => present,
 #     basic__public => 'foo'
 #     basic__request => 'foo'
 #     basic__private => 'foo'
 #     basic__note => 'foo'
 # }
-# 
-# 
+#
+#
 # === Authors
-# 
+#
 # Mark Boddington <mbodding@brocade>
-# 
+#
 # === Copyright
-# 
+#
 # Copyright 2015 Brocade
-# 
+#
 define brocadevtm::ssl_server_keys (
   $ensure,
   $basic__public,

@@ -103,23 +103,23 @@
 #
 # [*tacacs_plus__timeout*]
 # Connection timeout in seconds.
-# 
+#
 # === Examples
-# 
-# brocadevtm::user_authenticators { 'example': 
+#
+# brocadevtm::user_authenticators { 'example':
 #     ensure => present,
 #     basic__type => 'foo'
 # }
-# 
-# 
+#
+#
 # === Authors
-# 
+#
 # Mark Boddington <mbodding@brocade>
-# 
+#
 # === Copyright
-# 
+#
 # Copyright 2015 Brocade
-# 
+#
 define brocadevtm::user_authenticators (
   $ensure,
   $basic__type,

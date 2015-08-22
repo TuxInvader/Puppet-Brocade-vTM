@@ -38,22 +38,22 @@
 #
 # [*ldap__ssl_type*]
 # The type of LDAP SSL encryption to use.
-# 
+#
 # === Examples
-# 
-# brocadevtm::rule_authenticators { 'example': 
+#
+# brocadevtm::rule_authenticators { 'example':
 #     ensure => present,
 # }
-# 
-# 
+#
+#
 # === Authors
-# 
+#
 # Mark Boddington <mbodding@brocade>
-# 
+#
 # === Copyright
-# 
+#
 # Copyright 2015 Brocade
-# 
+#
 define brocadevtm::rule_authenticators (
   $ensure,
   $basic__host          = undef,

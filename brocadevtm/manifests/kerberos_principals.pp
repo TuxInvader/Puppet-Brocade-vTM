@@ -20,24 +20,24 @@
 #
 # [*basic__service*]
 # The service name part of the Kerberos principal name the traffic manager should use to authenticate itself.
-# 
+#
 # === Examples
-# 
-# brocadevtm::kerberos_principals { 'example': 
+#
+# brocadevtm::kerberos_principals { 'example':
 #     ensure => present,
 #     basic__keytab => 'foo'
 #     basic__service => 'foo'
 # }
-# 
-# 
+#
+#
 # === Authors
-# 
+#
 # Mark Boddington <mbodding@brocade>
-# 
+#
 # === Copyright
-# 
+#
 # Copyright 2015 Brocade
-# 
+#
 define brocadevtm::kerberos_principals (
   $ensure,
   $basic__keytab,

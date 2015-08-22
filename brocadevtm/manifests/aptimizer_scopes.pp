@@ -14,22 +14,22 @@
 #
 # [*basic__root*]
 # The root path of the application defined by this application scope.
-# 
+#
 # === Examples
-# 
-# brocadevtm::aptimizer_scopes { 'example': 
+#
+# brocadevtm::aptimizer_scopes { 'example':
 #     ensure => present,
 # }
-# 
-# 
+#
+#
 # === Authors
-# 
+#
 # Mark Boddington <mbodding@brocade>
-# 
+#
 # === Copyright
-# 
+#
 # Copyright 2015 Brocade
-# 
+#
 define brocadevtm::aptimizer_scopes (
   $ensure,
   $basic__canonical_hostname = undef,

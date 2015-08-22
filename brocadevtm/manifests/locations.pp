@@ -19,23 +19,23 @@
 #
 # [*basic__type*]
 # Does this location contain traffic managers and configuration or is it a recipient of GLB requests?
-# 
+#
 # === Examples
-# 
-# brocadevtm::locations { 'example': 
+#
+# brocadevtm::locations { 'example':
 #     ensure => present,
 #     basic__id => 8888
 # }
-# 
-# 
+#
+#
 # === Authors
-# 
+#
 # Mark Boddington <mbodding@brocade>
-# 
+#
 # === Copyright
-# 
+#
 # Copyright 2015 Brocade
-# 
+#
 define brocadevtm::locations (
   $ensure,
   $basic__id,
