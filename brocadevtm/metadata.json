@@ -1,19 +1,13 @@
 {
-  "name": "brocadevtm",
-  "version": "0.1.0",
-  "author": "mbodding <at> brocade",
-  "summary": "This module provides the ability to manage vTM Configuration",
+  "name": "tuxinvader-brocadevtm",
+  "version": "0.1.1",
+  "author": "mbodding @ brocde",
+  "summary": "Configure and Manage Brocade vTM",
   "license": "Apache-2.0",
-  "source": "git://github.com/tuxinvader/puppet-brocade-vtm.git",
-  "project_page": "https://github.com/tuxinvader/puppet-brocade-vtm",
-  "issues_url": "https://github.com/tuxinvader/puppet-brocade-vtm/issues",
-  "requirements": [
-    {
-      "name": "puppet",
-      "version_requirement": ">= 3.3.0 < 5.0.0"
-    }
-  ],
-  "operatingsystem_support": [
+  "source": "https://github.com/TuxInvader/Puppet-Brocade-vTM",
+  "project_page": "https://github.com/TuxInvader/Puppet-Brocade-vTM",
+  "issues_url": "https://github.com/TuxInvader/Puppet-Brocade-vTM/issues",
+    "operatingsystem_support": [
     {
       "operatingsystem": "RedHat",
       "operatingsystemrelease": [
@@ -101,6 +95,7 @@
     }
   ],
   "dependencies": [
-  
+    {"name":"puppetlabs-stdlib","version_requirement":">= 1.0.0"}
   ]
 }
+
