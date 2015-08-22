@@ -30,7 +30,8 @@ Puppet::Type.type(:vtmrest).provide(:ruby) do
 		$response = vtmrc.putObject(resource[:name], resource[:content], resource[:type])
 		if $response == nil || ( ! $response.code.start_with?("20") )
 			$stderr.puts("Notice: FAILED #{resource[:name]}")
-			$stderr.puts("Notice: VTM Response #{$response.code}.")
+			$stderr.puts("Notice: VTM Response Code: #{$response.code}")
+			$stderr.puts("Notice: VTM Response Body: #{$response.body}")
 			raise(Puppet::Error, "Failed to create '#{resource[:name]}'")
 			return false
 		end
