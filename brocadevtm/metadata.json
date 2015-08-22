@@ -1,6 +1,6 @@
 {
   "name": "tuxinvader-brocadevtm",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "author": "mbodding @ brocde",
   "summary": "Configure and Manage Brocade vTM",
   "license": "Apache-2.0",
@@ -95,7 +95,6 @@
     }
   ],
   "dependencies": [
-    {"name":"puppetlabs-stdlib","version_requirement":">= 1.0.0"}
   ]
 }
 
