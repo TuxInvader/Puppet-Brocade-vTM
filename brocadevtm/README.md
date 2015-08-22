@@ -22,6 +22,10 @@ vTM depending where it is running... Including:
 Once you have your vTM stood up. This module can help you manage the
 configuration of that vTM instance.
 
+## Installation 
+
+    puppet module install tuxinvader/brocadevtm
+
 ## Usage
 
 Simple web service example. Uses a single VIP with two virtual servers:
