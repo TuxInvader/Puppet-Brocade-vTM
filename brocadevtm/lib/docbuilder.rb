@@ -114,7 +114,7 @@ class DocBuilder
 		output.puts("# ")
 		output.puts("# === Copyright")
 		output.puts("# ")
-		output.puts("# Copyright 2016 Brocade")
+		output.puts("# Copyright 2015 Brocade")
 		output.puts("# ")
 		
 		output.close()
