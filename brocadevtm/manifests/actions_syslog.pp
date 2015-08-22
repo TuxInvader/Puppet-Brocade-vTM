@@ -1,6 +1,9 @@
 # === Class: brocadevtm::actions_syslog
 #
-
+# This class is a direct implementation of brocadvtm::actions
+#
+# Please refer to the documentation in that module for more information
+#
 class brocadevtm::actions_syslog (
   $ensure = present,
   $basic__note                 = "",

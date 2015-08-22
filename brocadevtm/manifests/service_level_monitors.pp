@@ -1,6 +1,37 @@
 # === Define: brocadevtm::service_level_monitors
 #
-
+# SLM Class
+# Service level monitoring is used to produce alerts when an application's performance is degraded. This is done by monitoring the response time of connections to a virtual server.
+#
+# === Parameters
+#
+# [*basic__note*]
+# A description for the SLM class.
+#
+# [*basic__response_time*]
+# Responses that arrive within this time limit, expressed in milliseconds, are treated as conforming.
+#
+# [*basic__serious_threshold*]
+# When the percentage of conforming responses drops below this level, a serious error level message will be emitted.
+#
+# [*basic__warning_threshold*]
+# When the percentage of conforming responses drops below this level, a warning message will be emitted.
+# 
+# === Examples
+# 
+# brocadevtm::service_level_monitors { 'example': 
+#     ensure => present,
+# }
+# 
+# 
+# === Authors
+# 
+# Mark Boddington <mbodding@brocade>
+# 
+# === Copyright
+# 
+# Copyright 2015 Brocade
+# 
 define brocadevtm::service_level_monitors (
   $ensure,
   $basic__note              = "",

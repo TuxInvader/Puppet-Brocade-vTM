@@ -1,6 +1,25 @@
 # === Define: brocadevtm::kerberos_keytabs
 #
-
+# Kerberos Keytab
+# A Kerberos keytab file contains credentials to authenticate as (a number of) Kerberos principals.
+#
+# === Parameters
+# 
+# === Examples
+# 
+# brocadevtm::kerberos_keytabs { 'example': 
+#     ensure => present,
+# }
+# 
+# 
+# === Authors
+# 
+# Mark Boddington <mbodding@brocade>
+# 
+# === Copyright
+# 
+# Copyright 2015 Brocade
+# 
 define brocadevtm::kerberos_keytabs (
   $ensure,
   $content,

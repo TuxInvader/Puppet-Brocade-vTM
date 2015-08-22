@@ -1,6 +1,110 @@
 # === Define: brocadevtm::monitors
 #
-
+# Monitor
+# Monitors check important remote services are running, by periodically sending them traffic and checking the response is correct. They are used by virtual servers to detect the failure of backend nodes.
+#
+# === Parameters
+#
+# [*basic__back_off*]
+# Should the monitor slowly increase the delay after it has failed?
+#
+# [*basic__delay*]
+# The minimum time between calls to a monitor.
+#
+# [*basic__failures*]
+# The number of times in a row that a node must fail execution of the monitor before it is classed as unavailable.
+#
+# [*basic__machine*]
+# The machine to monitor, where relevant this should be in the form "<hostname>:<port>", for "ping" monitors the ":<port>" part must not be specified.
+#
+# [*basic__note*]
+# A description of the montitor.
+#
+# [*basic__scope*]
+# A monitor can either monitor each node in the pool separately and disable an individual node if it fails, or it can monitor a specific machine and disable the entire pool if that machine fails. GLB location monitors must monitor a specific machine.
+#
+# [*basic__timeout*]
+# The maximum runtime for an individual instance of the monitor.
+#
+# [*basic__type*]
+# The internal monitor implementation of this monitor.
+#
+# [*basic__use_ssl*]
+# Whether or not the monitor should connect using SSL.
+#
+# [*basic__verbose*]
+# Whether or not the monitor should emit verbose logging. This is useful for diagnosing problems.
+#
+# [*http__authentication*]
+# The HTTP basic-auth "<user>:<password>" to use for the test HTTP request.
+#
+# [*http__body_regex*]
+# A regular expression that the HTTP response body must match.  If the response body content doesn't matter then set this to ".*" (match anything).
+#
+# [*http__host_header*]
+# The host header to use in the test HTTP request.
+#
+# [*http__path*]
+# The path to use in the test HTTP request.  This must be a string beginning with a "/" (forward slash).
+#
+# [*http__status_regex*]
+# A regular expression that the HTTP status code must match.  If the status code doesn't matter then set this to ".*" (match anything).
+#
+# [*rtsp__body_regex*]
+# The regular expression that the RTSP response body must match.
+#
+# [*rtsp__path*]
+# The path to use in the RTSP request (some servers will return 500 Internal Server Error unless this is a valid media file).
+#
+# [*rtsp__status_regex*]
+# The regular expression that the RTSP response status code must match.
+#
+# [*script__arguments*]
+# A table containing arguments and argument values to be passed to the monitor program.
+# Type:array, Details:{"name"=>{"description"=>"The name of the argument to be passed to the monitor program.", "type"=>"string"}, "value"=>{"description"=>"The value of the argument to be passed to the monitor program.", "type"=>"string"}, "description"=>{"description"=>"A description for the argument provided to the program.", "type"=>"string"}}
+#
+# [*script__program*]
+# The program to run.  This must be an executable file, either within the monitor scripts directory or specified as an absolute path to some other location on the filesystem.
+#
+# [*sip__body_regex*]
+# The regular expression that the SIP response body must match.
+#
+# [*sip__status_regex*]
+# The regular expression that the SIP response status code must match.
+#
+# [*sip__transport*]
+# Which transport protocol the SIP monitor will use to query the server.
+#
+# [*tcp__close_string*]
+# An optional string to write to the server before closing the connection.
+#
+# [*tcp__max_response_len*]
+# The maximum amount of data to read back from a server, use 0 for unlimited. Applies to TCP and HTTP monitors.
+#
+# [*tcp__response_regex*]
+# A regular expression to match against the response from the server. Applies to TCP monitors only.
+#
+# [*tcp__write_string*]
+# The string to write down the TCP connection.
+#
+# [*udp__accept_all*]
+# If this monitor uses UDP, should it accept responses from any IP and port?
+# 
+# === Examples
+# 
+# brocadevtm::monitors { 'example': 
+#     ensure => present,
+# }
+# 
+# 
+# === Authors
+# 
+# Mark Boddington <mbodding@brocade>
+# 
+# === Copyright
+# 
+# Copyright 2015 Brocade
+# 
 define brocadevtm::monitors (
   $ensure,
   $basic__back_off       = true,

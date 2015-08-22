@@ -1,6 +1,9 @@
 # === Class: brocadevtm::monitors_dns
 #
-
+# This class is a direct implementation of brocadvtm::monitors
+#
+# Please refer to the documentation in that module for more information
+#
 class brocadevtm::monitors_dns (
   $ensure = present,
   $basic__back_off       = true,

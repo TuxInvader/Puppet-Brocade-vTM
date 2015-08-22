@@ -1,5 +1,4 @@
 # === Class: brocadevtm::rules_application_firewall_enforcer
-#
 
 class brocadevtm::rules_application_firewall_enforcer (
   $ensure = present,

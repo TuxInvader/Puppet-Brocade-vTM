@@ -1,6 +1,9 @@
 # === Class: brocadevtm::user_groups_monitoring
 #
-
+# This class is a direct implementation of brocadvtm::user_groups
+#
+# Please refer to the documentation in that module for more information
+#
 class brocadevtm::user_groups_monitoring (
   $ensure = present,
   $basic__description          = "Access only to config summary / monitoring pages",

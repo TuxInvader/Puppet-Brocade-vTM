@@ -1,6 +1,25 @@
 # === Define: brocadevtm::monitor_scripts
 #
-
+# Monitor Program
+# An executable program that can be used to by external program monitors to report the health of backend services.
+#
+# === Parameters
+# 
+# === Examples
+# 
+# brocadevtm::monitor_scripts { 'example': 
+#     ensure => present,
+# }
+# 
+# 
+# === Authors
+# 
+# Mark Boddington <mbodding@brocade>
+# 
+# === Copyright
+# 
+# Copyright 2015 Brocade
+# 
 define brocadevtm::monitor_scripts (
   $ensure,
   $content,

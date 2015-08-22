@@ -1,6 +1,9 @@
 # === Class: brocadevtm::user_groups_admin
 #
-
+# This class is a direct implementation of brocadvtm::user_groups
+#
+# Please refer to the documentation in that module for more information
+#
 class brocadevtm::user_groups_admin (
   $ensure = present,
   $basic__description          = "Full access to all pages",

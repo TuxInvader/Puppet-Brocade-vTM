@@ -1,6 +1,41 @@
 # === Define: brocadevtm::locations
 #
-
+# Location
+# These are geographic locations as used by *Global Load Balancing* services. Such a location may not necessarily contain a traffic manager; instead it could refer to the location of a remote datacenter.
+#
+# === Parameters
+#
+# [*basic__id*]
+# The identifier of this location.
+#
+# [*basic__latitude*]
+# The latitude of this location.
+#
+# [*basic__longitude*]
+# The longitude of this location.
+#
+# [*basic__note*]
+# A note, used to describe this location.
+#
+# [*basic__type*]
+# Does this location contain traffic managers and configuration or is it a recipient of GLB requests?
+# 
+# === Examples
+# 
+# brocadevtm::locations { 'example': 
+#     ensure => present,
+#     basic__id => 8888
+# }
+# 
+# 
+# === Authors
+# 
+# Mark Boddington <mbodding@brocade>
+# 
+# === Copyright
+# 
+# Copyright 2015 Brocade
+# 
 define brocadevtm::locations (
   $ensure,
   $basic__id,

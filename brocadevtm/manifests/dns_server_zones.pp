@@ -1,6 +1,33 @@
 # === Define: brocadevtm::dns_server_zones
 #
-
+# DNS Zone
+# The "conf/dnsserver/zones/" file contains zone metadata
+#
+# === Parameters
+#
+# [*basic__origin*]
+# The domain origin of this Zone.
+#
+# [*basic__zonefile*]
+# The Zone File encapsulated by this Zone.
+# 
+# === Examples
+# 
+# brocadevtm::dns_server_zones { 'example': 
+#     ensure => present,
+#     basic__origin => 'foo'
+#     basic__zonefile => 'foo'
+# }
+# 
+# 
+# === Authors
+# 
+# Mark Boddington <mbodding@brocade>
+# 
+# === Copyright
+# 
+# Copyright 2015 Brocade
+# 
 define brocadevtm::dns_server_zones (
   $ensure,
   $basic__origin,

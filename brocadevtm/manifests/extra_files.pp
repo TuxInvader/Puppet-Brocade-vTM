@@ -1,6 +1,25 @@
 # === Define: brocadevtm::extra_files
 #
-
+# Extra File
+# A user-uploaded file. Such files can be used in TrafficScript code using the "resource.get" function.
+#
+# === Parameters
+# 
+# === Examples
+# 
+# brocadevtm::extra_files { 'example': 
+#     ensure => present,
+# }
+# 
+# 
+# === Authors
+# 
+# Mark Boddington <mbodding@brocade>
+# 
+# === Copyright
+# 
+# Copyright 2015 Brocade
+# 
 define brocadevtm::extra_files (
   $ensure,
   $content,

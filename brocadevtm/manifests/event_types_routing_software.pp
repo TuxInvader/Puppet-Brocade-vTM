@@ -1,6 +1,9 @@
 # === Class: brocadevtm::event_types_routing_software
 #
-
+# This class is a direct implementation of brocadvtm::event_types
+#
+# Please refer to the documentation in that module for more information
+#
 class brocadevtm::event_types_routing_software (
   $ensure = present,
   $basic__actions               = [],

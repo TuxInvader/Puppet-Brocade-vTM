@@ -1,6 +1,25 @@
 # === Define: brocadevtm::action_programs
 #
-
+# Action Program
+# This is a program or script that can be referenced and used by actions of type 'Program'
+#
+# === Parameters
+# 
+# === Examples
+# 
+# brocadevtm::action_programs { 'example': 
+#     ensure => present,
+# }
+# 
+# 
+# === Authors
+# 
+# Mark Boddington <mbodding@brocade>
+# 
+# === Copyright
+# 
+# Copyright 2015 Brocade
+# 
 define brocadevtm::action_programs (
   $ensure,
   $content,

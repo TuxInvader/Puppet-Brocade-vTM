@@ -1,5 +1,4 @@
 # === Class: brocadevtm::monitor_scripts_dns_pl
-#
 
 class brocadevtm::monitor_scripts_dns_pl (
   $ensure = present,

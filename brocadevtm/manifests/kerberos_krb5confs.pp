@@ -1,6 +1,25 @@
 # === Define: brocadevtm::kerberos_krb5confs
 #
-
+# Kerberos Configuration File
+# A Kerberos krb5.conf file that provides the raw configuration for a Kerberos principal.
+#
+# === Parameters
+# 
+# === Examples
+# 
+# brocadevtm::kerberos_krb5confs { 'example': 
+#     ensure => present,
+# }
+# 
+# 
+# === Authors
+# 
+# Mark Boddington <mbodding@brocade>
+# 
+# === Copyright
+# 
+# Copyright 2015 Brocade
+# 
 define brocadevtm::kerberos_krb5confs (
   $ensure,
   $content,

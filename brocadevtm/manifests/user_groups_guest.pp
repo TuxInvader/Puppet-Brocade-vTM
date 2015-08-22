@@ -1,6 +1,9 @@
 # === Class: brocadevtm::user_groups_guest
 #
-
+# This class is a direct implementation of brocadvtm::user_groups
+#
+# Please refer to the documentation in that module for more information
+#
 class brocadevtm::user_groups_guest (
   $ensure = present,
   $basic__description          = "Read-only access",

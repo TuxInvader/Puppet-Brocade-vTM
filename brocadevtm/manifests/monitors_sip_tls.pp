@@ -1,6 +1,9 @@
 # === Class: brocadevtm::monitors_sip_tls
 #
-
+# This class is a direct implementation of brocadvtm::monitors
+#
+# Please refer to the documentation in that module for more information
+#
 class brocadevtm::monitors_sip_tls (
   $ensure = present,
   $basic__back_off       = true,

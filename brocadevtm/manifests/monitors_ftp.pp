@@ -1,6 +1,9 @@
 # === Class: brocadevtm::monitors_ftp
 #
-
+# This class is a direct implementation of brocadvtm::monitors
+#
+# Please refer to the documentation in that module for more information
+#
 class brocadevtm::monitors_ftp (
   $ensure = present,
   $basic__back_off       = true,

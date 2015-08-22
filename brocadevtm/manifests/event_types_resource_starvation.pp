@@ -1,6 +1,9 @@
 # === Class: brocadevtm::event_types_resource_starvation
 #
-
+# This class is a direct implementation of brocadvtm::event_types
+#
+# Please refer to the documentation in that module for more information
+#
 class brocadevtm::event_types_resource_starvation (
   $ensure = present,
   $basic__actions               = [],

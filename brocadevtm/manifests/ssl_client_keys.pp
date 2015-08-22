@@ -1,6 +1,41 @@
 # === Define: brocadevtm::ssl_client_keys
 #
-
+# SSL Client Key Pair
+# SSL Client Certificates are used when connecting to backend nodes that require client certificate authentication.
+#
+# === Parameters
+#
+# [*basic__public*]
+# Public certificate
+#
+# [*basic__request*]
+# Certificate Signing Request for certificate
+#
+# [*basic__private*]
+# Private key for certificate
+#
+# [*basic__note*]
+# Notes for this certificate
+# 
+# === Examples
+# 
+# brocadevtm::ssl_client_keys { 'example': 
+#     ensure => present,
+#     basic__public => 'foo'
+#     basic__request => 'foo'
+#     basic__private => 'foo'
+#     basic__note => 'foo'
+# }
+# 
+# 
+# === Authors
+# 
+# Mark Boddington <mbodding@brocade>
+# 
+# === Copyright
+# 
+# Copyright 2015 Brocade
+# 
 define brocadevtm::ssl_client_keys (
   $ensure,
   $basic__public,

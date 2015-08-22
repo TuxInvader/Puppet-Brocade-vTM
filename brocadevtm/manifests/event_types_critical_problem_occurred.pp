@@ -1,6 +1,9 @@
 # === Class: brocadevtm::event_types_critical_problem_occurred
 #
-
+# This class is a direct implementation of brocadvtm::event_types
+#
+# Please refer to the documentation in that module for more information
+#
 class brocadevtm::event_types_critical_problem_occurred (
   $ensure = present,
   $basic__actions               = [],

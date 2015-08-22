@@ -1,6 +1,9 @@
 # === Class: brocadevtm::aptimizer_scopes_any_hostname_or_path
 #
-
+# This class is a direct implementation of brocadvtm::aptimizer_scopes
+#
+# Please refer to the documentation in that module for more information
+#
 class brocadevtm::aptimizer_scopes_any_hostname_or_path (
   $ensure = present,
   $basic__canonical_hostname = "",

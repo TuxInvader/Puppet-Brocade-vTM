@@ -1,6 +1,9 @@
 # === Class: brocadevtm::event_types_ssl_certificate_expiry
 #
-
+# This class is a direct implementation of brocadvtm::event_types
+#
+# Please refer to the documentation in that module for more information
+#
 class brocadevtm::event_types_ssl_certificate_expiry (
   $ensure = present,
   $basic__actions               = [],

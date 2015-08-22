@@ -1,6 +1,9 @@
 # === Class: brocadevtm::monitors_server_first
 #
-
+# This class is a direct implementation of brocadvtm::monitors
+#
+# Please refer to the documentation in that module for more information
+#
 class brocadevtm::monitors_server_first (
   $ensure = present,
   $basic__back_off       = true,

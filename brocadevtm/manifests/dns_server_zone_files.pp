@@ -1,6 +1,25 @@
 # === Define: brocadevtm::dns_server_zone_files
 #
-
+# DNS Zone File
+# The "conf/dnsserver/zonefiles/" directory contains files that define DNS zones.
+#
+# === Parameters
+# 
+# === Examples
+# 
+# brocadevtm::dns_server_zone_files { 'example': 
+#     ensure => present,
+# }
+# 
+# 
+# === Authors
+# 
+# Mark Boddington <mbodding@brocade>
+# 
+# === Copyright
+# 
+# Copyright 2015 Brocade
+# 
 define brocadevtm::dns_server_zone_files (
   $ensure,
   $content,

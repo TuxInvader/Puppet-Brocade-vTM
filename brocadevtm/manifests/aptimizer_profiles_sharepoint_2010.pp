@@ -1,6 +1,9 @@
 # === Class: brocadevtm::aptimizer_profiles_sharepoint_2010
 #
-
+# This class is a direct implementation of brocadvtm::aptimizer_profiles
+#
+# Please refer to the documentation in that module for more information
+#
 class brocadevtm::aptimizer_profiles_sharepoint_2010 (
   $ensure = present,
   $basic__background_after                   = 0,

@@ -1,6 +1,9 @@
 # === Class: brocadevtm::actions_e-mail
 #
-
+# This class is a direct implementation of brocadvtm::actions
+#
+# Please refer to the documentation in that module for more information
+#
 class brocadevtm::actions_e-mail (
   $ensure = present,
   $basic__note                 = "",
