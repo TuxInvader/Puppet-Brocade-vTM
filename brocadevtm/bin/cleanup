@@ -10,6 +10,7 @@ class GetOptions
 	def self.parse(args)
 		options = OpenStruct.new
 		options.jfdi = false
+		options.docs = false
 
 		opt_parser = OptionParser.new do |opts|
 
@@ -20,7 +21,11 @@ class GetOptions
 
 			opts.on("-y", "--jfdi", "Just do it, don't ask me") do |jfdi|
 				options.jfdi = true
-      	end
+			end
+
+			opts.on("-d", "--docs", "Clean the skel.docs tree too") do |docs|
+				options.docs = true
+			end
 
 			opts.on_tail("-?", "--help", "Show this message") do
 				puts opts
@@ -69,4 +74,7 @@ FileUtils.cp Dir.glob('skel/templates/*.pp'), 'templates'
 puts("Cleaning Files")
 FileUtils.rm Dir.glob('files/*')
 FileUtils.cp Dir.glob('skel/files/*'), 'files' 
+
+puts("Cleaning Docs")
+FileUtils.rm Dir.glob('skel/docs/*')
 
