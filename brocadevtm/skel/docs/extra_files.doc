@@ -1,0 +1,21 @@
+#
+# Extra File
+# A user-uploaded file. Such files can be used in TrafficScript code using the "resource.get" function.
+#
+# === Parameters
+# 
+# === Examples
+# 
+# <CLASS-OR-TYPE-DECLARATION> 
+#     ensure => present,
+# }
+# 
+# 
+# === Authors
+# 
+# Mark Boddington <mbodding@brocade>
+# 
+# === Copyright
+# 
+# Copyright 2016 Brocade
+# 
