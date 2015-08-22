@@ -119,7 +119,11 @@ class PuppetManifest
 			@params.each do |key,value|
 				sp = " " * ( @maxKeyLength - key.length )
 				if value.is_a?(String) and value != "undef"
-					value = '"' + value.gsub(/(["$])/, '\\\\\\\\\\\\\1') + '"'
+					if value == ""
+						value = "undef"
+					else
+						value = '"' + value.gsub(/(["$])/, '\\\\\\\\\\\\\1') + '"'
+					end
 				end
 				code += "  \$#{key}#{sp} = #{value},\n"
 			end
@@ -128,10 +132,10 @@ class PuppetManifest
 
 		code += "  include brocadevtm\n"
 
-		code += "  $ip   = $brocadevtm::rest_ip\n"
-		code += "  $port = $brocadevtm::rest_port\n"
-		code += "  $user = $brocadevtm::rest_user\n"
-		code += "  $pass = $brocadevtm::rest_pass\n\n"
+		code += "  $ip      = $brocadevtm::rest_ip\n"
+		code += "  $port    = $brocadevtm::rest_port\n"
+		code += "  $user    = $brocadevtm::rest_user\n"
+		code += "  $pass    = $brocadevtm::rest_pass\n\n"
 		code += "  info (\"Configuring #{type_} ${name}\")\n"
 
 		if isClass
@@ -139,23 +143,23 @@ class PuppetManifest
 		else
 			code += "  vtmrest { \"#{@type}/\${name}\":\n"
 		end
-		code += "    endpoint => \"https://\${ip}:\${port}/api/tm/#{@restVersion}/config/active\",\n"
-		code += "    ensure => $ensure,\n"
-		code += "    username => $user,\n"
-		code += "    password => $pass,\n"
+		code += "    ensure     => $ensure,\n"
+		code += "    endpoint   => \"https://\${ip}:\${port}/api/tm/#{@restVersion}/config/active\",\n"
+		code += "    username   => $user,\n"
+		code += "    password   => $pass,\n"
 		if @isBinary
-			code += "    content => $content,\n"
-			code += "    type => 'application/octet-stream',\n"
+			code += "    content    => $content,\n"
+			code += "    type       => 'application/octet-stream',\n"
 		else
 			if @template == nil
-				code += "    content => template('brocadevtm/#{type_}.erb'),\n"
+				code += "    content    => template('brocadevtm/#{type_}.erb'),\n"
 			else
-				code += "    content => template('brocadevtm/#{@template}'),\n"
+				code += "    content    => template('brocadevtm/#{@template}'),\n"
 			end
-			code += "    type => 'application/json',\n"
-			code += "    internal => '#{type_}',\n"
+			code += "    type       => 'application/json',\n"
+			code += "    internal   => '#{type_}',\n"
 		end
-		code += "    debug => 0,\n"
+		code += "    debug      => 0,\n"
 		code += "  }\n}\n"
 
 		filename = "#{outputDir}/#{type_}.pp"
