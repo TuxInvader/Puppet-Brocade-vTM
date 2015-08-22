@@ -1,0 +1,84 @@
+#!/usr/bin/ruby
+
+require 'io/console'
+require 'optparse'
+require 'ostruct'
+require 'fileutils'
+
+require_relative '../lib/docbuilder'
+
+class GetOptions
+
+	def self.parse(args)
+		options = OpenStruct.new
+		options.jfdi = false
+		options.dir = nil
+		options.outdir = "skel/docs"
+
+		opt_parser = OptionParser.new do |opts|
+
+			opts.banner = "Usage: cleanup [options]"
+
+			opts.separator ""
+			opts.separator "Specific options:"
+
+			opts.on("-y", "--jfdi", "Just do it, don't ask me") do |jfdi|
+				options.jfdi = true
+			end
+
+			opts.on("-d", "--dir REST FOLDER", "folder containing REST schemas") do |dir|
+				options.dir = dir
+			end
+
+			opts.on("-o", "--outdir Docs Folder", "output folder for documentation") do |odir|
+				options.outdir = odir
+			end
+
+			opts.on_tail("-?", "--help", "Show this message") do
+				puts opts
+				exit
+			end
+
+		end
+
+		opt_parser.parse!(args)
+		options
+
+	end
+end
+
+options = GetOptions.parse(ARGV)
+
+puts("===============================================================")
+puts(" This script will update the documentation for the module params")
+puts(" so that genManifest can include better documentation in the")
+puts(" manifests.")
+puts("")
+puts(" See: skel/docs")
+puts("")
+puts(" You will need an extracted copy of the REST schemas to continue")
+puts(" Schemas are found in $ZEUSHOME/zxtm/etc/ of recent vTM relases.")
+puts("")
+puts(" Usage Example: ./bin/updateDocs -d ~/zxtm-10.1/3.5")
+puts("")
+puts("===============================================================")
+if options.jfdi == false
+	puts(" Are you sure you wish to continue (YES)?? ")
+	puts("===============================================================")
+	print "Type \"YES\" -> "
+	$stdin.iflush
+	continue=gets.chomp
+	if continue != "YES"
+		exit
+	end
+end
+
+raise 'You must supply a -d or --dir parameter' if options.dir.nil?
+
+Dir.glob("#{options.dir}/config-*").each do |dir|
+	puts(dir)
+	db = DocBuilder.new(dir)
+	db.buildDoc
+	db.writeDoc(options.outdir)
+end
+
