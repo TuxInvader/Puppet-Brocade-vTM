@@ -3,7 +3,7 @@
 This is a puppet module for configuring the Brocade vTM - formerly:
 
 	Zeus Load Balancer
-	Zeus eXtensinle Traffic Manager (ZXTM)
+	Zeus eXtensible Traffic Manager (ZXTM)
 	Zeus Traffic Manager
 	
 	Riverbed Stingray

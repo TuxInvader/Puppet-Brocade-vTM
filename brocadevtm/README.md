@@ -3,7 +3,7 @@
 This is a puppet module for configuring the Brocade vTM - formerly:
 	
 	Zeus Load Balancer
-	Zeus eXtensinle Traffic Manager (ZXTM)
+	Zeus eXtensible Traffic Manager (ZXTM)
 	Zeus Traffic Manager
 
 	Riverbed Stingray
@@ -133,8 +133,9 @@ manifests, so you should ensure you use the same API version in both.
 
 ## Tools (genManifests)
 
-I only wrote the init.pp manifest myself, the rest are generate by a ruby
-script. The script walks the vTM REST API and then writes the manifests.
+I only wrote the init.pp manifest myself, the remainder are generate by a ruby
+script. The script walks the vTM REST API and then writes a manifests for each
+type and object it finds.
 
 The version of manifests included by default are for REST Version 3.3. I chose
 this version because it is the most up-to-date version included with vTM
@@ -158,7 +159,7 @@ Usage:
 	./bin/genManifests -h <vTM Host> -v <API Version> -U <User> -P <Pass> -d <debug level>
 
 The tool generates manifests by walking the API. Any types it finds (eg 
-Virtual Servers, Pools, Monitors) get defined types createdi, so that you
+Virtual Servers, Pools, Monitors) get defined types created, so that you
 can deploy instances of those types. Any configuration it finds will be
 used to generate Classes. For example the Default Monitors are created as
 classes, so you can simply `include brocadevtm::moinitors_simple_http`.
