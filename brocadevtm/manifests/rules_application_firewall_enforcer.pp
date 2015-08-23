@@ -11,7 +11,7 @@ class brocadevtm::rules_application_firewall_enforcer (
   $pass    = $brocadevtm::rest_pass
 
   info ("Configuring rules_application_firewall_enforcer ${name}")
-  vtmrest { "rules/Application%20Firewall%20Enforcer":
+  vtmrest { 'rules/Application%20Firewall%20Enforcer':
     ensure     => $ensure,
     endpoint   => "https://${ip}:${port}/api/tm/3.3/config/active",
     username   => $user,

@@ -9,13 +9,13 @@ class brocadevtm::actions_snmp_trap (
   $basic__note                 = undef,
   $basic__syslog_msg_len_limit = 1024,
   $basic__timeout              = 60,
-  $basic__type                 = "trap",
+  $basic__type                 = 'trap',
   $basic__verbose              = false,
   $email__server               = undef,
-  $email__to                   = [],
+  $email__to                   = '[]',
   $log__file                   = undef,
-  $log__from                   = "stingraytrafficmanager@%hostname%",
-  $program__arguments          = [],
+  $log__from                   = 'stingraytrafficmanager@%hostname%',
+  $program__arguments          = '[]',
   $program__program            = undef,
   $soap__additional_data       = undef,
   $soap__password              = undef,
@@ -24,11 +24,11 @@ class brocadevtm::actions_snmp_trap (
   $syslog__sysloghost          = undef,
   $trap__auth_password         = undef,
   $trap__community             = undef,
-  $trap__hash_algorithm        = "md5",
+  $trap__hash_algorithm        = 'md5',
   $trap__priv_password         = undef,
   $trap__traphost              = undef,
   $trap__username              = undef,
-  $trap__version               = "snmpv1",
+  $trap__version               = 'snmpv1',
 ){
   include brocadevtm
   $ip      = $brocadevtm::rest_ip
@@ -37,7 +37,7 @@ class brocadevtm::actions_snmp_trap (
   $pass    = $brocadevtm::rest_pass
 
   info ("Configuring actions_snmp_trap ${name}")
-  vtmrest { "actions/SNMP%20Trap":
+  vtmrest { 'actions/SNMP%20Trap':
     ensure     => $ensure,
     endpoint   => "https://${ip}:${port}/api/tm/3.3/config/active",
     username   => $user,

@@ -1,7 +1,8 @@
 # === Define: brocadevtm::kerberos_keytabs
 #
 # Kerberos Keytab
-# A Kerberos keytab file contains credentials to authenticate as (a number of) Kerberos principals.
+# A Kerberos keytab file contains credentials to authenticate as (a number of)
+# Kerberos principals.
 #
 # === Parameters
 #

@@ -8,13 +8,13 @@
 # If the [*use_admin*] parameter is set to False, then we will create the user named here.
 #
 # [*rest_pass*]
-# The cleartext password for the REST user.  
+# The cleartext password for the REST user.
 #
 # [*rest_ip*]
 # The IP Address where the REST API is listening
 #
 # [*rest_port*]
-# The REST API port. 
+# The REST API port.
 #
 # === Examples
 #
@@ -33,7 +33,7 @@ class brocadevtm (
 
   if ( $rest_user == undef ) {
     fail('You must provide a $rest_user')
-  } 
+  }
 
   if ( $rest_pass == undef) {
     fail('You must provide a $rest_pass')
