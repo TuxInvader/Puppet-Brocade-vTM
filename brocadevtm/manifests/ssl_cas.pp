@@ -1,7 +1,8 @@
 # === Define: brocadevtm::ssl_cas
 #
 # SSL Trusted Certificate
-# SSL certificate authority certificates (CAs) and certificate revocation lists (CRLs) can be used when validating server and client certificates.
+# SSL certificate authority certificates (CAs) and certificate revocation
+# lists (CRLs) can be used when validating server and client certificates.
 #
 # === Parameters
 #

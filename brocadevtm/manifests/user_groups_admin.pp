@@ -6,9 +6,9 @@
 #
 class brocadevtm::user_groups_admin (
   $ensure = present,
-  $basic__description          = "Full access to all pages",
+  $basic__description          = 'Full access to all pages',
   $basic__password_expire_time = 0,
-  $basic__permissions          = [{"name"=>"all", "access_level"=>"full"}],
+  $basic__permissions          = '[{"name"=>"all", "access_level"=>"full"}]',
   $basic__timeout              = 30,
 ){
   include brocadevtm
@@ -18,7 +18,7 @@ class brocadevtm::user_groups_admin (
   $pass    = $brocadevtm::rest_pass
 
   info ("Configuring user_groups_admin ${name}")
-  vtmrest { "user_groups/admin":
+  vtmrest { 'user_groups/admin':
     ensure     => $ensure,
     endpoint   => "https://${ip}:${port}/api/tm/3.3/config/active",
     username   => $user,

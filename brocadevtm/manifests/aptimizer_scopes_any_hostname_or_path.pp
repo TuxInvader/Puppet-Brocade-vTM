@@ -7,8 +7,8 @@
 class brocadevtm::aptimizer_scopes_any_hostname_or_path (
   $ensure = present,
   $basic__canonical_hostname = undef,
-  $basic__hostnames          = [],
-  $basic__root               = "/",
+  $basic__hostnames          = '[]',
+  $basic__root               = '/',
 ){
   include brocadevtm
   $ip      = $brocadevtm::rest_ip
@@ -17,7 +17,7 @@ class brocadevtm::aptimizer_scopes_any_hostname_or_path (
   $pass    = $brocadevtm::rest_pass
 
   info ("Configuring aptimizer_scopes_any_hostname_or_path ${name}")
-  vtmrest { "aptimizer/scopes/Any%20hostname%20or%20path":
+  vtmrest { 'aptimizer/scopes/Any%20hostname%20or%20path':
     ensure     => $ensure,
     endpoint   => "https://${ip}:${port}/api/tm/3.3/config/active",
     username   => $user,

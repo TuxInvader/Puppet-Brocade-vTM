@@ -1,13 +1,17 @@
 # === Define: brocadevtm::custom
 #
 # Custom configuration set
-# Custom configuration sets store arbitrary named values. These values can be read by SOAP or REST clients. 
+# Custom configuration sets store arbitrary named values. These values can be
+# read by SOAP or REST clients.
 #
 # === Parameters
 #
 # [*basic__string_lists*]
 # This table contains named lists of strings
-# Type:array, Details:{"name"=>{"description"=>"Name of list", "type"=>"string"}, "value"=>{"description"=>"Named list of user-specified strings.", "type"=>"array", "uniqueItems"=>false, "items"=>{"type"=>"string"}}}
+# Type:array
+# Properties:{"name"=>{"description"=>"Name of list", "type"=>"string"},
+# "value"=>{"description"=>"Named list of user-specified strings.",
+# "type"=>"array", "uniqueItems"=>false, "items"=>{"type"=>"string"}}}
 #
 # === Examples
 #
@@ -26,7 +30,7 @@
 #
 define brocadevtm::custom (
   $ensure,
-  $basic__string_lists = [],
+  $basic__string_lists = '[]',
 ){
   include brocadevtm
   $ip      = $brocadevtm::rest_ip

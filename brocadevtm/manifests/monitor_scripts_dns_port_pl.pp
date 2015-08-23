@@ -11,7 +11,7 @@ class brocadevtm::monitor_scripts_dns_port_pl (
   $pass    = $brocadevtm::rest_pass
 
   info ("Configuring monitor_scripts_dns_port_pl ${name}")
-  vtmrest { "monitor_scripts/dns_port.pl":
+  vtmrest { 'monitor_scripts/dns_port.pl':
     ensure     => $ensure,
     endpoint   => "https://${ip}:${port}/api/tm/3.3/config/active",
     username   => $user,

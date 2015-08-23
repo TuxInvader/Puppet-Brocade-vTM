@@ -1,7 +1,8 @@
 # === Define: brocadevtm::ssl_server_keys
 #
 # SSL Key Pair
-# SSL Server Certificates are presented to clients by virtual servers when SSL decryption is enabled.
+# SSL Server Certificates are presented to clients by virtual servers when SSL
+# decryption is enabled.
 #
 # === Parameters
 #

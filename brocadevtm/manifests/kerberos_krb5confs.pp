@@ -1,7 +1,8 @@
 # === Define: brocadevtm::kerberos_krb5confs
 #
 # Kerberos Configuration File
-# A Kerberos krb5.conf file that provides the raw configuration for a Kerberos principal.
+# A Kerberos krb5.conf file that provides the raw configuration for a Kerberos
+# principal.
 #
 # === Parameters
 #
