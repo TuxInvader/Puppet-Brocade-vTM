@@ -674,7 +674,7 @@ define brocadevtm::virtual_servers (
   $ftp__ssl_data                           = true,
   $gzip__compress_level                    = 1,
   $gzip__enabled                           = false,
-  $gzip__include_mime                      = '["text/html", "text/plain"]',
+  $gzip__include_mime                      = '["text/html","text/plain"]',
   $gzip__max_size                          = 10000000,
   $gzip__min_size                          = 1000,
   $gzip__no_size                           = true,

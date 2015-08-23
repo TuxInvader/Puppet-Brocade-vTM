@@ -17,7 +17,7 @@ class brocadevtm::event_types_license_key_problem (
   $glb__event_tags              = '[]',
   $glb__objects                 = '[]',
   $java__event_tags             = '[]',
-  $licensekeys__event_tags      = '["expiresoon", "licenseclustertoobig", "expired", "licensecorrupt", "unlicensed", "tpslimited", "ssltpslimited", "bwlimited", "license-rejected-unauthorized", "license-rejected-authorized", "license-graceperiodexpired", "license-timedout-unauthorized", "license-timedout-authorized", "license-unauthorized"]',
+  $licensekeys__event_tags      = '["expiresoon","licenseclustertoobig","expired","licensecorrupt","unlicensed","tpslimited","ssltpslimited","bwlimited","license-rejected-unauthorized","license-rejected-authorized","license-graceperiodexpired","license-timedout-unauthorized","license-timedout-authorized","license-unauthorized"]',
   $licensekeys__objects         = '["*"]',
   $locations__event_tags        = '[]',
   $locations__objects           = '[]',

@@ -125,7 +125,7 @@ class PuppetManifest
 						value = "'" + value.gsub(/(["'])/, '\\\\\1') + "'"
 					end
 				elsif value.is_a?(Array)
-					value = "'#{value}'"
+					value = "'#{JSON.generate(value)}'"
 				end
 				code += "  \$#{key}#{sp} = #{value},\n"
 			end

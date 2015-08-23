@@ -409,7 +409,7 @@ define brocadevtm::traffic_managers (
   $appliance__managereturnpath            = true,
   $appliance__managevpcconf               = true,
   $appliance__name_servers                = '[]',
-  $appliance__ntpservers                  = '["0.riverbed.pool.ntp.org", "1.riverbed.pool.ntp.org", "2.riverbed.pool.ntp.org", "3.riverbed.pool.ntp.org"]',
+  $appliance__ntpservers                  = '["0.riverbed.pool.ntp.org","1.riverbed.pool.ntp.org","2.riverbed.pool.ntp.org","3.riverbed.pool.ntp.org"]',
   $appliance__routes                      = '[]',
   $appliance__search_domains              = '[]',
   $appliance__shim_client_id              = undef,

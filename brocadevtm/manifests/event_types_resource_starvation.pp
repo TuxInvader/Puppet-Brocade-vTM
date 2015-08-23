@@ -34,7 +34,7 @@ class brocadevtm::event_types_resource_starvation (
   $ssl__event_tags              = '[]',
   $sslhw__event_tags            = '[]',
   $trafficscript__event_tags    = '[]',
-  $vservers__event_tags         = '["maxclientbufferdrop", "responsetoolarge", "rtspstreamnoports", "sipstreamnoports"]',
+  $vservers__event_tags         = '["maxclientbufferdrop","responsetoolarge","rtspstreamnoports","sipstreamnoports"]',
   $vservers__objects            = '["*"]',
   $zxtms__event_tags            = '[]',
   $zxtms__objects               = '[]',

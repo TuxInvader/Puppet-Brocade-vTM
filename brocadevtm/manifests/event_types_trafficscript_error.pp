@@ -27,7 +27,7 @@ class brocadevtm::event_types_trafficscript_error (
   $pools__objects               = '[]',
   $protection__event_tags       = '[]',
   $protection__objects          = '[]',
-  $rules__event_tags            = '["datastorefull", "ruleabort", "rulexmlerr", "rulelogmsgwarn", "poolactivenodesunknown", "pooluseunknown", "rulenopersistence", "forwardproxybadhost", "invalidemit", "rulebufferlarge", "norate", "rulelogmsgserious"]',
+  $rules__event_tags            = '["datastorefull","ruleabort","rulexmlerr","rulelogmsgwarn","poolactivenodesunknown","pooluseunknown","rulenopersistence","forwardproxybadhost","invalidemit","rulebufferlarge","norate","rulelogmsgserious"]',
   $rules__objects               = '["*"]',
   $slm__event_tags              = '[]',
   $slm__objects                 = '[]',

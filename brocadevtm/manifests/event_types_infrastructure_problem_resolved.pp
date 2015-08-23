@@ -12,7 +12,7 @@ class brocadevtm::event_types_infrastructure_problem_resolved (
   $cloudcredentials__event_tags = '[]',
   $cloudcredentials__objects    = '[]',
   $config__event_tags           = '[]',
-  $faulttolerance__event_tags   = '["allmachinesok", "flipperbackendsworking", "flipperfrontendsworking", "machineok", "flipperrecovered", "activatealldead", "activatedautomatically", "ospfneighborsok"]',
+  $faulttolerance__event_tags   = '["allmachinesok","flipperbackendsworking","flipperfrontendsworking","machineok","flipperrecovered","activatealldead","activatedautomatically","ospfneighborsok"]',
   $general__event_tags          = '[]',
   $glb__event_tags              = '[]',
   $glb__objects                 = '[]',

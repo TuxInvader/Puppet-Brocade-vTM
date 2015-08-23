@@ -34,7 +34,7 @@ class brocadevtm::event_types_connection_failures (
   $ssl__event_tags              = '[]',
   $sslhw__event_tags            = '[]',
   $trafficscript__event_tags    = '[]',
-  $vservers__event_tags         = '["connfail", "connerror", "sslfail", "ssldrop"]',
+  $vservers__event_tags         = '["connfail","connerror","sslfail","ssldrop"]',
   $vservers__objects            = '[]',
   $zxtms__event_tags            = '[]',
   $zxtms__objects               = '[]',

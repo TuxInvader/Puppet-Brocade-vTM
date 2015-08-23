@@ -12,7 +12,7 @@ class brocadevtm::event_types_infrastructure_problem (
   $cloudcredentials__event_tags = '[]',
   $cloudcredentials__objects    = '[]',
   $config__event_tags           = '[]',
-  $faulttolerance__event_tags   = '["pingbackendfail", "machinetimeout", "pinggwfail", "machinefail", "pingfrontendfail", "ospfneighborsfailed", "ospfneighborsdegraded"]',
+  $faulttolerance__event_tags   = '["pingbackendfail","machinetimeout","pinggwfail","machinefail","pingfrontendfail","ospfneighborsfailed","ospfneighborsdegraded"]',
   $general__event_tags          = '[]',
   $glb__event_tags              = '[]',
   $glb__objects                 = '[]',

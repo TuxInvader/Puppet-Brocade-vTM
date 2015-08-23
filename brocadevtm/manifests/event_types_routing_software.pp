@@ -12,7 +12,7 @@ class brocadevtm::event_types_routing_software (
   $cloudcredentials__event_tags = '[]',
   $cloudcredentials__objects    = '[]',
   $config__event_tags           = '[]',
-  $faulttolerance__event_tags   = '["routingswoperational", "routingswfailurelimitreached", "routingswfailed", "routingswstartfailed", "ospfneighborsok", "ospfneighborsfailed", "ospfneighborsdegraded"]',
+  $faulttolerance__event_tags   = '["routingswoperational","routingswfailurelimitreached","routingswfailed","routingswstartfailed","ospfneighborsok","ospfneighborsfailed","ospfneighborsdegraded"]',
   $general__event_tags          = '[]',
   $glb__event_tags              = '[]',
   $glb__objects                 = '[]',

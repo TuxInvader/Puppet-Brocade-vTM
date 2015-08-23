@@ -34,7 +34,7 @@ class brocadevtm::event_types_ssl_certificate_expiry (
   $ssl__event_tags              = '[]',
   $sslhw__event_tags            = '[]',
   $trafficscript__event_tags    = '[]',
-  $vservers__event_tags         = '["vscacertexpired", "vscacerttoexpire", "vscrloutofdate", "vssslcertexpired", "vssslcerttoexpire"]',
+  $vservers__event_tags         = '["vscacertexpired","vscacerttoexpire","vscrloutofdate","vssslcertexpired","vssslcerttoexpire"]',
   $vservers__objects            = '["*"]',
   $zxtms__event_tags            = '[]',
   $zxtms__objects               = '[]',
