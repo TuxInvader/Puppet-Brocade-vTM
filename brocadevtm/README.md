@@ -87,7 +87,9 @@ The bin directory contains the tools which are used to generate the manifest
 files for this module.
 
 `cleanup` - removes the current manifests and supporting files
+
 `updateDocs` - generates docuementation for use in the manifests
+
 `genManifests` - generates the manifests themselves.
 
 You can upgrade or downgrade to any version of the API by using these tools.
