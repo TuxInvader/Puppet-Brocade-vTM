@@ -81,17 +81,65 @@ same server pool.
        basic__request => '-----BEGIN NEW CERTIFICATE REQUEST-----\nMIICkjCCAXoCAQAwTTELMAkGA1UEBhMCR0IxEjAQBgNVBAcTCUNhbWJyaWRnZTEQ\nMA4GA1UEChMHQnJvY2FkZTEYMBYGA1UEAxMPd3d3LmJyb2NhZGUuY29tMIIBIjAN\nBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAsiZD53KCrcN3r4yAW6GwkITYEQyz\ng1bbDP8fiRvaWJxOgRtE/8E4KRDdeqOCuV1YNuLaTsfCkF34T4pvI00wZ5lSdXBn\nVrEie49ip7z0QNQ/W4mvDzkDQ/Och1lRevflAhJUfgiVizCxDbxJfR6oSip3RAeG\narBIhp7TlfLKQj7YdnIyFROcHIMkLZ7aq7tUzVvcGonz5YXrmDDKFoGvbaJnNC0S\nAiM0aJIomOlexQmL4cgIhQQ1YlrF9hnulSbZN20zNz8fSeJ1UmyUgrYqLgzLXUb5\n4pqK1aGg4rQNIqwoAbyqibqzc2rO/o6MXgEb9zzFwAyHI38nptE7OdiC+wIDAQAB\noAAwDQYJKoZIhvcNAQELBQADggEBAGnf+2VPIY8zW6IE2htseeLHxH5SlNc6GJsI\nkGmc9WG72yV97EakpzwsIgsz06QXwCh+HloNUPZQAQ9KcUFhskLXxLE7PYXKnPLr\nMMAvA7aqCGPhb3/p738tT+G9IKUQfkbYmvY4ROIk56XzWT0ufVTw11jrIglQXo+g\nWdJt2MbNC6f/1+NVL85q9pRBvFSeBk7D43U/B+KkM/7wmB+5fMB6DJfRAHCvjOEI\nX56MyO4UJXsvs9jriDHLoqpAu3IkV1oxGzdaE/dRveqq21q1hz5S2PaOU5jPzetH\nAra3APjd55zS5EGex8t82ZJbI3aru2lPl6ztfErSWQLGNrxbVlE=\n-----END NEW CERTIFICATE REQUEST-----\n',
     }
 
+## Tools
+
+The bin directory contains the tools which are used to generate the manifest
+files for this module.
+
+`cleanup` - removes the current manifests and supporting files
+`updateDocs` - generates docuementation for use in the manifests
+`genManifests` - generates the manifests themselves.
+
+You can upgrade or downgrade to any version of the API by using these tools.
+For example, to upgrade to REST API version 3.5 you could run
+
+    ./bin/cleanup -d
+    ./bin/updateDocs -d zxtm10.1/3.5
+    ./bin/genManifests -v 3.5 -h <clean vtm host> -U admin -P password -d 1
+
+I recommend that you run genManifests against a freshly built/clean vTM host,
+unless you explicitly want to include some of your configuration as default
+manifests.
+
+## Tools (cleanup)
+
+Delete the files in manifests, templates, files, and optionally skel/docs,
+and then copy in the initial configuration from the skel folder.
+
+Usage:
+
+	./bin/cleanup -d
+
+The initial configuration only contains init.pp, you will need to execute
+genManifests after running cleanup
+
+## Tools (updateDocs)
+
+You will need to have a copy of the REST schemas available to use this.
+The schemas can be found in $ZEUSHOME/zxtm/etc of any 10.0 and newer version
+of vTM. Extract the schemas into a folder and then point the tool at them.
+
+Usage:
+
+    ./bin/updateDocs -d zxtm-10.1/3.3
+
+Where zxtm-10.1 is the root of the schema tree, and 3.3 is the api version.
+
+updateDocs places a markdown file for each REST schema in the skel/docs
+folder. The genManifests tool will look in this folder as it builds
+manifests, so you should ensure you use the same API version in both.
 
 ## Tools (genManifests)
 
-I didn't write any manifests myself, I wrote a ruby script to walk 
-the vTM REST API and to then write the manifests for me. The version 
-of manifests included by default are for REST Version 3.3. I chose this
-version because it is the most up-to-date version included with vTM 
-release 9.9 (which is the current Long-Term-Support release).
+I only wrote the init.pp manifest myself, the rest are generate by a ruby
+script. The script walks the vTM REST API and then writes the manifests.
+
+The version of manifests included by default are for REST Version 3.3. I chose
+this version because it is the most up-to-date version included with vTM
+release 9.9, which is the current LTS (Long-Term-Supported) release.
 
 If you are running an older version than 9.9, then you should probably 
-upgrade. 
+upgrade.
 
 The ruby tool which generates the manifests is included and can be 
 found in bin/genManifests.
@@ -103,26 +151,19 @@ All versions of the vTM released since 9.9 still have support for API
 version 3.3, but if you wish to make use of newer API calls or features
 then you can regenerate your manifests using this tool.
 
-The tool generates manifests by walking the API. Any types it finds (eg 
-Virtual Servers, Pools, Monitors) get defined types created so that you
-can deploy instances of those types. Any configuration it finds will be
-used to generate Classes. For example the Default Monitors are created as
-classes, so you can simply "include brocadevtm::moinitors_simple_http".
-
-This has a nice side affect in that it can also generate classes for any
-default configuration that you want included. For example, you could have 
-a custom class for your FLA key created by simply uploading the FLA key
-prior to running genManifests. Then you would just "include brocadevtm::licenses_myfla"
+Usage:
 
 	./bin/genManifests -h <vTM Host> -v <API Version> -U <User> -P <Pass> -d <debug level>
 
-## Tools (cleanup)
+The tool generates manifests by walking the API. Any types it finds (eg 
+Virtual Servers, Pools, Monitors) get defined types createdi, so that you
+can deploy instances of those types. Any configuration it finds will be
+used to generate Classes. For example the Default Monitors are created as
+classes, so you can simply `include brocadevtm::moinitors_simple_http`.
 
-Delete the files in manifests, templates, and files, and then copy in the
-initial configuration from the skel folder.
+This has the nice side affect that it can also generate classes for any
+default configuration that you want included. For example, you could have 
+a custom class for your FLA key created by simply uploading the FLA key
+prior to running genManifests. Then `include brocadevtm::licenses_myfla`
 
-	./bin/cleanup
-
-The initial configuration only contains init.pp, you will need to execute
-genManifests after running cleanup
 
