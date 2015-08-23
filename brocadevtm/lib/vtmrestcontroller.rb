@@ -192,6 +192,18 @@ class BrocadeVTMRestController
 		return name
 	end
 
+	# Write a node config to the given outfile.
+   # By default we write all configuration to the outfile, however...
+   # If allParams is false, then ignore params which are using defaults
+   # If builtin is false, then don't create config for built-in objects
+	def dumpNodeConfig(outfile, allParams=true, builtin=true, manifestDir=File.dirname(__FILE__) + "/../manifests/")
+
+		@objects.each do |name,manifest|
+			manifest.genNodeConfig(outfile, allParams, builtin, manifestDir)
+		end
+
+	end
+
 	# Dump out the Manifests to the console, and write to outputDir if provided
 	def dumpConfig(type=:manifests, manOut=nil, tmpOut=nil, binOut=nil )
 		if (type == :manifests) or ( type == :all )

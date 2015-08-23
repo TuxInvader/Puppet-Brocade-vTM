@@ -1,0 +1,108 @@
+#!/usr/bin/ruby
+
+require 'io/console'
+require 'optparse'
+require 'ostruct'
+require 'fileutils'
+
+require_relative '../lib/puppetmanifest'
+require_relative '../lib/vtmrestcontroller'
+
+class GetOptions
+
+	def self.parse(args)
+
+		options = OpenStruct.new
+		options.debug = 0
+		options.host = "127.0.0.1"
+		options.port = 9070
+		options.allParams = true
+		options.builtin = true
+		options.outfile = nil
+		options.manifestDir = File.dirname(__FILE__) + "/../manifests/"
+
+		opt_parser = OptionParser.new do |opts|
+
+			opts.banner = "Usage: genNodeConfig [options]"
+
+			opts.separator ""
+			opts.separator "Specific options:"
+
+			opts.on("-h", "--host <vTM Host>", "The hostname or ip address of the vTM to probe") do |host|
+				options.host = host
+      	end
+
+			opts.on("-p", "--port <vTM Port>", "The REST API port of the vTM to probe") do |port|
+				options.port = port
+      	end
+
+			opts.on("-v", "--version <REST Version>", "The REST Version") do |version|
+				options.version = version
+      	end
+
+			opts.on("-U", "--user <username>", "The REST API User") do |user|
+				options.user = user
+      	end
+
+			opts.on("-P", "--pass <password>", "The REST API Password") do |pass|
+				options.pass = pass
+      	end
+
+			opts.on("-o", "--outfile <filename>", "The output file to write") do |out|
+				options.outfile = out
+      	end
+
+			opts.on("-m", "--mandir <manifest dir>", "The location of the manifests") do |out|
+				options.outfile = out
+      	end
+
+			opts.on("-d", "--debug <level>", "The Debug level, 0 (lowest) to 5 (highest)") do |debug|
+				options.debug = Integer(debug)
+      	end
+
+			opts.on("-s", "Generate a sparse configuration (ignore default params)") do |sparse|
+				options.allParams = false
+			end
+
+			opts.on("-n", "Generate a sparse configuration (ignore built-in objects)") do |nb|
+				options.builtin = false
+			end
+
+			opts.on_tail("-?", "--help", "Show this message") do
+				puts opts
+				puts "\nMandatory Parameters: --version, --user, --password, --outfile\n\n"
+				exit
+			end
+
+		end
+
+		opt_parser.parse!(args)
+		options
+
+	end
+end
+
+options = GetOptions.parse(ARGV)
+
+raise 'You must supply a -v or --version parameter' if options.version.nil?
+raise 'You must supply a -U or --user parameter' if options.user.nil?
+raise 'You must supply a -P or --pass parameter' if options.pass.nil?
+raise 'You must supply a -o or --outfile parameter' if options.outfile.nil?
+
+if File.exist?(options.outfile)
+	FileUtils.rm options.outfile
+end
+
+initblob =  "class { 'brocadevtm':\n  rest_user   => '#{options.user}',\n"
+initblob += "  rest_pass   => '#{options.pass}',\n  rest_ip     => '#{options.host}',\n"
+initblob += "  rest_port   => '#{options.port}',\n}\n\n"
+
+nodefile = File.open(options.outfile, "w")
+nodefile.puts(initblob)
+nodefile.close()
+
+vtmrc = BrocadeVTMRestController.new(options.host, options.port, options.version, options.user, options.pass, options.debug)
+vtmrc.setType( WalkTypes::READ )
+vtmrc.walk( )
+vtmrc.dumpNodeConfig(options.outfile, options.allParams, options.builtin, options.manifestDir)
+

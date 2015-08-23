@@ -236,30 +236,144 @@ class PuppetManifest
 
 	end
 
+	# Write a node config to the given outfile.
+   # By default we write all configuration to the outfile, however...
+   # If allParams is false, then ignore params which are using defaults
+   # If builtin is false, then don't create config for built-in objects
+	def genNodeConfig(outfile, allParams, builtins, manifestDir)
+
+		type_ = @type.gsub(/[\/\.-]|%20/, "_").downcase
+		isBuiltin = false
+		myfile = "#{manifestDir}/#{type_}.pp"
+
+		if File.exist?(myfile)
+			isBuiltin = true
+			@template = File.basename(myfile)
+		else
+			dedupe(myfile, extension=".pp", rm=false, compare=false)
+		end
+
+		if @template
+			classHash = parseManifest(manifestDir)
+			name = @uri.sub(/.*?\/config\/active\/.*\/(.*)/,'\1')
+		else
+			classHash = {}
+		end
+		decodeJSON()
+		
+		if (!allParams)
+			@params.each do |key,value|
+				if classHash.has_key?(key)
+					if classHash[key] == value
+						@params.delete(key)
+					end
+				end
+			end
+		end
+
+		if (!builtins) and isBuiltin and @params.empty?
+			puts("Ignoring BuiltIn: #{type_}")
+			return
+		end
+
+		nodefile = File.open(outfile,"a")
+		if isBuiltin 
+			if @params.empty?
+				nodefile.puts("include brocadevtm::#{type_}\n")
+			else
+				nodefile.puts("class { 'brocadevtm::#{type_}':\n")
+				@params.each do |key,value|
+					if value == ""
+						value = "undef"
+					elsif value.is_a?(Array)
+						value = "'" + JSON.generate(value) + "'"
+					elsif value.is_a?(String)
+						value = "'#{value}'" 
+					end
+					sp = " " * ( @maxKeyLength - key.length )
+					nodefile.puts("  #{key}#{sp} => #{value},\n")
+				end
+				nodefile.puts("}\n")
+			end
+		else
+			if @params.empty?
+				puts "ODD ODD ODD"
+			else
+				nodefile.puts("brocadevtm::#{@template.chomp(".pp")} { '#{name}':\n")
+				sp = " " * ( @maxKeyLength - 6 )
+				nodefile.puts("  ensure#{sp} => present,\n")
+				@params.each do |key,value|
+					if value == ""
+						value = "undef"
+					elsif value.is_a?(Array)
+						value = "'" + JSON.generate(value) + "'"
+					elsif value.is_a?(String)
+						value = "'#{value}'" 
+					end
+					sp = " " * ( @maxKeyLength - key.length )
+					nodefile.puts("  #{key}#{sp} => #{value},\n")
+				end
+				nodefile.puts("}\n")
+			end
+		end
+		nodefile.close()
+
+	end
+
+	def parseManifest(manifestDir)
+		classHash = {}
+		File.open("#{manifestDir}/#{@template}", "r").each_line do |line|
+			line.scan(/\s+\$([^\s]+)\s+=\s+['"]*(.*?)['"]*,\n$/) do |key,value|
+				if value == "undef"
+					classHash[key] = ""
+				elsif value.match(/^[0-9]+$/)
+					classHash[key] = Integer(value)
+				elsif value == "false"
+					classHash[key] = false
+				elsif value == "true"
+					classHash[key] = true
+				elsif value == "[]"
+					classHash[key] = []
+				elsif value.start_with?("[")
+					classHash[key] = JSON.parse(value)
+				else
+					classHash[key] = value 
+				end
+			end
+		end
+		return classHash
+	end
+
 	# static objects can cause us to generate lots of duplicate templates.
-        # Remove any duplicates and store the parent template in @template
-	def dedupe(filename)
+   # Remove any duplicates and store the parent template in @template
+	def dedupe(filename, extension=".erb", rm=true, compare=true)
 		template = nil
 		parent = nil
-		filetree = filename.chomp(".erb").split("_")
+		filetree = filename.chomp(extension).split("_")
 		filetree.each do |test|
 			if parent == nil
 				parent = test
 			else
 				parent += "_" + test
 			end
-			test = parent+".erb"
+			test = parent+extension
 			if ( test == filename )
 				break
 			elsif ( File.exist?(test) )
-				if FileUtils.compare_file(test,filename)
-					template=test;
+				if compare
+					if FileUtils.compare_file(test,filename)
+						template=test
+					end
+				else
+					template=test
 				end
 			end
 		end
 		if template != nil
-			puts ("Deleting duplicate template: #{filename}. Using #{template}\n")
-			FileUtils.rm filename
+			if rm
+				puts ("Deleting duplicate template: #{filename}. Using #{template}\n")
+				FileUtils.rm filename
+			end
 			@template = File.basename template
 		end
 	end
