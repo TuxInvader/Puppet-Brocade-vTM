@@ -1,7 +1,7 @@
 class { 'brocadevtm':
-  rest_user   => 'admin', 
-  rest_pass   => 'iBGZWYGe4by',
-  rest_ip     => '172.17.42.9',
+  rest_user   => 'puppet', 
+  rest_pass   => 'master',
+  rest_ip     => '10.1.1.1',
 }
 
 include brocadevtm::global_settings
@@ -9,8 +9,8 @@ include brocadevtm::global_settings
 brocadevtm::traffic_ip_groups { 'Web%20VIP':
   ensure             => present,
   basic__enabled     => true,
-  basic__ipaddresses => ["172.17.42.100"],
-  basic__machines    => ["a9050fd48fa2"],
+  basic__ipaddresses => ["10.1.1.100"],
+  basic__machines    => ["myvtm"],
 }
 
 brocadevtm::virtual_servers { 'WebService':
