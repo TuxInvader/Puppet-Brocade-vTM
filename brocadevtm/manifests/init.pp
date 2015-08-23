@@ -5,7 +5,7 @@
 # === Parameters
 #
 # [*rest_user*]
-# If the [*use_admin*] parameter is set to False, then we will create the user named here.
+# The REST user for configuring this vTM
 #
 # [*rest_pass*]
 # The cleartext password for the REST user.
