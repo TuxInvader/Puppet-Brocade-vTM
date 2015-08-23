@@ -122,8 +122,10 @@ class PuppetManifest
 					if value == ""
 						value = "undef"
 					else
-						value = '"' + value.gsub(/(["$])/, '\\\\\\\\\\\\\1') + '"'
+						value = "'" + value.gsub(/(["'])/, '\\\\\1') + "'"
 					end
+				elsif value.is_a?(Array)
+					value = "'#{value}'"
 				end
 				code += "  \$#{key}#{sp} = #{value},\n"
 			end
@@ -139,7 +141,7 @@ class PuppetManifest
 		code += "  info (\"Configuring #{type_} ${name}\")\n"
 
 		if isClass
-			code += "  vtmrest { \"#{@type}\":\n"
+			code += "  vtmrest { '#{@type}':\n"
 		else
 			code += "  vtmrest { \"#{@type}/\${name}\":\n"
 		end

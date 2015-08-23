@@ -32,14 +32,12 @@ class DocBuilder
 					genParams(section,name)
 				end
 			elsif (props.has_key?("description"))
-				props["description"].gsub!(/\s*\n/,"\n# -")
+				mydoc = formatLine(props["description"], "# ")
 				if (props.has_key?("items"))
-					type = props["type"]
-					items = props["items"]["properties"]
-					@docHash[name] = "#{props["description"]}\n# Type:#{type}, Details:#{items}\n"
-				else
-					@docHash[name] = "#{props["description"]}\n"
+					mydoc += formatLine("Type:#{props["type"]}", "# ")
+					mydoc += formatLine("Properties:#{props["items"]["properties"]}", "# ")
 				end
+				@docHash[name] = mydoc
 			end
 		elsif props.is_a?(Array)
 			if name == nil
@@ -51,6 +49,38 @@ class DocBuilder
 		else
 			raise "Unexpected schema path discovered: #{name}, hash: #{props}"
 		end
+	end
+
+	def formatLine(line, prefix="", length=80)
+
+		newline = ""
+		length = length - prefix.length - 1
+
+		if line.nil?
+			return "\n"
+		end
+
+		if (! line.start_with?(prefix) )
+			newline = prefix
+		end
+
+		#line = line.gsub(/\n/,"\n#{prefix}")
+		while line.length > length do
+			tmp = line.slice(0,length)
+			nli = tmp.index(/\n/) 
+			wsi = tmp.rindex(/\s/)
+			if nli == nil || nli == 0
+				if wsi == 0 || wsi == nil
+					newline += line.slice!(0, 78) + "\n#{prefix}"
+				else
+					newline += line.slice!(0, wsi+1).strip + "\n#{prefix}"
+				end
+			else
+				newline += line.slice!(0, nli+1).strip + "\n#{prefix}"
+			end
+		end
+		newline = newline+line.strip
+		return newline+"\n"
 	end
 
 	def getRequiredParams
@@ -75,14 +105,14 @@ class DocBuilder
 
 		output = File.open("#{dir}/#{@id}.doc", "w")
 		output.puts("#")
-		output.puts("# #{@title}")
-		output.puts("# #{@description}")
+		output.puts( formatLine(@title, "# ") )
+		output.puts( formatLine(@description, "# ") )
 		output.puts("#")
 		output.puts("# === Parameters")
 		@docHash.each do |param,doc|
 			output.puts("#")
 			output.puts("# [*#{param}*]")
-			output.puts("# #{doc}")
+			output.puts("#{doc}")
 		end
 
 		output.puts("#")
