@@ -48,6 +48,9 @@ puts("")
 puts("     manifests")
 puts("     files")
 puts("     templates")
+if options.docs == true
+puts("     skel/docs")
+end
 puts("")
 puts(" It will then copy the base files in from the skel folder.")
 puts("")
@@ -75,6 +78,8 @@ puts("Cleaning Files")
 FileUtils.rm Dir.glob('files/*')
 FileUtils.cp Dir.glob('skel/files/*'), 'files' 
 
-puts("Cleaning Docs")
-FileUtils.rm Dir.glob('skel/docs/*')
+if options.docs == true
+	puts("Cleaning Docs")
+	FileUtils.rm Dir.glob('skel/docs/*')
+end
 
