@@ -43,7 +43,7 @@ class GetOptions
 				options.pass = pass
       	end
 
-			opts.on("-d", "--debug <vTM Port>", "The Debug level, 0 (lowest) to 5 (highest)") do |debug|
+			opts.on("-d", "--debug <level>", "The Debug level, 0 (lowest) to 5 (highest)") do |debug|
 				options.debug = Integer(debug)
       	end
 
