@@ -7,7 +7,7 @@
   "source": "https://github.com/TuxInvader/Puppet-Brocade-vTM",
   "project_page": "https://github.com/TuxInvader/Puppet-Brocade-vTM",
   "issues_url": "https://github.com/TuxInvader/Puppet-Brocade-vTM/issues",
-  "tags": ["vtm", "vadc", "steelapp", "stingray", "zxtm", "brocade", "zeus", "riverbed"]
+  "tags": ["vtm", "vadc", "steelapp", "stingray", "zxtm", "brocade", "zeus", "riverbed"],
     "operatingsystem_support": [
     {
       "operatingsystem": "RedHat",
