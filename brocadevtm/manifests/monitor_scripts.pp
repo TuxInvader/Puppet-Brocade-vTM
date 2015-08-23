@@ -1,8 +1,7 @@
 # === Define: brocadevtm::monitor_scripts
 #
 # Monitor Program
-# An executable program that can be used to by external program monitors to
-# report the health of backend services.
+# An executable program that can be used to by external program monitors to report the health of backend services.
 #
 # === Parameters
 #

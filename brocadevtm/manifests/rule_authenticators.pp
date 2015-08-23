@@ -1,8 +1,7 @@
 # === Define: brocadevtm::rule_authenticators
 #
 # TrafficScript Authenticator
-# TrafficScript authenticators define remote authentication services that can
-# be queried via a TrafficScript rule.
+# TrafficScript authenticators define remote authentication services that can be queried via a TrafficScript rule.
 #
 # === Parameters
 #
@@ -16,31 +15,23 @@
 # The port on which the remote authenticator should be contacted.
 #
 # [*ldap__attributes*]
-# A list of attributes to return from the search. If blank, no attributes will
-# be returned. If set to '*' then all user attributes will be returned.
-# Type:array
-# Properties:
+# A list of attributes to return from the search. If blank, no attributes will be returned. If set to '*' then all user attributes will be returned.
+# Type:array, Details:
 #
 # [*ldap__bind_dn*]
-# The distinguished name (DN) of the 'bind' user. The traffic manager will
-# connect to the LDAP server as this user when searching for user records.
+# The distinguished name (DN) of the 'bind' user. The traffic manager will connect to the LDAP server as this user when searching for user records.
 #
 # [*ldap__bind_password*]
 # The password for the bind user.
 #
 # [*ldap__filter*]
-# The filter used to locate the LDAP record for the user being authenticated.
-# Any occurrences of '"%u"' in the filter will be replaced by the name of the
-# user being authenticated.
+# The filter used to locate the LDAP record for the user being authenticated. Any occurrences of '"%u"' in the filter will be replaced by the name of the user being authenticated.
 #
 # [*ldap__filter_base_dn*]
-# The base distinguished name (DN) under which user records are located on the
-# server.
+# The base distinguished name (DN) under which user records are located on the server.
 #
 # [*ldap__ssl_cert*]
-# The SSL certificate that the traffic manager should use to validate the
-# remote server. If no certificate is specified then no signature validation
-# will be performed.
+# The SSL certificate that the traffic manager should use to validate the remote server. If no certificate is specified then no signature validation will be performed.
 #
 # [*ldap__ssl_enabled*]
 # Whether or not to enable SSL encryption to the LDAP server.
@@ -68,14 +59,14 @@ define brocadevtm::rule_authenticators (
   $basic__host          = undef,
   $basic__note          = undef,
   $basic__port          = 389,
-  $ldap__attributes     = '[]',
+  $ldap__attributes     = [],
   $ldap__bind_dn        = undef,
   $ldap__bind_password  = undef,
   $ldap__filter         = undef,
   $ldap__filter_base_dn = undef,
   $ldap__ssl_cert       = undef,
   $ldap__ssl_enabled    = false,
-  $ldap__ssl_type       = 'ldaps',
+  $ldap__ssl_type       = "ldaps",
 ){
   include brocadevtm
   $ip      = $brocadevtm::rest_ip

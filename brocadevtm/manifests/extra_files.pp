@@ -1,8 +1,7 @@
 # === Define: brocadevtm::extra_files
 #
 # Extra File
-# A user-uploaded file. Such files can be used in TrafficScript code using the
-# "resource.get" function.
+# A user-uploaded file. Such files can be used in TrafficScript code using the "resource.get" function.
 #
 # === Parameters
 #

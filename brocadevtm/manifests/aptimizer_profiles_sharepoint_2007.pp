@@ -8,7 +8,7 @@ class brocadevtm::aptimizer_profiles_sharepoint_2007 (
   $ensure = present,
   $basic__background_after                   = 0,
   $basic__background_on_additional_resources = false,
-  $basic__mode                               = 'active',
+  $basic__mode                               = "active",
   $basic__show_info_bar                      = true,
 ){
   include brocadevtm
@@ -18,7 +18,7 @@ class brocadevtm::aptimizer_profiles_sharepoint_2007 (
   $pass    = $brocadevtm::rest_pass
 
   info ("Configuring aptimizer_profiles_sharepoint_2007 ${name}")
-  vtmrest { 'aptimizer/profiles/SharePoint%202007':
+  vtmrest { "aptimizer/profiles/SharePoint%202007":
     ensure     => $ensure,
     endpoint   => "https://${ip}:${port}/api/tm/3.3/config/active",
     username   => $user,

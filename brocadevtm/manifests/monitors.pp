@@ -1,9 +1,7 @@
 # === Define: brocadevtm::monitors
 #
 # Monitor
-# Monitors check important remote services are running, by periodically
-# sending them traffic and checking the response is correct. They are used by
-# virtual servers to detect the failure of backend nodes.
+# Monitors check important remote services are running, by periodically sending them traffic and checking the response is correct. They are used by virtual servers to detect the failure of backend nodes.
 #
 # === Parameters
 #
@@ -14,22 +12,16 @@
 # The minimum time between calls to a monitor.
 #
 # [*basic__failures*]
-# The number of times in a row that a node must fail execution of the monitor
-# before it is classed as unavailable.
+# The number of times in a row that a node must fail execution of the monitor before it is classed as unavailable.
 #
 # [*basic__machine*]
-# The machine to monitor, where relevant this should be in the form
-# "<hostname>:<port>", for "ping" monitors the ":<port>" part must not be
-# specified.
+# The machine to monitor, where relevant this should be in the form "<hostname>:<port>", for "ping" monitors the ":<port>" part must not be specified.
 #
 # [*basic__note*]
 # A description of the montitor.
 #
 # [*basic__scope*]
-# A monitor can either monitor each node in the pool separately and disable an
-# individual node if it fails, or it can monitor a specific machine and
-# disable the entire pool if that machine fails. GLB location monitors must
-# monitor a specific machine.
+# A monitor can either monitor each node in the pool separately and disable an individual node if it fails, or it can monitor a specific machine and disable the entire pool if that machine fails. GLB location monitors must monitor a specific machine.
 #
 # [*basic__timeout*]
 # The maximum runtime for an individual instance of the monitor.
@@ -41,51 +33,38 @@
 # Whether or not the monitor should connect using SSL.
 #
 # [*basic__verbose*]
-# Whether or not the monitor should emit verbose logging. This is useful for
-# diagnosing problems.
+# Whether or not the monitor should emit verbose logging. This is useful for diagnosing problems.
 #
 # [*http__authentication*]
 # The HTTP basic-auth "<user>:<password>" to use for the test HTTP request.
 #
 # [*http__body_regex*]
-# A regular expression that the HTTP response body must match.  If the
-# response body content doesn't matter then set this to ".*" (match anything).
+# A regular expression that the HTTP response body must match.  If the response body content doesn't matter then set this to ".*" (match anything).
 #
 # [*http__host_header*]
 # The host header to use in the test HTTP request.
 #
 # [*http__path*]
-# The path to use in the test HTTP request.  This must be a string beginning
-# with a "/" (forward slash).
+# The path to use in the test HTTP request.  This must be a string beginning with a "/" (forward slash).
 #
 # [*http__status_regex*]
-# A regular expression that the HTTP status code must match.  If the status
-# code doesn't matter then set this to ".*" (match anything).
+# A regular expression that the HTTP status code must match.  If the status code doesn't matter then set this to ".*" (match anything).
 #
 # [*rtsp__body_regex*]
 # The regular expression that the RTSP response body must match.
 #
 # [*rtsp__path*]
-# The path to use in the RTSP request (some servers will return 500 Internal
-# Server Error unless this is a valid media file).
+# The path to use in the RTSP request (some servers will return 500 Internal Server Error unless this is a valid media file).
 #
 # [*rtsp__status_regex*]
 # The regular expression that the RTSP response status code must match.
 #
 # [*script__arguments*]
-# A table containing arguments and argument values to be passed to the monitor
-# program.
-# Type:array
-# Properties:{"name"=>{"description"=>"The name of the argument to be passed
-# to the monitor program.", "type"=>"string"}, "value"=>{"description"=>"The
-# value of the argument to be passed to the monitor program.",
-# "type"=>"string"}, "description"=>{"description"=>"A description for the
-# argument provided to the program.", "type"=>"string"}}
+# A table containing arguments and argument values to be passed to the monitor program.
+# Type:array, Details:{"name"=>{"description"=>"The name of the argument to be passed to the monitor program.", "type"=>"string"}, "value"=>{"description"=>"The value of the argument to be passed to the monitor program.", "type"=>"string"}, "description"=>{"description"=>"A description for the argument provided to the program.", "type"=>"string"}}
 #
 # [*script__program*]
-# The program to run.  This must be an executable file, either within the
-# monitor scripts directory or specified as an absolute path to some other
-# location on the filesystem.
+# The program to run.  This must be an executable file, either within the monitor scripts directory or specified as an absolute path to some other location on the filesystem.
 #
 # [*sip__body_regex*]
 # The regular expression that the SIP response body must match.
@@ -100,12 +79,10 @@
 # An optional string to write to the server before closing the connection.
 #
 # [*tcp__max_response_len*]
-# The maximum amount of data to read back from a server, use 0 for unlimited.
-# Applies to TCP and HTTP monitors.
+# The maximum amount of data to read back from a server, use 0 for unlimited. Applies to TCP and HTTP monitors.
 #
 # [*tcp__response_regex*]
-# A regular expression to match against the response from the server. Applies
-# to TCP monitors only.
+# A regular expression to match against the response from the server. Applies to TCP monitors only.
 #
 # [*tcp__write_string*]
 # The string to write down the TCP connection.
@@ -135,27 +112,27 @@ define brocadevtm::monitors (
   $basic__failures       = 3,
   $basic__machine        = undef,
   $basic__note           = undef,
-  $basic__scope          = 'pernode',
+  $basic__scope          = "pernode",
   $basic__timeout        = 3,
-  $basic__type           = 'ping',
+  $basic__type           = "ping",
   $basic__use_ssl        = false,
   $basic__verbose        = false,
   $http__authentication  = undef,
   $http__body_regex      = undef,
   $http__host_header     = undef,
-  $http__path            = '/',
-  $http__status_regex    = '^[234][0-9][0-9]$',
+  $http__path            = "/",
+  $http__status_regex    = "^[234][0-9][0-9]\\\$",
   $rtsp__body_regex      = undef,
-  $rtsp__path            = '/',
-  $rtsp__status_regex    = '^[234][0-9][0-9]$',
-  $script__arguments     = '[]',
+  $rtsp__path            = "/",
+  $rtsp__status_regex    = "^[234][0-9][0-9]\\\$",
+  $script__arguments     = [],
   $script__program       = undef,
   $sip__body_regex       = undef,
-  $sip__status_regex     = '^[234][0-9][0-9]$',
-  $sip__transport        = 'udp',
+  $sip__status_regex     = "^[234][0-9][0-9]\\\$",
+  $sip__transport        = "udp",
   $tcp__close_string     = undef,
   $tcp__max_response_len = 2048,
-  $tcp__response_regex   = '.+',
+  $tcp__response_regex   = ".+",
   $tcp__write_string     = undef,
   $udp__accept_all       = false,
 ){

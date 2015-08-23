@@ -1,9 +1,7 @@
 # === Define: brocadevtm::locations
 #
 # Location
-# These are geographic locations as used by *Global Load Balancing* services.
-# Such a location may not necessarily contain a traffic manager; instead it
-# could refer to the location of a remote datacenter.
+# These are geographic locations as used by *Global Load Balancing* services. Such a location may not necessarily contain a traffic manager; instead it could refer to the location of a remote datacenter.
 #
 # === Parameters
 #
@@ -20,8 +18,7 @@
 # A note, used to describe this location.
 #
 # [*basic__type*]
-# Does this location contain traffic managers and configuration or is it a
-# recipient of GLB requests?
+# Does this location contain traffic managers and configuration or is it a recipient of GLB requests?
 #
 # === Examples
 #
@@ -45,7 +42,7 @@ define brocadevtm::locations (
   $basic__latitude  = 0.0,
   $basic__longitude = 0.0,
   $basic__note      = undef,
-  $basic__type      = 'config',
+  $basic__type      = "config",
 ){
   include brocadevtm
   $ip      = $brocadevtm::rest_ip

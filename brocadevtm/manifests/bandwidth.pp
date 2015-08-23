@@ -1,15 +1,12 @@
 # === Define: brocadevtm::bandwidth
 #
 # Bandwidth Class
-# A Bandwidth class, which can be assigned to a virtual server or pool in
-# order to limit the number of bytes per second used by inbound or outbound
-# traffic.
+# A Bandwidth class, which can be assigned to a virtual server or pool in order to limit the number of bytes per second used by inbound or outbound traffic.
 #
 # === Parameters
 #
 # [*basic__maximum*]
-# The maximum bandwidth to allocate to connections that are associated with
-# this bandwidth class (in kbits/second).
+# The maximum bandwidth to allocate to connections that are associated with this bandwidth class (in kbits/second).
 #
 # [*basic__note*]
 # A description of this bandwidth class.
@@ -36,7 +33,7 @@ define brocadevtm::bandwidth (
   $ensure,
   $basic__maximum = 10000,
   $basic__note    = undef,
-  $basic__sharing = 'cluster',
+  $basic__sharing = "cluster",
 ){
   include brocadevtm
   $ip      = $brocadevtm::rest_ip

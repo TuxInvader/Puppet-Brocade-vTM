@@ -1,19 +1,16 @@
 # === Define: brocadevtm::aptimizer_scopes
 #
 # Aptimizer Application Scope
-# Application scopes define criteria that match URLs to specific logical web
-# applications hosted by a virtual server.
+# Application scopes define criteria that match URLs to specific logical web applications hosted by a virtual server.
 #
 # === Parameters
 #
 # [*basic__canonical_hostname*]
-# If the hostnames for this scope are aliases of each other, the canonical
-# hostname will be used for requests to the server.
+# If the hostnames for this scope are aliases of each other, the canonical hostname will be used for requests to the server.
 #
 # [*basic__hostnames*]
 # The hostnames to limit acceleration to.
-# Type:array
-# Properties:
+# Type:array, Details:
 #
 # [*basic__root*]
 # The root path of the application defined by this application scope.
@@ -36,8 +33,8 @@
 define brocadevtm::aptimizer_scopes (
   $ensure,
   $basic__canonical_hostname = undef,
-  $basic__hostnames          = '[]',
-  $basic__root               = '/',
+  $basic__hostnames          = [],
+  $basic__root               = "/",
 ){
   include brocadevtm
   $ip      = $brocadevtm::rest_ip

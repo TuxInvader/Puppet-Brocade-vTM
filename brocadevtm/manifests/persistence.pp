@@ -1,8 +1,7 @@
 # === Define: brocadevtm::persistence
 #
 # Session Persistence Class
-# A session persistence class is used to identify the session a new connection
-# belongs too and deliver it to the same backend node.
+# A session persistence class is used to identify the session a new connection belongs too and deliver it to the same backend node.
 #
 # === Parameters
 #
@@ -10,13 +9,10 @@
 # The cookie name to use for tracking session persistence.
 #
 # [*basic__delete*]
-# Whether or not the session should be deleted when a session failure occurs.
-# (Note, setting a failure mode of 'choose a new node' implicitly deletes the
-# session.)
+# Whether or not the session should be deleted when a session failure occurs. (Note, setting a failure mode of 'choose a new node' implicitly deletes the session.)
 #
 # [*basic__failure_mode*]
-# The action the pool should take if the session data is invalid or it cannot
-# contact the node specified by the session.
+# The action the pool should take if the session data is invalid or it cannot contact the node specified by the session.
 #
 # [*basic__note*]
 # A description of the session persistence class.
@@ -25,8 +21,7 @@
 # The type of session persistence to use.
 #
 # [*basic__url*]
-# The redirect URL to send clients to if the session persistence is configured
-# to redirect users when a node dies.
+# The redirect URL to send clients to if the session persistence is configured to redirect users when a node dies.
 #
 # === Examples
 #
@@ -47,9 +42,9 @@ define brocadevtm::persistence (
   $ensure,
   $basic__cookie       = undef,
   $basic__delete       = true,
-  $basic__failure_mode = 'new_node',
+  $basic__failure_mode = "new_node",
   $basic__note         = undef,
-  $basic__type         = 'ip',
+  $basic__type         = "ip",
   $basic__url          = undef,
 ){
   include brocadevtm

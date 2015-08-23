@@ -1,8 +1,7 @@
 # === Define: brocadevtm::ssl_client_keys
 #
 # SSL Client Key Pair
-# SSL Client Certificates are used when connecting to backend nodes that
-# require client certificate authentication.
+# SSL Client Certificates are used when connecting to backend nodes that require client certificate authentication.
 #
 # === Parameters
 #

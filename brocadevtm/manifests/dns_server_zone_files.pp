@@ -1,8 +1,7 @@
 # === Define: brocadevtm::dns_server_zone_files
 #
 # DNS Zone File
-# The "conf/dnsserver/zonefiles/" directory contains files that define DNS
-# zones.
+# The "conf/dnsserver/zonefiles/" directory contains files that define DNS zones.
 #
 # === Parameters
 #

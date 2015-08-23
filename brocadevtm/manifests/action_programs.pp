@@ -1,8 +1,7 @@
 # === Define: brocadevtm::action_programs
 #
 # Action Program
-# This is a program or script that can be referenced and used by actions of
-# type 'Program'
+# This is a program or script that can be referenced and used by actions of type 'Program'
 #
 # === Parameters
 #
