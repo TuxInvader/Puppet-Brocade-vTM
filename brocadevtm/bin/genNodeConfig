@@ -95,7 +95,7 @@ end
 
 initblob =  "class { 'brocadevtm':\n  rest_user   => '#{options.user}',\n"
 initblob += "  rest_pass   => '#{options.pass}',\n  rest_ip     => '#{options.host}',\n"
-initblob += "  rest_port   => '#{options.port}',\n}\n\n"
+initblob += "  rest_port   => #{options.port},\n}\n\n"
 
 nodefile = File.open(options.outfile, "w")
 nodefile.puts(initblob)
