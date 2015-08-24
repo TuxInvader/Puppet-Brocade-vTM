@@ -146,6 +146,20 @@ class BrocadeVTMRestController
 		end
 	end
 
+	def puppetPutObject(name, content, type, internal)
+
+		if type == "application/json"
+			qh = @qm.getQuirk(internal);
+			if ( qh != nil and qh.is_a?(Hash) and qh.has_key?(:writeFunc) )
+				puts("QURIK--------------------")
+				content = @qm.send(qh[:writeFunc], content)
+			end
+		end
+		puts("Content: #{content}")
+		return putObject(name,content,type)
+
+	end
+
 	def loadKnownParams()
 		kpf = File.open( File.expand_path("../data/required.csv", __FILE__) )
 		kpf.each_line do |line|
