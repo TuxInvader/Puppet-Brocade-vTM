@@ -93,10 +93,13 @@ class PuppetManifest
 			documentation = ""
 		end
 
+		decodeJSON()
+
 		if isClass
 			desc = "# === Class: brocadevtm::#{type_}\n"
 			code = "class brocadevtm::#{type_} (\n"
-			code += "  \$ensure = present,\n"
+			@maxKeyLength >= 6 ? sp = " " * ( @maxKeyLength - 6 ) : sp = " "
+			code += "  \$ensure#{sp} = present,\n"
 		else
 			desc = "# === Define: brocadevtm::#{type_}\n"
 			code = "define brocadevtm::#{type_} (\n"
@@ -110,23 +113,14 @@ class PuppetManifest
 			end
 		else
 		
-			decodeJSON()
 			@required.each_key do |key|
 				$stderr.puts($key)
 				code += "  \$#{key},\n"
 			end
 
 			@params.each do |key,value|
+				value = inspectValue(value)
 				sp = " " * ( @maxKeyLength - key.length )
-				if value.is_a?(String) and value != "undef"
-					if value == ""
-						value = "undef"
-					else
-						value = "'" + value.gsub(/(["'])/, '\\\\\1') + "'"
-					end
-				elsif value.is_a?(Array)
-					value = "'#{JSON.generate(value)}'"
-				end
 				code += "  \$#{key}#{sp} = #{value},\n"
 			end
 			code += "){\n"
@@ -263,6 +257,7 @@ class PuppetManifest
 		
 		if (!allParams)
 			@params.each do |key,value|
+			value = inspectValue(value)
 				if classHash.has_key?(key)
 					if classHash[key] == value
 						@params.delete(key)
@@ -281,39 +276,27 @@ class PuppetManifest
 			if @params.empty?
 				nodefile.puts("include brocadevtm::#{type_}\n")
 			else
-				nodefile.puts("class { 'brocadevtm::#{type_}':\n")
+				nodefile.puts("\nclass { 'brocadevtm::#{type_}':\n")
 				@params.each do |key,value|
-					if value == ""
-						value = "undef"
-					elsif value.is_a?(Array)
-						value = "'" + JSON.generate(value) + "'"
-					elsif value.is_a?(String)
-						value = "'#{value}'" 
-					end
+					value = inspectValue(value)
 					sp = " " * ( @maxKeyLength - key.length )
 					nodefile.puts("  #{key}#{sp} => #{value},\n")
 				end
-				nodefile.puts("}\n")
+				nodefile.puts("}\n\n")
 			end
 		else
 			if @params.empty?
 				puts "ODD ODD ODD"
 			else
-				nodefile.puts("brocadevtm::#{@template.chomp(".pp")} { '#{name}':\n")
+				nodefile.puts("\nbrocadevtm::#{@template.chomp(".pp")} { '#{name}':\n")
 				sp = " " * ( @maxKeyLength - 6 )
 				nodefile.puts("  ensure#{sp} => present,\n")
 				@params.each do |key,value|
-					if value == ""
-						value = "undef"
-					elsif value.is_a?(Array)
-						value = "'" + JSON.generate(value) + "'"
-					elsif value.is_a?(String)
-						value = "'#{value}'" 
-					end
+					value = inspectValue(value)
 					sp = " " * ( @maxKeyLength - key.length )
 					nodefile.puts("  #{key}#{sp} => #{value},\n")
 				end
-				nodefile.puts("}\n")
+				nodefile.puts("}\n\n")
 			end
 		end
 		nodefile.close()
@@ -325,7 +308,7 @@ class PuppetManifest
 		File.open("#{manifestDir}/#{@template}", "r").each_line do |line|
 			line.scan(/\s+\$([^\s]+)\s+=\s+['"]*(.*?)['"]*,\n$/) do |key,value|
 				if value == "undef"
-					classHash[key] = ""
+					classHash[key] = 'undef'
 				elsif value.match(/^[0-9]+$/)
 					classHash[key] = Integer(value)
 				elsif value == "false"
@@ -333,15 +316,26 @@ class PuppetManifest
 				elsif value == "true"
 					classHash[key] = true
 				elsif value == "[]"
-					classHash[key] = []
+					classHash[key] = "'[]'"
 				elsif value.start_with?("[")
-					classHash[key] = JSON.parse(value)
+					classHash[key] = "'" + value + "'"
 				else
-					classHash[key] = value 
+					classHash[key] = "'" + value + "'"
 				end
 			end
 		end
 		return classHash
+	end
+
+	def inspectValue(value)
+		if value == ""
+			value = "undef"
+		elsif value.is_a?(Array)
+			value = "'" + JSON.generate(value) + "'"
+		elsif value.is_a?(String)
+			value = "'" + value.inspect[1...-1] + "'"
+		end
+		return value
 	end
 
 	# static objects can cause us to generate lots of duplicate templates.
