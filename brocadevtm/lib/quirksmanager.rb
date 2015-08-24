@@ -45,7 +45,7 @@ class QuirksManager
 		hash = JSON.parse(json)
 		if ( ! hash["properties"]["basic"]["private"].start_with?("-----BEGIN") )
 			# private is not a private key, maybe we stored the hash? Do nothing.
-			return json
+			return hash
 		end
 		sha = Digest::SHA2.new(256)
 		sha.update( hash["properties"]["basic"]["private"] )
