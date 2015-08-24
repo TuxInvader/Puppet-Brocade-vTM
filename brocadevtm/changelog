@@ -1,0 +1,6 @@
+# Version 0.1.5
+ 
+- Fix manifests/monitors_* files by correcting the \\ escape sequences.
+- genNodeConfig script to generate a node manifest directly from a vTM
+- Various other fixes
+
