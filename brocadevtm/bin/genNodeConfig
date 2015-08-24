@@ -106,3 +106,9 @@ vtmrc.setType( WalkTypes::READ )
 vtmrc.walk( )
 vtmrc.dumpNodeConfig(options.outfile, options.allParams, options.builtin, options.manifestDir)
 
+puts ""
+puts "Warning: Any SSL Keys in your configuration will not be complete in the generated config."
+puts "The Traffic Manager returns a sha256 hash of the private key when queried. So we have stored"
+puts "this hash. If you need to be able to push this configuration entirely, you will need to"
+puts "manually add the full private key to your manifest!"
+puts ""
