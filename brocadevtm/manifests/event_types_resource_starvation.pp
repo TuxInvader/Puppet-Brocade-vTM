@@ -5,7 +5,7 @@
 # Please refer to the documentation in that module for more information
 #
 class brocadevtm::event_types_resource_starvation (
-  $ensure = present,
+  $ensure                       = present,
   $basic__actions               = '[]',
   $basic__built_in              = true,
   $basic__note                  = 'Events triggered when we have run out of system resources or hit a configured limit in the Stingray Traffic Manager.',

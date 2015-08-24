@@ -5,7 +5,7 @@
 # Please refer to the documentation in that module for more information
 #
 class brocadevtm::event_types_all_custom_trafficscript_events (
-  $ensure = present,
+  $ensure                       = present,
   $basic__actions               = '[]',
   $basic__built_in              = true,
   $basic__note                  = 'Events created using the TrafficScript function event.emit().',

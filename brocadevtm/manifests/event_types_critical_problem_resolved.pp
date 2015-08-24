@@ -5,7 +5,7 @@
 # Please refer to the documentation in that module for more information
 #
 class brocadevtm::event_types_critical_problem_resolved (
-  $ensure = present,
+  $ensure                       = present,
   $basic__actions               = '[]',
   $basic__built_in              = true,
   $basic__note                  = 'Triggered when a critical problem recovers.',

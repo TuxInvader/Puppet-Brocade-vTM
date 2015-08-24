@@ -63,7 +63,7 @@
 # Copyright 2015 Brocade
 #
 class brocadevtm::appliance_nat (
-  $ensure = present,
+  $ensure                         = present,
   $basic__many_to_one_all_ports   = '[]',
   $basic__many_to_one_port_locked = '[]',
   $basic__one_to_one              = '[]',

@@ -5,7 +5,7 @@
 # Please refer to the documentation in that module for more information
 #
 class brocadevtm::event_types_ssl_certificate_expiry (
-  $ensure = present,
+  $ensure                       = present,
   $basic__actions               = '[]',
   $basic__built_in              = true,
   $basic__note                  = 'Warnings about SSL certificates that have expired or are about to.',

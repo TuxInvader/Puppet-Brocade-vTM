@@ -5,7 +5,7 @@
 # Please refer to the documentation in that module for more information
 #
 class brocadevtm::event_types_routing_software (
-  $ensure = present,
+  $ensure                       = present,
   $basic__actions               = '[]',
   $basic__built_in              = true,
   $basic__note                  = 'Events relating to the integrated routing software used for Route Health Injection',

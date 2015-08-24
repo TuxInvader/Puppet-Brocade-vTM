@@ -5,7 +5,7 @@
 # Please refer to the documentation in that module for more information
 #
 class brocadevtm::aptimizer_scopes_any_hostname_or_path (
-  $ensure = present,
+  $ensure                    = present,
   $basic__canonical_hostname = undef,
   $basic__hostnames          = '[]',
   $basic__root               = '/',

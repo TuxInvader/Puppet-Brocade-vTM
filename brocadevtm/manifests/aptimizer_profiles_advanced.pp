@@ -5,7 +5,7 @@
 # Please refer to the documentation in that module for more information
 #
 class brocadevtm::aptimizer_profiles_advanced (
-  $ensure = present,
+  $ensure                                    = present,
   $basic__background_after                   = 0,
   $basic__background_on_additional_resources = false,
   $basic__mode                               = 'active',

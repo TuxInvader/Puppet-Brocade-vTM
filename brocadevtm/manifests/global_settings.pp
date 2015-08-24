@@ -1023,7 +1023,7 @@
 # Copyright 2015 Brocade
 #
 class brocadevtm::global_settings (
-  $ensure = present,
+  $ensure                                      = present,
   $basic__accepting_delay                      = 50,
   $basic__afm_enabled                          = false,
   $basic__chunk_size                           = 16384,

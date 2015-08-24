@@ -1,7 +1,7 @@
 # === Class: brocadevtm::monitor_scripts_dns_port_pl
 
 class brocadevtm::monitor_scripts_dns_port_pl (
-  $ensure = present,
+  $ensure  = present,
   $content = file('brocadevtm/monitor_scripts_dns_port_pl.data'),
 ){
   include brocadevtm

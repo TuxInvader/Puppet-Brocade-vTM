@@ -26,7 +26,7 @@
 # Copyright 2015 Brocade
 #
 class brocadevtm::application_firewall (
-  $ensure = present,
+  $ensure  = present,
 ){
   include brocadevtm
   $ip      = $brocadevtm::rest_ip

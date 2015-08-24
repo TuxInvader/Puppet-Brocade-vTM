@@ -5,7 +5,7 @@
 # Please refer to the documentation in that module for more information
 #
 class brocadevtm::monitors_ping (
-  $ensure = present,
+  $ensure                = present,
   $basic__back_off       = true,
   $basic__delay          = 2,
   $basic__failures       = 3,

@@ -34,7 +34,7 @@
 # Copyright 2015 Brocade
 #
 class brocadevtm::security (
-  $ensure = present,
+  $ensure        = present,
   $basic__access = '[]',
 ){
   include brocadevtm

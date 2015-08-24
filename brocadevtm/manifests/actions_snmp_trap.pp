@@ -5,7 +5,7 @@
 # Please refer to the documentation in that module for more information
 #
 class brocadevtm::actions_snmp_trap (
-  $ensure = present,
+  $ensure                      = present,
   $basic__note                 = undef,
   $basic__syslog_msg_len_limit = 1024,
   $basic__timeout              = 60,

@@ -5,7 +5,7 @@
 # Please refer to the documentation in that module for more information
 #
 class brocadevtm::monitors_ftp (
-  $ensure = present,
+  $ensure                = present,
   $basic__back_off       = true,
   $basic__delay          = 5,
   $basic__failures       = 3,
@@ -29,9 +29,9 @@ class brocadevtm::monitors_ftp (
   $sip__body_regex       = undef,
   $sip__status_regex     = '^[234][0-9][0-9]$',
   $sip__transport        = 'udp',
-  $tcp__close_string     = 'QUIT\r\n',
+  $tcp__close_string     = 'QUIT\\r\\n',
   $tcp__max_response_len = 2048,
-  $tcp__response_regex   = '(^|\n)220 [^\n]+\n',
+  $tcp__response_regex   = '(^|\\n)220 [^\\n]+\\n',
   $tcp__write_string     = undef,
   $udp__accept_all       = false,
 ){

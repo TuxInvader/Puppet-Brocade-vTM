@@ -5,7 +5,7 @@
 # Please refer to the documentation in that module for more information
 #
 class brocadevtm::user_groups_admin (
-  $ensure = present,
+  $ensure                      = present,
   $basic__description          = 'Full access to all pages',
   $basic__password_expire_time = 0,
   $basic__permissions          = '[{"name":"all","access_level":"full"}]',

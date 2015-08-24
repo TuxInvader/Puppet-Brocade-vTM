@@ -1,7 +1,7 @@
 # === Class: brocadevtm::rules_application_firewall_enforcer
 
 class brocadevtm::rules_application_firewall_enforcer (
-  $ensure = present,
+  $ensure  = present,
   $content = file('brocadevtm/rules_application_firewall_enforcer.data'),
 ){
   include brocadevtm
