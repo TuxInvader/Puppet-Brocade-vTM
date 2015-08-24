@@ -15,14 +15,15 @@ class QuirksManager
 
 		# manifest: JSON String 
 		# required: array of required params
-		# writeFunc: Any special function required for writing JSON
-		# compareFunc: Any special function required prior to comparing JSON
+		# writeFunc: Any special function required for writing JSON - returns the json
+		# compareFunc: Any special function required prior to comparing JSON - returns a hash
 		# readFunc: Any special function required prior to reading JSON
 		# deleteFunc: Any special function required prior to deletion
 
 		@quirkHash["ssl_server_keys"] = { manifest: '{"properties":{"basic":{"note":"","public":"","private":"","request":""}}}', 
 													required: [{"name"=>"basic__public","example"=>""},{"name"=>"basic__private","example"=>""}],
-												 	compareFunc: "hashPrivateKey" }
+												 	compareFunc: "hashPrivateKey", writeFunc: "stripHashValue" }
+						
 	
 		# SSL Client and Server keys need the same additional processing
 		@quirkHash["ssl_client_keys"] = @quirkHash["ssl_server_keys"]
@@ -51,6 +52,18 @@ class QuirksManager
 		sha.update( hash["properties"]["basic"]["private"] )
 		hash["properties"]["basic"]["private"] = sha.base64digest()
 		return hash
+	end
+
+	# If the private key is not the full key, then strip it out of the JSON, 
+   # we don't want to hose the private key with the checksum
+	def stripHashValue(json)
+		hash = JSON.parse(json)
+		if ( ! hash["properties"]["basic"]["private"].start_with?("-----BEGIN") )
+			hash["properties"]["basic"].delete("private")
+			return JSON.generate(hash)
+		else
+			return json
+		end
 	end
 
 end
