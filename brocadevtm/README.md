@@ -92,6 +92,8 @@ files for this module.
 
 `genManifests` - generates the manifests themselves.
 
+`genNodeConfig` - generates a node manifest directly from a vTM
+
 You can upgrade or downgrade to any version of the API by using these tools.
 For example, to upgrade to REST API version 3.5 you could run
 
@@ -102,6 +104,48 @@ For example, to upgrade to REST API version 3.5 you could run
 I recommend that you run genManifests against a freshly built/clean vTM host,
 unless you explicitly want to include some of your configuration as default
 manifests.
+
+## Tools (genNodeConfig)
+
+This tool is the most useful one for most people. It allows you to build a
+manifest by importing the configuration of a preconfigure vTM.
+
+By default it will generate configuration for all objects in your config
+and include all parameters for those objects. You can tell the tool to
+generate a sparse configuration file with `-s`, or to ignore built-in
+unmodified objects with `-n`.
+
+Usage:
+
+    Usage: genNodeConfig [options]
+
+    Specific options:
+       -h, --host <vTM Host>            The hostname or ip address of the vTM to probe
+       -p, --port <vTM Port>            The REST API port of the vTM to probe
+       -v, --version <REST Version>     The REST Version
+       -U, --user <username>            The REST API User
+       -P, --pass <password>            The REST API Password
+       -o, --outfile <filename>         The output file to write
+       -m, --mandir <manifest dir>      The location of the manifests
+       -d, --debug <level>              The Debug level, 0 (lowest) to 5 (highest)
+       -s                               Generate a sparse configuration (ignore default params)
+       -n                               Generate a sparse configuration (ignore built-in objects)
+       -?, --help                       Show this message
+
+    Mandatory Parameters: --version, --user, --password, --outfile
+
+
+To generate the smallest manifest possible, with no defaults/built-in objects you would use:
+
+    ./bin/genNodeConfig -h vtm1 -v 3.3 -U admin -P admin -d 1 -o vtm1_manifest.pp -s -n
+
+To generate a full configuration - which is the default and recommended method:
+
+    ./bin/genNodeConfig -h vtm1 -v 3.3 -U admin -P admin -d 1 -o vtm1_manifest.pp 
+
+Note: The vTM does not provide private SSL keys via the REST api. So this tool can not store
+your private keys. Instead it will store a SHA256 fingerprint as provided by REST. You
+will need to manually add your private keys to your manifest if you want them
 
 ## Tools (cleanup)
 
