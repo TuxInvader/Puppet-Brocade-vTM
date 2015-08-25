@@ -325,15 +325,22 @@ class PuppetManifest
 					nodefile.puts("  ensure => present,\n")
 					nodefile.puts("  content => file('#{dataOut}'),\n")
 			else
-				sp = " " * ( @maxKeyLength - 6 )
+
+				@maxKeyLength >= 6 ? sp = " " * ( @maxKeyLength - 6 ) : sp = " "
 				nodefile.puts("  ensure#{sp} => present,\n")
-				@params.each do |key,value|
-					value = inspectValue(value)
-					sp = " " * ( @maxKeyLength - key.length )
-					nodefile.puts("  #{key}#{sp} => #{value},\n")
+				if @params.empty?
+					puts("WARNING --- BUG? Object parameters are empty, this may be a bug!")
+					puts("WARNING --- BUG? #{name}, #{type}")
+				else
+					@params.each do |key,value|
+						value = inspectValue(value)
+						sp = " " * ( @maxKeyLength - key.length )
+						nodefile.puts("  #{key}#{sp} => #{value},\n")
+					end
 				end
 			end
 			nodefile.puts("}\n\n")
+
 		end
 		nodefile.close()
 
