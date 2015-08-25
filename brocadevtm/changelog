@@ -1,4 +1,11 @@
 
+# Version 0.1.7
+
+- Fix genNodeConfig so that it also creates binary/non-JSON configuration.
+- Fix vtmrest provider to ensure comparison of binary/non-JSON data works.
+- Update README.md to include full usage for tools.
+- Add ADC and LoadBalancer to metadata.
+
 # Version 0.1.6
 
 - Document getNodeConfig in README.md

@@ -1,13 +1,13 @@
 {
   "name": "tuxinvader-brocadevtm",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "author": "mbodding @ brocde",
   "summary": "Configure and Manage Brocade vTM",
   "license": "Apache-2.0",
   "source": "https://github.com/TuxInvader/Puppet-Brocade-vTM",
   "project_page": "https://github.com/TuxInvader/Puppet-Brocade-vTM",
   "issues_url": "https://github.com/TuxInvader/Puppet-Brocade-vTM/issues",
-  "tags": ["vtm", "vadc", "steelapp", "stingray", "zxtm", "brocade", "zeus", "riverbed"],
+  "tags": ["vtm", "vadc", "steelapp", "stingray", "zxtm", "brocade", "zeus", "riverbed", "adc", "loadbalancer"],
     "operatingsystem_support": [
     {
       "operatingsystem": "RedHat",
