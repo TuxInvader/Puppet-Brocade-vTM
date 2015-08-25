@@ -175,7 +175,7 @@ class PuppetManifest
 				propStr += genTemplateString( name[key], value, templvar) + ","
 			end
 			return propStr + "},"
-		elsif data.is_a?(Integer)
+		elsif data.is_a?(Integer) or data.is_a?(Float)
 			return "<%= @"+templvar+" %>"
 		elsif data.is_a?(Array)
 			return "<%= @"+templvar+" %>"
@@ -241,7 +241,7 @@ class PuppetManifest
 			isBuiltin = true
 			@template = File.basename(myfile)
 		else
-			dedupe(myfile, extension=".pp", rm=false, compare=false)
+			dedupe(myfile, extension=".pp")
 		end
 
 		if @template
@@ -395,7 +395,7 @@ class PuppetManifest
 
 	# static objects can cause us to generate lots of duplicate templates.
    # Remove any duplicates and store the parent template in @template
-	def dedupe(filename, extension=".erb", rm=true, compare=true)
+	def dedupe(filename, extension=".erb")
 		template = nil
 		parent = nil
 		filetree = filename.chomp(extension).split("_")
@@ -409,17 +409,19 @@ class PuppetManifest
 			if ( test == filename )
 				break
 			elsif ( File.exist?(test) )
-				if compare
+				if extension == ".erb"
 					if FileUtils.compare_file(test,filename)
 						template=test
 					end
 				else
-					template=test
+					if IO.read(test,7) == "# === D"
+						template=test
+					end
 				end
 			end
 		end
 		if template != nil
-			if rm
+			if extension == ".erb"
 				puts ("Deleting duplicate template: #{filename}. Using #{template}\n")
 				FileUtils.rm filename
 			end
