@@ -108,7 +108,7 @@ manifests.
 ## Tools (genNodeConfig)
 
 This tool is the most useful one for most people. It allows you to build a
-manifest by importing the configuration of a preconfigure vTM.
+manifest by importing the configuration of a preconfigured vTM.
 
 By default it will generate configuration for all objects in your config
 and include all parameters for those objects. You can tell the tool to
