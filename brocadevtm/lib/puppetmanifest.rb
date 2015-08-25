@@ -8,6 +8,7 @@ class PuppetManifest
 
 	def initialize(type, uri, restVersion, object)
 		@type = type
+		@type_ = type.gsub(/[\/\.-]|%20/, "_").downcase
 		@uri = uri.path
 		@restVersion = restVersion
 		@json = nil
@@ -74,15 +75,14 @@ class PuppetManifest
 	end	
 
 	def genManifest(outputDir,isClass=false)
-		type_ = @type.gsub(/[\/\.-]|%20/, "_").downcase
 
-		docfile = "skel/docs/#{type_}.doc"
+		docfile = "skel/docs/#{@type_}.doc"
 		if ( File.exist?(docfile) )
 			documentation = File.read(docfile)
 			if isClass
-				documentation.sub!("<CLASS-OR-TYPE-DECLARATION>","class {'brocadevtm::#{type_}':")
+				documentation.sub!("<CLASS-OR-TYPE-DECLARATION>","class {'brocadevtm::#{@type_}':")
 			else 
-				documentation.sub!("<CLASS-OR-TYPE-DECLARATION>","brocadevtm::#{type_} { 'example':")
+				documentation.sub!("<CLASS-OR-TYPE-DECLARATION>","brocadevtm::#{@type_} { 'example':")
 			end
 		elsif (@template != nil)
 			parent = @template.chomp(".erb")
@@ -96,18 +96,18 @@ class PuppetManifest
 		decodeJSON()
 
 		if isClass
-			desc = "# === Class: brocadevtm::#{type_}\n"
-			code = "class brocadevtm::#{type_} (\n"
+			desc = "# === Class: brocadevtm::#{@type_}\n"
+			code = "class brocadevtm::#{@type_} (\n"
 			@maxKeyLength >= 6 ? sp = " " * ( @maxKeyLength - 6 ) : sp = " "
 			code += "  \$ensure#{sp} = present,\n"
 		else
-			desc = "# === Define: brocadevtm::#{type_}\n"
-			code = "define brocadevtm::#{type_} (\n"
+			desc = "# === Define: brocadevtm::#{@type_}\n"
+			code = "define brocadevtm::#{@type_} (\n"
 			code += "  \$ensure,\n"
 		end
 		if @isBinary 
 			if isClass 
-				code += "  \$content = file('brocadevtm/#{type_}.data'),\n){\n"
+				code += "  \$content = file('brocadevtm/#{@type_}.data'),\n){\n"
 			else
 				code += "  \$content,\n){\n"
 			end
@@ -132,7 +132,7 @@ class PuppetManifest
 		code += "  $port    = $brocadevtm::rest_port\n"
 		code += "  $user    = $brocadevtm::rest_user\n"
 		code += "  $pass    = $brocadevtm::rest_pass\n\n"
-		code += "  info (\"Configuring #{type_} ${name}\")\n"
+		code += "  info (\"Configuring #{@type_} ${name}\")\n"
 
 		if isClass
 			code += "  vtmrest { '#{@type}':\n"
@@ -148,17 +148,17 @@ class PuppetManifest
 			code += "    type       => 'application/octet-stream',\n"
 		else
 			if @template == nil
-				code += "    content    => template('brocadevtm/#{type_}.erb'),\n"
+				code += "    content    => template('brocadevtm/#{@type_}.erb'),\n"
 			else
 				code += "    content    => template('brocadevtm/#{@template}'),\n"
 			end
 			code += "    type       => 'application/json',\n"
-			code += "    internal   => '#{type_}',\n"
+			code += "    internal   => '#{@type_}',\n"
 		end
 		code += "    debug      => 0,\n"
 		code += "  }\n}\n"
 
-		filename = "#{outputDir}/#{type_}.pp"
+		filename = "#{outputDir}/#{@type_}.pp"
 		manifest = File.open(filename, "w")
 		manifest.puts desc
 		manifest.puts documentation
@@ -202,8 +202,7 @@ class PuppetManifest
 		erb = erb.gsub(',}', '}')
 		erb = erb.gsub('},}','}}')
 
-		type_ = @type.gsub(/[\/\.-]|%20/, "_").downcase
-		filename = "#{outputDir}/#{type_}.erb"
+		filename = "#{outputDir}/#{@type_}.erb"
 		template = File.open(filename, "w")
 		template.puts erb
 		template.close
@@ -222,8 +221,7 @@ class PuppetManifest
 			return true
 		end
 
-		type_ = @type.gsub(/[\/\.-]|%20/, "_").downcase
-		filename = "#{outputDir}/#{type_}.data"
+		filename = "#{outputDir}/#{@type_}.data"
 		binary = File.open(filename, "w")
 		binary.puts @data
 		binary.close
@@ -234,11 +232,10 @@ class PuppetManifest
    # By default we write all configuration to the outfile, however...
    # If allParams is false, then ignore params which are using defaults
    # If builtin is false, then don't create config for built-in objects
-	def genNodeConfig(outfile, allParams, builtins, manifestDir)
+	def genNodeConfig(outfile, allParams, builtins, manifestDir, binDir=nil)
 
-		type_ = @type.gsub(/[\/\.-]|%20/, "_").downcase
 		isBuiltin = false
-		myfile = "#{manifestDir}/#{type_}.pp"
+		myfile = "#{manifestDir}/#{@type_}.pp"
 
 		if File.exist?(myfile)
 			isBuiltin = true
@@ -253,42 +250,81 @@ class PuppetManifest
 		else
 			classHash = {}
 		end
-		decodeJSON()
-		
-		if (!allParams)
-			@params.each do |key,value|
-			value = inspectValue(value)
-				if classHash.has_key?(key)
-					if classHash[key] == value
-						@params.delete(key)
+
+		if @isBinary
+			if isBuiltin
+				myDataFile = classHash["content"].sub("brocadevtm","#{manifestDir}../files")[7..-4]
+				if File.exist?(myDataFile) 
+					myData = File.read(myDataFile) 
+				else
+					myData = ""
+				end
+			else
+				myData = ""
+			end
+		else
+			decodeJSON()
+			if (!allParams) or (isBuiltin and !builtins) 
+				@params.each do |key,value|
+				value = inspectValue(value)
+					if classHash.has_key?(key)
+						if classHash[key] == value
+							@params.delete(key)
+						else
+							puts("Including #{@type}, uses custom setting for: #{key}")
+						end
 					end
 				end
 			end
 		end
 
-		if (!builtins) and isBuiltin and @params.empty?
-			puts("Ignoring BuiltIn: #{type_}")
-			return
+		if (!builtins) and isBuiltin 
+			if (!@isBinary) and @params.empty?
+				puts("Ignoring BuiltIn JSON Object: #{@type_}")
+				return
+			elsif @isBinary and myData == @data
+				puts("Ignoring BuiltIn Binary Object: #{@type_}")
+				return
+			end
 		end
 
 		nodefile = File.open(outfile,"a")
-		if isBuiltin 
-			if @params.empty?
-				nodefile.puts("include brocadevtm::#{type_}\n")
-			else
-				nodefile.puts("\nclass { 'brocadevtm::#{type_}':\n")
-				@params.each do |key,value|
-					value = inspectValue(value)
-					sp = " " * ( @maxKeyLength - key.length )
-					nodefile.puts("  #{key}#{sp} => #{value},\n")
+		if isBuiltin
+			if @isBinary
+
+				if (myData != @data) or allParams
+					dataOut = writeBinFile(outfile,binDir)
+					nodefile.puts("\nclass { 'brocadevtm::#{@type_}':\n")
+					nodefile.puts("  ensure => present,\n")
+					nodefile.puts("  content => file('#{dataOut}'),\n")
+					nodefile.puts("}\n\n")
+				else
+					nodefile.puts("include brocadevtm::#{@type_}\n")
 				end
-				nodefile.puts("}\n\n")
+
+			else
+
+				if @params.empty?
+					nodefile.puts("include brocadevtm::#{@type_}\n")
+				else
+					nodefile.puts("\nclass { 'brocadevtm::#{@type_}':\n")
+					@params.each do |key,value|
+						value = inspectValue(value)
+						sp = " " * ( @maxKeyLength - key.length )
+						nodefile.puts("  #{key}#{sp} => #{value},\n")
+					end
+					nodefile.puts("}\n\n")
+				end
+
 			end
 		else
-			if @params.empty?
-				puts "ODD ODD ODD"
+			
+			nodefile.puts("\nbrocadevtm::#{@template.chomp(".pp")} { '#{name}':\n")
+			if @isBinary
+					dataOut = writeBinFile(outfile,binDir)
+					nodefile.puts("  ensure => present,\n")
+					nodefile.puts("  content => file('#{dataOut}'),\n")
 			else
-				nodefile.puts("\nbrocadevtm::#{@template.chomp(".pp")} { '#{name}':\n")
 				sp = " " * ( @maxKeyLength - 6 )
 				nodefile.puts("  ensure#{sp} => present,\n")
 				@params.each do |key,value|
@@ -296,17 +332,34 @@ class PuppetManifest
 					sp = " " * ( @maxKeyLength - key.length )
 					nodefile.puts("  #{key}#{sp} => #{value},\n")
 				end
-				nodefile.puts("}\n\n")
 			end
+			nodefile.puts("}\n\n")
 		end
 		nodefile.close()
+
+	end
+
+	def writeBinFile(outfile, binDir)
+
+		if binDir.nil?
+			outfile = outfile.gsub(/\./,"_") + "_" + @type_ + ".data"
+		else
+			outfile = binDir + "/" + @type_ + ".data"
+		end
+
+		outfile = File.expand_path(outfile)
+		out = File.open(outfile,"w")
+		out.puts(@data)
+		out.close()
+
+		return outfile
 
 	end
 
 	def parseManifest(manifestDir)
 		classHash = {}
 		File.open("#{manifestDir}/#{@template}", "r").each_line do |line|
-			line.scan(/\s+\$([^\s]+)\s+=\s+['"]*(.*?)['"]*,\n$/) do |key,value|
+			line.scan(/\s+\$([^\s]+)\s+=\s+['"]{0,1}(.*?)['"]{0,1},\n$/) do |key,value|
 				if value == "undef"
 					classHash[key] = 'undef'
 				elsif value.match(/^[0-9]+$/)
@@ -317,8 +370,6 @@ class PuppetManifest
 					classHash[key] = true
 				elsif value == "[]"
 					classHash[key] = "'[]'"
-				elsif value.start_with?("[")
-					classHash[key] = "'" + value + "'"
 				else
 					classHash[key] = "'" + value + "'"
 				end

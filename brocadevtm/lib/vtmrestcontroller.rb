@@ -210,10 +210,10 @@ class BrocadeVTMRestController
    # By default we write all configuration to the outfile, however...
    # If allParams is false, then ignore params which are using defaults
    # If builtin is false, then don't create config for built-in objects
-	def dumpNodeConfig(outfile, allParams=true, builtin=true, manifestDir=File.dirname(__FILE__) + "/../manifests/")
+	def dumpNodeConfig(outfile, allParams=true, builtin=true, manifestDir=File.dirname(__FILE__) + "/../manifests/", binDir=nil)
 
 		@objects.each do |name,manifest|
-			manifest.genNodeConfig(outfile, allParams, builtin, manifestDir)
+			manifest.genNodeConfig(outfile, allParams, builtin, manifestDir, binDir)
 		end
 
 	end
