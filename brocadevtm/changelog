@@ -1,4 +1,9 @@
 
+# Version 0.1.8
+
+- Fix puppetmanifest - Handle floats correctly (needed for Locations).
+- Fix genNodeConfig - Check and ignore built-in classes when building declarations.
+ 
 # Version 0.1.7
 
 - Fix genNodeConfig so that it also creates binary/non-JSON configuration.
