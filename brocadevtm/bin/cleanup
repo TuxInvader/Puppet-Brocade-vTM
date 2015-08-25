@@ -23,12 +23,13 @@ class GetOptions
 				options.jfdi = true
 			end
 
-			opts.on("-d", "--docs", "Clean the skel.docs tree too") do |docs|
+			opts.on("-d", "--docs", "Clean the skel/docs tree too") do |docs|
 				options.docs = true
 			end
 
 			opts.on_tail("-?", "--help", "Show this message") do
 				puts opts
+				puts ""
 				exit
 			end
 
@@ -66,20 +67,21 @@ if options.jfdi == false
 	end
 end
 
+homedir = File.expand_path( "#{File.dirname(__FILE__)}/.." )
 puts("Cleaning Manifests")
-FileUtils.rm Dir.glob('manifests/*')
-FileUtils.cp Dir.glob('skel/manifests/*'), 'manifests' 
+FileUtils.rm Dir.glob("#{homedir}/manifests/*")
+FileUtils.cp Dir.glob("#{homedir}/skel/manifests/*"), "#{homedir}/manifests/"
 
 puts("Cleaning Templates")
-FileUtils.rm Dir.glob('templates/*')
-FileUtils.cp Dir.glob('skel/templates/*.pp'), 'templates' 
+FileUtils.rm Dir.glob("#{homedir}/templates/*")
+FileUtils.cp Dir.glob("#{homedir}/skel/templates/*.pp"), "#{homedir}/templates/"
 
 puts("Cleaning Files")
-FileUtils.rm Dir.glob('files/*')
-FileUtils.cp Dir.glob('skel/files/*'), 'files' 
+FileUtils.rm Dir.glob("#{homedir}/files/*")
+FileUtils.cp Dir.glob("#{homedir}/skel/files/*"), "#{homedir}/files/"
 
 if options.docs == true
 	puts("Cleaning Docs")
-	FileUtils.rm Dir.glob('skel/docs/*')
+	FileUtils.rm Dir.glob("#{homedir}/skel/docs/*")
 end
 
