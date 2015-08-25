@@ -281,7 +281,9 @@ class BrocadeVTMRestController
 				if ( probe != nil )
 					debug(2, "Creating Manifest for: #{uri}")
 					name = newManifest(uri,false)
-					if ( probe == :BINARY )
+					if name.nil?
+						$stderr.puts("ERROR - (BUG?) newManifest returned nil for: #{uri}")
+					elsif ( probe == :BINARY )
 						@manifests[name].setBinary(true)
 					else
 						qh = @qm.getQuirk(name);
@@ -308,7 +310,11 @@ class BrocadeVTMRestController
 				if @walkType == WalkTypes::PROBE or @walkType == WalkTypes::READ
 					# Existing JSON object
 					name = newManifest(uri,true)
-					@objects[name].setJSON(response.body)
+					if name.nil?
+						$stderr.puts("ERROR - (BUG?) newManifest returned nil for: #{uri}")
+					else
+						@objects[name].setJSON(response.body)
+					end
 				elsif @walkType == WalkTypes::DELETE && uri.path.end_with?(@probeName)
 					debug(3, "Deleting Object: #{uri}")
 					debug(3, do_delete(uri).body)
@@ -318,9 +324,13 @@ class BrocadeVTMRestController
 			if @walkType == WalkTypes::PROBE or @walkType == WalkTypes::READ
 				# Existing binary object
 				name = newManifest(uri,true)
-				@objects[name].setBinary(true)
-				@objects[name].setData(response.body)
-				debug(3, response.body )
+				if name.nil?
+					$stderr.puts("ERROR - (BUG?) newManifest returned nil for: #{uri}")
+				else
+					@objects[name].setBinary(true)
+					@objects[name].setData(response.body)
+					debug(3, response.body )
+				end
 			elsif @walkType == WalkTypes::DELETE && uri.path.end_with?(@probeName)
 				debug(3, "Deleting Object: #{uri}")
 				debug(3, do_delete(uri).body)
@@ -353,6 +363,10 @@ class BrocadeVTMRestController
 			when Net::HTTPBadRequest then
 				debug(4, "Probe: Mandatory parameter needed")
 				name = newManifest(uri,false)
+				if name.nil?
+					$stderr.puts("ERROR - (BUG?) newManifest returned nil for: #{uri}")
+					return nil
+				end
 				jsonError = JSON.parse(response.body)
 				newJSON = (findNeededParams(name, uri, nil, jsonError))
 				if ( newJSON == nil )
