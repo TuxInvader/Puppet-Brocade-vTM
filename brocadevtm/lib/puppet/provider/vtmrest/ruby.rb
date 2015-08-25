@@ -27,7 +27,7 @@ Puppet::Type.type(:vtmrest).provide(:ruby) do
 
 	def create
 		$stdout.puts("Notice: Creating #{resource[:name]}")
-		$stdout.puts("Notice: Content #{resource[:content]}")
+		#$stdout.puts("Notice: Content #{resource[:content]}")
 		$response = vtmrc.puppetCreate(resource[:name], resource[:content], resource[:type], resource[:internal])
 		if $response == nil || ( ! $response.code.start_with?("20") )
 			$stderr.puts("Notice: FAILED #{resource[:name]}")

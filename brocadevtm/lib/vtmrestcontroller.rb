@@ -139,7 +139,7 @@ class BrocadeVTMRestController
 			vtm = JSON.parse(vtmResponse.body)
 		else
 			vtm = vtmResponse.body
-			puppet = content
+			puppet = content.force_encoding(vtm.encoding)
 		end
 		if ( vtm == puppet ) 
 			return true

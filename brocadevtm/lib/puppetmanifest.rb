@@ -355,8 +355,8 @@ class PuppetManifest
 		end
 
 		outfile = File.expand_path(outfile)
-		out = File.open(outfile,"w")
-		out.puts(@data)
+		out = File.open(outfile, "wb:ASCII-8BIT")
+		out.write(@data)
 		out.close()
 
 		return outfile
