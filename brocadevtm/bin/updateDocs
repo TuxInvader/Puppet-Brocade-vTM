@@ -18,7 +18,7 @@ class GetOptions
 
 		opt_parser = OptionParser.new do |opts|
 
-			opts.banner = "Usage: cleanup [options]"
+			opts.banner = "Usage: updateDocs [options]"
 
 			opts.separator ""
 			opts.separator "Specific options:"
@@ -37,6 +37,7 @@ class GetOptions
 
 			opts.on_tail("-?", "--help", "Show this message") do
 				puts opts
+				puts "\nMandatory Parameters: --dir\n\n"
 				exit
 			end
 
