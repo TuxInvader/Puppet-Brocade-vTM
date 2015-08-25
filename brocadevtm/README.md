@@ -126,6 +126,7 @@ Usage:
        -U, --user <username>            The REST API User
        -P, --pass <password>            The REST API Password
        -o, --outfile <filename>         The output file to write
+       -b, --bindir <filename>          The directory in which to store any binary content (eg rules)
        -m, --mandir <manifest dir>      The location of the manifests
        -d, --debug <level>              The Debug level, 0 (lowest) to 5 (highest)
        -s                               Generate a sparse configuration (ignore default params)
@@ -143,6 +144,9 @@ To generate a full configuration - which is the default and recommended method:
 
     ./bin/genNodeConfig -h vtm1 -v 3.3 -U admin -P admin -d 1 -o vtm1_manifest.pp 
 
+Any non-JSON/binary configuration will be stored in files, prefixed with the outfile. You may
+use `-b dir` to specify a folder to place them in.
+
 Note: The vTM does not provide private SSL keys via the REST api. So this tool can not store
 your private keys. Instead it will store a SHA256 fingerprint as provided by REST. You
 will need to manually add your private keys to your manifest if you want them
@@ -153,6 +157,15 @@ Delete the files in manifests, templates, files, and optionally skel/docs,
 and then copy in the initial configuration from the skel folder.
 
 Usage:
+
+    Usage: cleanup [options]
+
+    Specific options:
+       -y, --jfdi                       Just do it, don't ask me
+       -d, --docs                       Clean the skel/docs tree too
+       -?, --help                       Show this message
+
+To clean up all files including the documentation in skel/docs
 
 	./bin/cleanup -d
 
@@ -167,9 +180,20 @@ of vTM. Extract the schemas into a folder and then point the tool at them.
 
 Usage:
 
-    ./bin/updateDocs -d zxtm-10.1/3.3
+    Usage: updateDocs [options]
+    
+    Specific options:
+       -y, --jfdi                       Just do it, don't ask me
+       -d, --dir REST FOLDER            folder containing REST schemas
+       -o, --outdir Docs Folder         output folder for documentation
+       -?, --help                       Show this message
 
-Where zxtm-10.1 is the root of the schema tree, and 3.3 is the api version.
+    Mandatory Parameters: --dir
+
+If you wanted to create documentation for API version 3.3, from a ZXTM 10.1
+copy of the REST schemas, then you might use
+
+    ./bin/updateDocs -d zxtm-10.1/3.3
 
 updateDocs places a markdown file for each REST schema in the skel/docs
 folder. The genManifests tool will look in this folder as it builds
@@ -188,6 +212,23 @@ release 9.9, which is the current LTS (Long-Term-Supported) release.
 If you are running an older version than 9.9, then you should probably 
 upgrade.
 
+Usage:
+
+    Usage: genManifests [options]
+    
+    Specific options:
+       -h, --host <vTM Host>            The hostname or ip address of the vTM to probe
+       -p, --port <vTM Port>            The REST API port of the vTM to probe
+       -v, --version <REST Version>     The REST Version
+       -U, --user <username>            The REST API User
+       -P, --pass <password>            The REST API Password
+       -d, --debug <level>              The Debug level, 0 (lowest) to 5 (highest)
+       -y, --[no-]jfdi                  Don't print warning, just do it
+       -?, --help                       Show this message
+
+    Mandatory Parameters: --version, --user, --password
+
+
 The ruby tool which generates the manifests is included and can be 
 found in bin/genManifests.
 
@@ -197,8 +238,6 @@ older version of the API), then genManifests can help.
 All versions of the vTM released since 9.9 still have support for API
 version 3.3, but if you wish to make use of newer API calls or features
 then you can regenerate your manifests using this tool.
-
-Usage:
 
 	./bin/genManifests -h <vTM Host> -v <API Version> -U <User> -P <Pass> -d <debug level>
 
