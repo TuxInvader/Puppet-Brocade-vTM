@@ -38,6 +38,7 @@ class BrocadeVTMRestController
 		@rewalk = {}
 		@qm = QuirksManager.new()
 		@quirks = @qm.getQuirks()
+		@homedir = File.expand_path( "#{File.dirname(__FILE__)}/.." )
 	end
 
 	def debug(level, msg)
@@ -120,7 +121,8 @@ class BrocadeVTMRestController
 		return response
 	end
 
-	def compare(name, content, type, internal) 
+	# Puppet Compare Function
+	def puppetCompare(name, content, type, internal) 
 		vtmResponse = getObject(name);
 		if ( vtmResponse == nil )
 			return nil
@@ -146,18 +148,22 @@ class BrocadeVTMRestController
 		end
 	end
 
-	def puppetPutObject(name, content, type, internal)
+	# Puppet Create function
+	def puppetCreate(name, content, type, internal)
 
 		if type == "application/json"
 			qh = @qm.getQuirk(internal);
 			if ( qh != nil and qh.is_a?(Hash) and qh.has_key?(:writeFunc) )
-				puts("QURIK--------------------")
 				content = @qm.send(qh[:writeFunc], content)
 			end
 		end
-		puts("Content: #{content}")
 		return putObject(name,content,type)
 
+	end
+
+	# Puppet Delete function
+	def puppetDelete(name)
+		return deleteObject(name)
 	end
 
 	def loadKnownParams()
@@ -210,7 +216,7 @@ class BrocadeVTMRestController
    # By default we write all configuration to the outfile, however...
    # If allParams is false, then ignore params which are using defaults
    # If builtin is false, then don't create config for built-in objects
-	def dumpNodeConfig(outfile, allParams=true, builtin=true, manifestDir=File.dirname(__FILE__) + "/../manifests/", binDir=nil)
+	def dumpNodeConfig(outfile, allParams=true, builtin=true, manifestDir="#{@homedir}/manifests/", binDir=nil)
 
 		@objects.each do |name,manifest|
 			manifest.genNodeConfig(outfile, allParams, builtin, manifestDir, binDir)

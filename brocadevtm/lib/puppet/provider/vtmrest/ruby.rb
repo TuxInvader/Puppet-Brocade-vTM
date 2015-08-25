@@ -6,7 +6,7 @@ Puppet::Type.type(:vtmrest).provide(:ruby) do
 	def exists?
 
 		#$stdout.puts("Notice: Content #{resource[:content]}")
-		$response = vtmrc.compare(resource[:name], resource[:content], resource[:type], resource[:internal])
+		$response = vtmrc.puppetCompare(resource[:name], resource[:content], resource[:type], resource[:internal])
 		if $response == true
 			$stdout.puts("Notice: Object #{resource[:name]} OK")
 			return true;
@@ -28,7 +28,7 @@ Puppet::Type.type(:vtmrest).provide(:ruby) do
 	def create
 		$stdout.puts("Notice: Creating #{resource[:name]}")
 		$stdout.puts("Notice: Content #{resource[:content]}")
-		$response = vtmrc.puppetPutObject(resource[:name], resource[:content], resource[:type], resource[:internal])
+		$response = vtmrc.puppetCreate(resource[:name], resource[:content], resource[:type], resource[:internal])
 		if $response == nil || ( ! $response.code.start_with?("20") )
 			$stderr.puts("Notice: FAILED #{resource[:name]}")
 			$stderr.puts("Notice: VTM Response Code: #{$response.code}")
@@ -41,7 +41,7 @@ Puppet::Type.type(:vtmrest).provide(:ruby) do
 
 	def destroy
 		$stdout.puts("Notice: Removing #{resource[:name]}")
-		vtmrc.deleteObject(resource[:name])
+		vtmrc.puppetDelete(resource[:name])
 	end
 
 	private
