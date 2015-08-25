@@ -271,7 +271,7 @@ class PuppetManifest
 						if classHash[key] == value
 							@params.delete(key)
 						else
-							puts("Including #{@type}, uses custom setting for: #{key}")
+							puts("Including/Declaring #{@type}, uses custom setting for: #{key}")
 						end
 					end
 				end
@@ -328,10 +328,7 @@ class PuppetManifest
 
 				@maxKeyLength >= 6 ? sp = " " * ( @maxKeyLength - 6 ) : sp = " "
 				nodefile.puts("  ensure#{sp} => present,\n")
-				if @params.empty?
-					puts("WARNING --- BUG? Object parameters are empty, this may be a bug!")
-					puts("WARNING --- BUG? #{name}, #{type}")
-				else
+				if ! @params.empty?
 					@params.each do |key,value|
 						value = inspectValue(value)
 						sp = " " * ( @maxKeyLength - key.length )
