@@ -207,7 +207,13 @@ class PuppetManifest
 		template.puts erb
 		template.close
 
-		dedupe(filename)
+		# Dedupe our template
+		parentFile = findParent(filename)
+		if parentFile != nil
+			@template = parentFile
+			puts ("Deleting duplicate template: #{filename}. Using #{parentFile}\n")
+			FileUtils.rm filename
+		end
 
 	end
 
@@ -232,20 +238,20 @@ class PuppetManifest
    # By default we write all configuration to the outfile, however...
    # If allParams is false, then ignore params which are using defaults
    # If builtin is false, then don't create config for built-in objects
-	def genNodeConfig(outfile, allParams, builtins, manifestDir, binDir=nil)
+	def genNodeConfig(outfile, allParams, builtins, preReq, manifestDir, binDir=nil)
 
 		isBuiltin = false
 		myfile = "#{manifestDir}/#{@type_}.pp"
 
 		if File.exist?(myfile)
 			isBuiltin = true
-			@template = File.basename(myfile)
+			parentFile = File.basename(myfile).chomp(".pp")
 		else
-			dedupe(myfile, extension=".pp")
+			parentFile = findParent(myfile, extension=".pp").chomp(".pp")
 		end
 
-		if @template
-			classHash = parseManifest(manifestDir)
+		if parentFile != nil
+			classHash = parseManifest(manifestDir, parentFile)
 			name = @uri.sub(/.*?\/config\/active\/.*\/(.*)/,'\1')
 		else
 			classHash = {}
@@ -264,6 +270,11 @@ class PuppetManifest
 			end
 		else
 			decodeJSON()
+
+			if preReq.has_key?(parentFile)
+				checkRequires(parentFile,preReq,manifestDir)
+			end
+
 			if (!allParams) or (isBuiltin and !builtins) 
 				@params.each do |key,value|
 				value = inspectValue(value)
@@ -319,7 +330,7 @@ class PuppetManifest
 			end
 		else
 			
-			nodefile.puts("\nbrocadevtm::#{@template.chomp(".pp")} { '#{name}':\n")
+			nodefile.puts("\nbrocadevtm::#{parentFile} { '#{name}':\n")
 			if @isBinary
 					dataOut = writeBinFile(outfile,binDir)
 					nodefile.puts("  ensure => present,\n")
@@ -343,6 +354,42 @@ class PuppetManifest
 
 	end
 
+	def checkRequires(parentFile,preReq,manifestDir)
+		requires = "["
+		preReq[parentFile].each do |req|
+			reqObject = req.shift
+			reqVar = req.shift
+			reqType = req.shift
+			puts("ro: #{reqObject}, rv: #{reqVar}, rt: #{reqType}")
+			if (@params.has_key?(reqVar))
+				if (@params[reqVar].is_a? Array)
+					@params[reqVar].each do |item|
+						if item.is_a?(Hash)
+							puts(" ----- TODO - Complex Hash Support -------")
+						else
+							ro_ = reqObject.gsub(/[\/\.-]|%20/, "_")
+							item_ = item.gsub(/[\/\.-]|%20/, "_").downcase
+							if File.exist?("#{manifestDir}/#{ro_.downcase}_#{item_}.pp")
+								requires += " Class[Brocadevtm::#{ro_}_#{item_}], "
+							else
+								escaped = item.gsub(' ', '%20')
+								requires += " Brocadevtm::#{reqObject}['#{escaped}'], "
+							end
+						end
+					end
+				elsif (@params[reqVar].is_a? String)
+					if (!req.empty?) and (!req.include?(@params[reqVar]))
+						escaped = @params[reqVar].gsub(' ', '%20')
+						requires += " Brocadevtm::#{reqObject}['#{escaped}'], "
+					end
+				end
+			end
+			if requires != '['
+				@params["require"] = requires + "]"
+			end
+		end
+	end
+
 	def writeBinFile(outfile, binDir)
 
 		if binDir.nil?
@@ -360,9 +407,9 @@ class PuppetManifest
 
 	end
 
-	def parseManifest(manifestDir)
+	def parseManifest(manifestDir,parentFile)
 		classHash = {}
-		File.open("#{manifestDir}/#{@template}", "r").each_line do |line|
+		File.open("#{manifestDir}/#{parentFile}.pp", "r").each_line do |line|
 			line.scan(/\s+\$([^\s]+)\s+=\s+['"]{0,1}(.*?)['"]{0,1},\n$/) do |key,value|
 				if value == "undef"
 					classHash[key] = 'undef'
@@ -388,15 +435,22 @@ class PuppetManifest
 		elsif value.is_a?(Array)
 			value = "'" + JSON.generate(value) + "'"
 		elsif value.is_a?(String)
-			value = "'" + value.inspect[1...-1] + "'"
+			if value.start_with?('[ Brocadevtm::')
+				value = value.inspect[1...-1] 
+			elsif value.start_with?('[ Class[')
+				value = value.inspect[1...-1] 
+			else
+				value = "'" + value.inspect[1...-1] + "'"
+			end
 		end
 		return value
 	end
 
-	# static objects can cause us to generate lots of duplicate templates.
-   # Remove any duplicates and store the parent template in @template
-	def dedupe(filename, extension=".erb")
-		template = nil
+	# Check to see if this filename has a parent object. 
+   # If the file type is erb, then compare the file with it's parent.
+   # If the file type is pp, then check for Define, ignore Class.
+	def findParent(filename, extension=".erb")
+		parentFile = nil
 		parent = nil
 		filetree = filename.chomp(extension).split("_")
 		filetree.each do |test|
@@ -411,22 +465,19 @@ class PuppetManifest
 			elsif ( File.exist?(test) )
 				if extension == ".erb"
 					if FileUtils.compare_file(test,filename)
-						template=test
+						parentFile=test
 					end
-				else
+				elsif extension == ".pp"
 					if IO.read(test,7) == "# === D"
-						template=test
+						parentFile=test
 					end
 				end
 			end
 		end
-		if template != nil
-			if extension == ".erb"
-				puts ("Deleting duplicate template: #{filename}. Using #{template}\n")
-				FileUtils.rm filename
-			end
-			@template = File.basename template
+		if parentFile != nil
+			return File.basename parentFile
 		end
+		return nil
 	end
 
 	def dump()

@@ -181,12 +181,24 @@ class BrocadeVTMRestController
 	end
 
 	def loadPreRequisites()
+		@preReq = {}
 		prf = File.open( File.expand_path("../data/precedence.csv", __FILE__) )
 		prf.each_line do |line|
 			entry = line.chomp.split(',')
-			@preReq[entry.shift] = entry 
+			type = entry.shift
+			if @preReq.include?(type)
+				@preReq[type].push entry
+			else
+				@preReq[type] = [ entry ] 
+			end
 		end
 		prf.close
+	end
+
+	def loadWalkOrdering()
+		walkOrder = [ "monitors", "rules", "ssl_", "aptimizer", "locations", 
+                   "dns_", "glb_services", "kerberos_keytabs", "kerberos", 
+                   "pools", "traffic_ip_groups", "virtual_servers" ]
 	end
 
 	def newManifest(uri, object)
@@ -218,8 +230,11 @@ class BrocadeVTMRestController
    # If builtin is false, then don't create config for built-in objects
 	def dumpNodeConfig(outfile, allParams=true, builtin=true, manifestDir="#{@homedir}/manifests/", binDir=nil)
 
+		loadPreRequisites()
+
 		@objects.each do |name,manifest|
-			manifest.genNodeConfig(outfile, allParams, builtin, manifestDir, binDir)
+			preReq = Marshal.load(Marshal.dump(@preReq))
+			manifest.genNodeConfig(outfile, allParams, builtin, preReq, manifestDir, binDir)
 		end
 
 	end

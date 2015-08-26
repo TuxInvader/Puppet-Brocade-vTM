@@ -1,2 +1,15 @@
-virtual_server,pools,traffic_ip_groups
-kerberos_principals,kerberos_keytabs
+# Format
+# type : requirement, local variable, local type, exclusion1,exclusion2
+pools,Monitors,basic__monitors,Array
+virtual_servers,Pools,basic__pool,String,discard,builtin_dns
+virtual_servers,Traffic_ip_groups,basic__listen_on_traffic_ips,Array
+virtual_servers,Rules,basic__completionrules,Array
+virtual_servers,Rules,basic__request_rules,Array
+virtual_servers,Glb_services,basic__glb_services,Array
+virtual_servers,Aptimizer_profiles,aptimizer__profile,name:aptimize_profiles|urls:aptimizer_scopes
+virtual_servers,Dns_server_zones,dns__zones,Array
+virtual_servers,Ssl_cas,ssl__client_cert_cas,Array
+virtual_servers,Ssl_server_keys,ssl__server_cert_host_mapping,Array
+virtual_servers,Ssl_server_keys,ssl__server_cert_default,String
+kerberos_principals,Kerberos_keytabs,basic__keytab,String
+glb_services,Locations,basic__chained_location_order,Array
