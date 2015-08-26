@@ -156,7 +156,7 @@ class BrocadeVTMRestController
 				if ( hash2.include?(key) )
 					return false if ( ! deepCompare("#{name}:#{key}", value,hash2[key]) )
 				else
-					$stderr.puts("Notice: DeepCompare: #{name}, Missing Key #{key}")
+					$stderr.puts("Notice: DeepCompare: #{name}, Missing Key '#{key}'")
 					return false
 				end
 			end
@@ -169,7 +169,7 @@ class BrocadeVTMRestController
 			end	
 		else
 			if ( hash1 != hash2 )
-				$stderr.puts("Notice: DeepCompare: #{name}, No Match #{hash1} : #{hash2}")
+				$stderr.puts("Notice: DeepCompare: #{name}, No Match '#{hash1}' vs '#{hash2}'")
 				return false
 			end
 		end
