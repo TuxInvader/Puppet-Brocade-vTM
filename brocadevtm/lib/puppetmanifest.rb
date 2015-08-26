@@ -360,12 +360,11 @@ class PuppetManifest
 			reqObject = req.shift
 			reqVar = req.shift
 			reqType = req.shift
-			puts("ro: #{reqObject}, rv: #{reqVar}, rt: #{reqType}")
 			if (@params.has_key?(reqVar))
 				if (@params[reqVar].is_a? Array)
 					@params[reqVar].each do |item|
 						if item.is_a?(Hash)
-							puts(" ----- TODO - Complex Hash Support -------")
+							puts(" --!!-- TODO : we do not yet write 'require's for Aptimizer or SNI mappings !!--!!")
 						else
 							ro_ = reqObject.gsub(/[\/\.-]|%20/, "_")
 							item_ = item.gsub(/[\/\.-]|%20/, "_").downcase
@@ -378,7 +377,10 @@ class PuppetManifest
 						end
 					end
 				elsif (@params[reqVar].is_a? String)
-					if (!req.empty?) and (!req.include?(@params[reqVar]))
+					if @params[reqVar] == ''
+						next
+					end
+					if req.empty? or ( (!req.empty?) and (!req.include?(@params[reqVar])) )
 						escaped = @params[reqVar].gsub(' ', '%20')
 						requires += " Brocadevtm::#{reqObject}['#{escaped}'], "
 					end
