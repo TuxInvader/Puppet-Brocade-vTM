@@ -1,4 +1,12 @@
 
+# Version 0.2.0
+
+- genNodeConfig now creates relationships between objects.
+- lib/data/precedence.csv contains mapping data for those relationships.
+- vtmrest is more intelligent about checking configuration equality.
+- vtmrest will now report the first change it finds when doing a comparison.
+- Disabled notices from vtmrest when everything is OK.
+
 # Version 0.1.8
 
 - Fix puppetmanifest - Handle floats correctly (needed for Locations).
