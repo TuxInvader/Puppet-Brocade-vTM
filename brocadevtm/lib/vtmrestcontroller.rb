@@ -137,15 +137,43 @@ class BrocadeVTMRestController
 				puppet = JSON.parse(content)
 			end
 			vtm = JSON.parse(vtmResponse.body)
+			#return deepCompare(name,puppet,vtm)
+			return deepCompare(name,vtm,puppet)
+			#return vtm == puppet
 		else
 			vtm = vtmResponse.body
 			puppet = content.force_encoding(vtm.encoding)
+			if ( vtm == puppet ) 
+				return true
+			end
 		end
-		if ( vtm == puppet ) 
-			return true
+		return false
+	end
+
+	def deepCompare(name, hash1, hash2)
+		if hash1.is_a?(Hash)
+			hash1.each do |key,value|
+				if ( hash2.include?(key) )
+					return false if ( ! deepCompare("#{name}:#{key}", value,hash2[key]) )
+				else
+					$stderr.puts("Notice: DeepCompare: #{name}, Missing Key #{key}")
+					return false
+				end
+			end
+		elsif hash1.is_a?(Array)
+			sort1 = hash1.sort_by { |h| h.to_s }
+			sort2 = hash2.sort_by { |h| h.to_s }
+			sort1.each do |item1|
+				item2 = sort2.shift
+				return false if ( ! deepCompare("#{name}:#{item1}", item1,item2) )
+			end	
 		else
-			return false
+			if ( hash1 != hash2 )
+				$stderr.puts("Notice: DeepCompare: #{name}, No Match #{hash1} : #{hash2}")
+				return false
+			end
 		end
+		return true
 	end
 
 	# Puppet Create function

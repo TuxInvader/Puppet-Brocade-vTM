@@ -8,7 +8,7 @@ Puppet::Type.type(:vtmrest).provide(:ruby) do
 		#$stdout.puts("Notice: Content #{resource[:content]}")
 		$response = vtmrc.puppetCompare(resource[:name], resource[:content], resource[:type], resource[:internal])
 		if $response == true
-			$stdout.puts("Notice: Object #{resource[:name]} OK")
+			#$stdout.puts("Notice: Object #{resource[:name]} OK")
 			return true;
 		elsif $response == false
 			$stderr.puts("Notice: Object #{resource[:name]} differs from catalog")
@@ -27,7 +27,9 @@ Puppet::Type.type(:vtmrest).provide(:ruby) do
 
 	def create
 		$stdout.puts("Notice: Creating #{resource[:name]}")
-		#$stdout.puts("Notice: Content #{resource[:content]}")
+		#if ( resource[:type] == "application/json" )
+		#	$stdout.puts("Notice: Content #{resource[:content]}")
+		#end
 		$response = vtmrc.puppetCreate(resource[:name], resource[:content], resource[:type], resource[:internal])
 		if $response == nil || ( ! $response.code.start_with?("20") )
 			$stderr.puts("Notice: FAILED #{resource[:name]}")
