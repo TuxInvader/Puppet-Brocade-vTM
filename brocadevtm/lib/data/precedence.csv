@@ -1,6 +1,7 @@
 # Format
 # type : requirement, local variable, local type, exclusion1,exclusion2
 pools,Monitors,basic__monitors,Array
+pools,Persistence,basic__persistence_class,String
 virtual_servers,Pools,basic__pool,String,discard,builtin_dns
 virtual_servers,Traffic_ip_groups,basic__listen_on_traffic_ips,Array
 virtual_servers,Rules,basic__completionrules,Array
