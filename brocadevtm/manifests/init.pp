@@ -1,6 +1,6 @@
 # == Define: brocadevtm
 #
-# This defines the REST API access information.
+# This defines the Brocade vTM access information.
 #
 # === Parameters
 #
