@@ -1,4 +1,10 @@
 
+# Version 0.2.2
+
+- genNodeConfig -c option to attempt to carry on when we see errors
+- specifically this is a workaround for https://github.com/TuxInvader/Puppet-Brocade-vTM/issues/2
+- delint manifests
+
 # Version 0.2.1
 
 - vtmrest now allows purging of unknown configuration
