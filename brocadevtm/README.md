@@ -25,16 +25,15 @@ configuration of that vTM instance.
 
 ## Where can I get Brocade vTM?
 
-You could try downloading a copy from one of these locations
+You could try one of these locations:
 
-vTM Info:  <http://www.brocade.com/en/products-services/application-delivery-controllers.html>
+Brocade vTM Info:  <http://www.brocade.com/en/products-services/application-delivery-controllers.html>
 
-vTM Eval Signup: <http://www1.brocade.com/forms/jsp/steelapp-request-trial/index.jsp>
+Brocade vTM Eval Signup: <http://www1.brocade.com/forms/jsp/steelapp-request-trial/index.jsp>
 
 Download Location: <https://support.riverbed.com/content/support/software/steelapp/traffic-manager.html>
 
 Docker Version: <https://hub.docker.com/r/tuxinvader/brocade-vtm/>
-
 
 ## Installation 
 
