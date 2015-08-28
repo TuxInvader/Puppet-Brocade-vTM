@@ -12,14 +12,17 @@ class brocadevtm::user_groups_monitoring (
   $basic__timeout              = 30,
 ){
   include brocadevtm
-  $ip      = $brocadevtm::rest_ip
-  $port    = $brocadevtm::rest_port
-  $user    = $brocadevtm::rest_user
-  $pass    = $brocadevtm::rest_pass
+  $ip              = $brocadevtm::rest_ip
+  $port            = $brocadevtm::rest_port
+  $user            = $brocadevtm::rest_user
+  $pass            = $brocadevtm::rest_pass
+  $purge           = $brocadevtm::purge
+  $purge_state_dir = $brocadevtm::purge_state_dir
 
   info ("Configuring user_groups_monitoring ${name}")
   vtmrest { 'user_groups/Monitoring':
     ensure     => $ensure,
+    before     => Class[Brocadevtm::Purge],
     endpoint   => "https://${ip}:${port}/api/tm/3.3/config/active",
     username   => $user,
     password   => $pass,
@@ -27,5 +30,13 @@ class brocadevtm::user_groups_monitoring (
     type       => 'application/json',
     internal   => 'user_groups_monitoring',
     debug      => 0,
+  }
+
+  if ( $purge ) {
+    ensure_resource('file', "${purge_state_dir}/user_groups", {ensure => present})
+    file_line { "user_groups/Monitoring":
+      line => "user_groups/Monitoring",
+      path => "${purge_state_dir}/user_groups",
+    }
   }
 }

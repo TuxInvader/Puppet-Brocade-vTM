@@ -31,14 +31,17 @@ class brocadevtm::actions_syslog (
   $trap__version               = 'snmpv1',
 ){
   include brocadevtm
-  $ip      = $brocadevtm::rest_ip
-  $port    = $brocadevtm::rest_port
-  $user    = $brocadevtm::rest_user
-  $pass    = $brocadevtm::rest_pass
+  $ip              = $brocadevtm::rest_ip
+  $port            = $brocadevtm::rest_port
+  $user            = $brocadevtm::rest_user
+  $pass            = $brocadevtm::rest_pass
+  $purge           = $brocadevtm::purge
+  $purge_state_dir = $brocadevtm::purge_state_dir
 
   info ("Configuring actions_syslog ${name}")
   vtmrest { 'actions/Syslog':
     ensure     => $ensure,
+    before     => Class[Brocadevtm::Purge],
     endpoint   => "https://${ip}:${port}/api/tm/3.3/config/active",
     username   => $user,
     password   => $pass,
@@ -46,5 +49,13 @@ class brocadevtm::actions_syslog (
     type       => 'application/json',
     internal   => 'actions_syslog',
     debug      => 0,
+  }
+
+  if ( $purge ) {
+    ensure_resource('file', "${purge_state_dir}/actions", {ensure => present})
+    file_line { "actions/Syslog":
+      line => "actions/Syslog",
+      path => "${purge_state_dir}/actions",
+    }
   }
 }

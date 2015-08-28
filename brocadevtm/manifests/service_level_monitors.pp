@@ -45,14 +45,17 @@ define brocadevtm::service_level_monitors (
   $basic__warning_threshold = 50,
 ){
   include brocadevtm
-  $ip      = $brocadevtm::rest_ip
-  $port    = $brocadevtm::rest_port
-  $user    = $brocadevtm::rest_user
-  $pass    = $brocadevtm::rest_pass
+  $ip              = $brocadevtm::rest_ip
+  $port            = $brocadevtm::rest_port
+  $user            = $brocadevtm::rest_user
+  $pass            = $brocadevtm::rest_pass
+  $purge           = $brocadevtm::purge
+  $purge_state_dir = $brocadevtm::purge_state_dir
 
   info ("Configuring service_level_monitors ${name}")
   vtmrest { "service_level_monitors/${name}":
     ensure     => $ensure,
+    before     => Class[Brocadevtm::Purge],
     endpoint   => "https://${ip}:${port}/api/tm/3.3/config/active",
     username   => $user,
     password   => $pass,
@@ -60,5 +63,13 @@ define brocadevtm::service_level_monitors (
     type       => 'application/json',
     internal   => 'service_level_monitors',
     debug      => 0,
+  }
+
+  if ( $purge ) {
+    ensure_resource('file', "${purge_state_dir}/service_level_monitors", {ensure => present})
+    file_line { "service_level_monitors/${name}":
+      line => "service_level_monitors/${name}",
+      path => "${purge_state_dir}/service_level_monitors",
+    }
   }
 }

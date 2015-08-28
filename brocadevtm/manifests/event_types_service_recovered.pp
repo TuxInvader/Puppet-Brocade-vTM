@@ -40,14 +40,17 @@ class brocadevtm::event_types_service_recovered (
   $zxtms__objects               = '[]',
 ){
   include brocadevtm
-  $ip      = $brocadevtm::rest_ip
-  $port    = $brocadevtm::rest_port
-  $user    = $brocadevtm::rest_user
-  $pass    = $brocadevtm::rest_pass
+  $ip              = $brocadevtm::rest_ip
+  $port            = $brocadevtm::rest_port
+  $user            = $brocadevtm::rest_user
+  $pass            = $brocadevtm::rest_pass
+  $purge           = $brocadevtm::purge
+  $purge_state_dir = $brocadevtm::purge_state_dir
 
   info ("Configuring event_types_service_recovered ${name}")
   vtmrest { 'event_types/Service%20Recovered':
     ensure     => $ensure,
+    before     => Class[Brocadevtm::Purge],
     endpoint   => "https://${ip}:${port}/api/tm/3.3/config/active",
     username   => $user,
     password   => $pass,
@@ -55,5 +58,13 @@ class brocadevtm::event_types_service_recovered (
     type       => 'application/json',
     internal   => 'event_types_service_recovered',
     debug      => 0,
+  }
+
+  if ( $purge ) {
+    ensure_resource('file', "${purge_state_dir}/event_types", {ensure => present})
+    file_line { "event_types/Service%20Recovered":
+      line => "event_types/Service%20Recovered",
+      path => "${purge_state_dir}/event_types",
+    }
   }
 }

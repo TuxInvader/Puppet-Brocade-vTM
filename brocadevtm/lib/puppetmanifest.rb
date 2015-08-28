@@ -128,10 +128,12 @@ class PuppetManifest
 
 		code += "  include brocadevtm\n"
 
-		code += "  $ip      = $brocadevtm::rest_ip\n"
-		code += "  $port    = $brocadevtm::rest_port\n"
-		code += "  $user    = $brocadevtm::rest_user\n"
-		code += "  $pass    = $brocadevtm::rest_pass\n\n"
+		code += "  $ip              = $brocadevtm::rest_ip\n"
+		code += "  $port            = $brocadevtm::rest_port\n"
+		code += "  $user            = $brocadevtm::rest_user\n"
+		code += "  $pass            = $brocadevtm::rest_pass\n"
+		code += "  $purge           = $brocadevtm::purge\n"
+		code += "  $purge_state_dir = $brocadevtm::purge_state_dir\n\n"
 		code += "  info (\"Configuring #{@type_} ${name}\")\n"
 
 		if isClass
@@ -140,6 +142,7 @@ class PuppetManifest
 			code += "  vtmrest { \"#{@type}/\${name}\":\n"
 		end
 		code += "    ensure     => $ensure,\n"
+		code += "    before     => Class[Brocadevtm::Purge],\n"
 		code += "    endpoint   => \"https://\${ip}:\${port}/api/tm/#{@restVersion}/config/active\",\n"
 		code += "    username   => $user,\n"
 		code += "    password   => $pass,\n"
@@ -156,7 +159,32 @@ class PuppetManifest
 			code += "    internal   => '#{@type_}',\n"
 		end
 		code += "    debug      => 0,\n"
-		code += "  }\n}\n"
+		code += "  }\n\n"
+		code += "  if ( $purge ) {\n"
+		if (isClass)
+			if @template
+				cFile = @template.chomp(".erb")
+			else
+				if @type.include?('/')
+					cFile = @type[0..@type.rindex('/')-1].gsub(/\//,'_')
+				else
+					cFile = @type
+				end
+			end
+			code += "    ensure_resource('file', \"${purge_state_dir}/#{cFile}\", {ensure => present})\n"
+			code += "    file_line { \"#{@type}\":\n"
+			code += "      line => \"#{@type}\",\n"
+			code += "      path => \"${purge_state_dir}/#{cFile}\",\n"
+			code += "    }\n"
+		else
+			code += "    ensure_resource('file', \"${purge_state_dir}/#{@type_}\", {ensure => present})\n"
+			code += "    file_line { \"#{@type}/\${name}\":\n"
+			code += "      line => \"#{@type}/${name}\",\n"
+			code += "      path => \"${purge_state_dir}/#{@type_}\",\n"
+			code += "    }\n"
+		end
+		code += "  }\n"
+		code += "}\n"
 
 		filename = "#{outputDir}/#{@type_}.pp"
 		manifest = File.open(filename, "w")

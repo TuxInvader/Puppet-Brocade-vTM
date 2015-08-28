@@ -751,14 +751,17 @@ define brocadevtm::virtual_servers (
   $web_cache__refresh_time                 = 2,
 ){
   include brocadevtm
-  $ip      = $brocadevtm::rest_ip
-  $port    = $brocadevtm::rest_port
-  $user    = $brocadevtm::rest_user
-  $pass    = $brocadevtm::rest_pass
+  $ip              = $brocadevtm::rest_ip
+  $port            = $brocadevtm::rest_port
+  $user            = $brocadevtm::rest_user
+  $pass            = $brocadevtm::rest_pass
+  $purge           = $brocadevtm::purge
+  $purge_state_dir = $brocadevtm::purge_state_dir
 
   info ("Configuring virtual_servers ${name}")
   vtmrest { "virtual_servers/${name}":
     ensure     => $ensure,
+    before     => Class[Brocadevtm::Purge],
     endpoint   => "https://${ip}:${port}/api/tm/3.3/config/active",
     username   => $user,
     password   => $pass,
@@ -766,5 +769,13 @@ define brocadevtm::virtual_servers (
     type       => 'application/json',
     internal   => 'virtual_servers',
     debug      => 0,
+  }
+
+  if ( $purge ) {
+    ensure_resource('file', "${purge_state_dir}/virtual_servers", {ensure => present})
+    file_line { "virtual_servers/${name}":
+      line => "virtual_servers/${name}",
+      path => "${purge_state_dir}/virtual_servers",
+    }
   }
 }

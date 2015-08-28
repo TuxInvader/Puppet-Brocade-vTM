@@ -34,14 +34,17 @@ define brocadevtm::dns_server_zones (
   $basic__zonefile,
 ){
   include brocadevtm
-  $ip      = $brocadevtm::rest_ip
-  $port    = $brocadevtm::rest_port
-  $user    = $brocadevtm::rest_user
-  $pass    = $brocadevtm::rest_pass
+  $ip              = $brocadevtm::rest_ip
+  $port            = $brocadevtm::rest_port
+  $user            = $brocadevtm::rest_user
+  $pass            = $brocadevtm::rest_pass
+  $purge           = $brocadevtm::purge
+  $purge_state_dir = $brocadevtm::purge_state_dir
 
   info ("Configuring dns_server_zones ${name}")
   vtmrest { "dns_server/zones/${name}":
     ensure     => $ensure,
+    before     => Class[Brocadevtm::Purge],
     endpoint   => "https://${ip}:${port}/api/tm/3.3/config/active",
     username   => $user,
     password   => $pass,
@@ -49,5 +52,13 @@ define brocadevtm::dns_server_zones (
     type       => 'application/json',
     internal   => 'dns_server_zones',
     debug      => 0,
+  }
+
+  if ( $purge ) {
+    ensure_resource('file', "${purge_state_dir}/dns_server_zones", {ensure => present})
+    file_line { "dns_server/zones/${name}":
+      line => "dns_server/zones/${name}",
+      path => "${purge_state_dir}/dns_server_zones",
+    }
   }
 }

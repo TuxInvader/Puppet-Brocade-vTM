@@ -433,14 +433,17 @@ define brocadevtm::pools (
   $udp__accept_from_mask                    = undef,
 ){
   include brocadevtm
-  $ip      = $brocadevtm::rest_ip
-  $port    = $brocadevtm::rest_port
-  $user    = $brocadevtm::rest_user
-  $pass    = $brocadevtm::rest_pass
+  $ip              = $brocadevtm::rest_ip
+  $port            = $brocadevtm::rest_port
+  $user            = $brocadevtm::rest_user
+  $pass            = $brocadevtm::rest_pass
+  $purge           = $brocadevtm::purge
+  $purge_state_dir = $brocadevtm::purge_state_dir
 
   info ("Configuring pools ${name}")
   vtmrest { "pools/${name}":
     ensure     => $ensure,
+    before     => Class[Brocadevtm::Purge],
     endpoint   => "https://${ip}:${port}/api/tm/3.3/config/active",
     username   => $user,
     password   => $pass,
@@ -448,5 +451,13 @@ define brocadevtm::pools (
     type       => 'application/json',
     internal   => 'pools',
     debug      => 0,
+  }
+
+  if ( $purge ) {
+    ensure_resource('file', "${purge_state_dir}/pools", {ensure => present})
+    file_line { "pools/${name}":
+      line => "pools/${name}",
+      path => "${purge_state_dir}/pools",
+    }
   }
 }

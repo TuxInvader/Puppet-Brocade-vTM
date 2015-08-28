@@ -40,14 +40,17 @@ define brocadevtm::aptimizer_scopes (
   $basic__root               = '/',
 ){
   include brocadevtm
-  $ip      = $brocadevtm::rest_ip
-  $port    = $brocadevtm::rest_port
-  $user    = $brocadevtm::rest_user
-  $pass    = $brocadevtm::rest_pass
+  $ip              = $brocadevtm::rest_ip
+  $port            = $brocadevtm::rest_port
+  $user            = $brocadevtm::rest_user
+  $pass            = $brocadevtm::rest_pass
+  $purge           = $brocadevtm::purge
+  $purge_state_dir = $brocadevtm::purge_state_dir
 
   info ("Configuring aptimizer_scopes ${name}")
   vtmrest { "aptimizer/scopes/${name}":
     ensure     => $ensure,
+    before     => Class[Brocadevtm::Purge],
     endpoint   => "https://${ip}:${port}/api/tm/3.3/config/active",
     username   => $user,
     password   => $pass,
@@ -55,5 +58,13 @@ define brocadevtm::aptimizer_scopes (
     type       => 'application/json',
     internal   => 'aptimizer_scopes',
     debug      => 0,
+  }
+
+  if ( $purge ) {
+    ensure_resource('file', "${purge_state_dir}/aptimizer_scopes", {ensure => present})
+    file_line { "aptimizer/scopes/${name}":
+      line => "aptimizer/scopes/${name}",
+      path => "${purge_state_dir}/aptimizer_scopes",
+    }
   }
 }

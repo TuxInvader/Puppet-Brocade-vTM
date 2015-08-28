@@ -39,14 +39,17 @@ define brocadevtm::bandwidth (
   $basic__sharing = 'cluster',
 ){
   include brocadevtm
-  $ip      = $brocadevtm::rest_ip
-  $port    = $brocadevtm::rest_port
-  $user    = $brocadevtm::rest_user
-  $pass    = $brocadevtm::rest_pass
+  $ip              = $brocadevtm::rest_ip
+  $port            = $brocadevtm::rest_port
+  $user            = $brocadevtm::rest_user
+  $pass            = $brocadevtm::rest_pass
+  $purge           = $brocadevtm::purge
+  $purge_state_dir = $brocadevtm::purge_state_dir
 
   info ("Configuring bandwidth ${name}")
   vtmrest { "bandwidth/${name}":
     ensure     => $ensure,
+    before     => Class[Brocadevtm::Purge],
     endpoint   => "https://${ip}:${port}/api/tm/3.3/config/active",
     username   => $user,
     password   => $pass,
@@ -54,5 +57,13 @@ define brocadevtm::bandwidth (
     type       => 'application/json',
     internal   => 'bandwidth',
     debug      => 0,
+  }
+
+  if ( $purge ) {
+    ensure_resource('file', "${purge_state_dir}/bandwidth", {ensure => present})
+    file_line { "bandwidth/${name}":
+      line => "bandwidth/${name}",
+      path => "${purge_state_dir}/bandwidth",
+    }
   }
 }

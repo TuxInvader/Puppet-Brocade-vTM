@@ -1207,14 +1207,17 @@ class brocadevtm::global_settings (
   $web_cache__verbose                          = false,
 ){
   include brocadevtm
-  $ip      = $brocadevtm::rest_ip
-  $port    = $brocadevtm::rest_port
-  $user    = $brocadevtm::rest_user
-  $pass    = $brocadevtm::rest_pass
+  $ip              = $brocadevtm::rest_ip
+  $port            = $brocadevtm::rest_port
+  $user            = $brocadevtm::rest_user
+  $pass            = $brocadevtm::rest_pass
+  $purge           = $brocadevtm::purge
+  $purge_state_dir = $brocadevtm::purge_state_dir
 
   info ("Configuring global_settings ${name}")
   vtmrest { 'global_settings':
     ensure     => $ensure,
+    before     => Class[Brocadevtm::Purge],
     endpoint   => "https://${ip}:${port}/api/tm/3.3/config/active",
     username   => $user,
     password   => $pass,
@@ -1222,5 +1225,13 @@ class brocadevtm::global_settings (
     type       => 'application/json',
     internal   => 'global_settings',
     debug      => 0,
+  }
+
+  if ( $purge ) {
+    ensure_resource('file', "${purge_state_dir}/global_settings", {ensure => present})
+    file_line { "global_settings":
+      line => "global_settings",
+      path => "${purge_state_dir}/global_settings",
+    }
   }
 }

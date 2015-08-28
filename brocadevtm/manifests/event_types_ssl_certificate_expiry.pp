@@ -40,14 +40,17 @@ class brocadevtm::event_types_ssl_certificate_expiry (
   $zxtms__objects               = '[]',
 ){
   include brocadevtm
-  $ip      = $brocadevtm::rest_ip
-  $port    = $brocadevtm::rest_port
-  $user    = $brocadevtm::rest_user
-  $pass    = $brocadevtm::rest_pass
+  $ip              = $brocadevtm::rest_ip
+  $port            = $brocadevtm::rest_port
+  $user            = $brocadevtm::rest_user
+  $pass            = $brocadevtm::rest_pass
+  $purge           = $brocadevtm::purge
+  $purge_state_dir = $brocadevtm::purge_state_dir
 
   info ("Configuring event_types_ssl_certificate_expiry ${name}")
   vtmrest { 'event_types/SSL%20Certificate%20Expiry':
     ensure     => $ensure,
+    before     => Class[Brocadevtm::Purge],
     endpoint   => "https://${ip}:${port}/api/tm/3.3/config/active",
     username   => $user,
     password   => $pass,
@@ -55,5 +58,13 @@ class brocadevtm::event_types_ssl_certificate_expiry (
     type       => 'application/json',
     internal   => 'event_types_ssl_certificate_expiry',
     debug      => 0,
+  }
+
+  if ( $purge ) {
+    ensure_resource('file', "${purge_state_dir}/event_types", {ensure => present})
+    file_line { "event_types/SSL%20Certificate%20Expiry":
+      line => "event_types/SSL%20Certificate%20Expiry",
+      path => "${purge_state_dir}/event_types",
+    }
   }
 }

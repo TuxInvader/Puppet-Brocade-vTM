@@ -11,14 +11,17 @@ class brocadevtm::aptimizer_scopes_any_hostname_or_path (
   $basic__root               = '/',
 ){
   include brocadevtm
-  $ip      = $brocadevtm::rest_ip
-  $port    = $brocadevtm::rest_port
-  $user    = $brocadevtm::rest_user
-  $pass    = $brocadevtm::rest_pass
+  $ip              = $brocadevtm::rest_ip
+  $port            = $brocadevtm::rest_port
+  $user            = $brocadevtm::rest_user
+  $pass            = $brocadevtm::rest_pass
+  $purge           = $brocadevtm::purge
+  $purge_state_dir = $brocadevtm::purge_state_dir
 
   info ("Configuring aptimizer_scopes_any_hostname_or_path ${name}")
   vtmrest { 'aptimizer/scopes/Any%20hostname%20or%20path':
     ensure     => $ensure,
+    before     => Class[Brocadevtm::Purge],
     endpoint   => "https://${ip}:${port}/api/tm/3.3/config/active",
     username   => $user,
     password   => $pass,
@@ -26,5 +29,13 @@ class brocadevtm::aptimizer_scopes_any_hostname_or_path (
     type       => 'application/json',
     internal   => 'aptimizer_scopes_any_hostname_or_path',
     debug      => 0,
+  }
+
+  if ( $purge ) {
+    ensure_resource('file', "${purge_state_dir}/aptimizer_scopes", {ensure => present})
+    file_line { "aptimizer/scopes/Any%20hostname%20or%20path":
+      line => "aptimizer/scopes/Any%20hostname%20or%20path",
+      path => "${purge_state_dir}/aptimizer_scopes",
+    }
   }
 }

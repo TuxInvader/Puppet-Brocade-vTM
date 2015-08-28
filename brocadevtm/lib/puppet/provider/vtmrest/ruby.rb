@@ -5,6 +5,10 @@ Puppet::Type.type(:vtmrest).provide(:ruby) do
 
 	def exists?
 
+		if resource[:type] == 'purge'
+			return vtmrc.puppetPurge(resource[:content])
+		end
+
 		#$stdout.puts("Notice: Content #{resource[:content]}")
 		$response = vtmrc.puppetCompare(resource[:name], resource[:content], resource[:type], resource[:internal])
 		if $response == true

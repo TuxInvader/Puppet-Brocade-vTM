@@ -104,14 +104,17 @@ define brocadevtm::traffic_ip_groups (
   $basic__slaves                           = '[]',
 ){
   include brocadevtm
-  $ip      = $brocadevtm::rest_ip
-  $port    = $brocadevtm::rest_port
-  $user    = $brocadevtm::rest_user
-  $pass    = $brocadevtm::rest_pass
+  $ip              = $brocadevtm::rest_ip
+  $port            = $brocadevtm::rest_port
+  $user            = $brocadevtm::rest_user
+  $pass            = $brocadevtm::rest_pass
+  $purge           = $brocadevtm::purge
+  $purge_state_dir = $brocadevtm::purge_state_dir
 
   info ("Configuring traffic_ip_groups ${name}")
   vtmrest { "traffic_ip_groups/${name}":
     ensure     => $ensure,
+    before     => Class[Brocadevtm::Purge],
     endpoint   => "https://${ip}:${port}/api/tm/3.3/config/active",
     username   => $user,
     password   => $pass,
@@ -119,5 +122,13 @@ define brocadevtm::traffic_ip_groups (
     type       => 'application/json',
     internal   => 'traffic_ip_groups',
     debug      => 0,
+  }
+
+  if ( $purge ) {
+    ensure_resource('file', "${purge_state_dir}/traffic_ip_groups", {ensure => present})
+    file_line { "traffic_ip_groups/${name}":
+      line => "traffic_ip_groups/${name}",
+      path => "${purge_state_dir}/traffic_ip_groups",
+    }
   }
 }

@@ -36,14 +36,17 @@ class brocadevtm::monitors_dns (
   $udp__accept_all       = false,
 ){
   include brocadevtm
-  $ip      = $brocadevtm::rest_ip
-  $port    = $brocadevtm::rest_port
-  $user    = $brocadevtm::rest_user
-  $pass    = $brocadevtm::rest_pass
+  $ip              = $brocadevtm::rest_ip
+  $port            = $brocadevtm::rest_port
+  $user            = $brocadevtm::rest_user
+  $pass            = $brocadevtm::rest_pass
+  $purge           = $brocadevtm::purge
+  $purge_state_dir = $brocadevtm::purge_state_dir
 
   info ("Configuring monitors_dns ${name}")
   vtmrest { 'monitors/DNS':
     ensure     => $ensure,
+    before     => Class[Brocadevtm::Purge],
     endpoint   => "https://${ip}:${port}/api/tm/3.3/config/active",
     username   => $user,
     password   => $pass,
@@ -51,5 +54,13 @@ class brocadevtm::monitors_dns (
     type       => 'application/json',
     internal   => 'monitors_dns',
     debug      => 0,
+  }
+
+  if ( $purge ) {
+    ensure_resource('file', "${purge_state_dir}/monitors", {ensure => present})
+    file_line { "monitors/DNS":
+      line => "monitors/DNS",
+      path => "${purge_state_dir}/monitors",
+    }
   }
 }

@@ -152,14 +152,17 @@ define brocadevtm::protection (
   $http__send_error_page                    = true,
 ){
   include brocadevtm
-  $ip      = $brocadevtm::rest_ip
-  $port    = $brocadevtm::rest_port
-  $user    = $brocadevtm::rest_user
-  $pass    = $brocadevtm::rest_pass
+  $ip              = $brocadevtm::rest_ip
+  $port            = $brocadevtm::rest_port
+  $user            = $brocadevtm::rest_user
+  $pass            = $brocadevtm::rest_pass
+  $purge           = $brocadevtm::purge
+  $purge_state_dir = $brocadevtm::purge_state_dir
 
   info ("Configuring protection ${name}")
   vtmrest { "protection/${name}":
     ensure     => $ensure,
+    before     => Class[Brocadevtm::Purge],
     endpoint   => "https://${ip}:${port}/api/tm/3.3/config/active",
     username   => $user,
     password   => $pass,
@@ -167,5 +170,13 @@ define brocadevtm::protection (
     type       => 'application/json',
     internal   => 'protection',
     debug      => 0,
+  }
+
+  if ( $purge ) {
+    ensure_resource('file', "${purge_state_dir}/protection", {ensure => present})
+    file_line { "protection/${name}":
+      line => "protection/${name}",
+      path => "${purge_state_dir}/protection",
+    }
   }
 }

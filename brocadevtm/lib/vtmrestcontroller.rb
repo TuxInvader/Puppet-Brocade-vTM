@@ -20,7 +20,7 @@ end
 class BrocadeVTMRestController
 
 	def initialize(host, port, restVersion, user, pass, debugLevel=0)
-		@debugLevel = debugLevel
+		@debugLevel = Integer(debugLevel)
 		@restVersion = restVersion
 		@uri = URI.parse("https://#{host}:#{port}/api/tm/#{restVersion}/config/active/")
 		@user = user
@@ -43,7 +43,13 @@ class BrocadeVTMRestController
 
 	def debug(level, msg)
 		if ( @debugLevel >= level )
-			puts("Debug: #{level}: #{msg}")
+			if level < 0
+				$stderr.puts("ERROR: vtmrest: #{level}: #{msg}")
+			elsif level == 0
+				$stderr.puts("Notice: vtmrest: #{level}: #{msg}")
+			else
+				$stderr.puts("Debug: vtmrest: #{level}: #{msg}")
+			end
 		end
 	end
 
@@ -59,7 +65,7 @@ class BrocadeVTMRestController
 		elsif ( uri.start_with?("http") )
 			fqURI = URI.parse(uri)
 			if ( fqURI.host != @uri.host ) || ( fqURI.port != @uri.port ) 
-				then puts("ERROR - Change of host not supported")
+				then debug(-1, "Change of host not supported")
 				return nil
 			else
 				return fqURI
@@ -79,7 +85,7 @@ class BrocadeVTMRestController
 			when Net::HTTPSuccess then
 				return response
 			else
-				$stderr.puts "HTTP Call Failed: #{uri}, Response: #{response}"
+				debug(-1, "HTTP Call Failed: #{uri}, Response: #{response}")
 				return nil
 		end
 	end
@@ -156,7 +162,7 @@ class BrocadeVTMRestController
 				if ( hash2.include?(key) )
 					return false if ( ! deepCompare("#{name}:#{key}", value,hash2[key]) )
 				else
-					$stderr.puts("Notice: DeepCompare: #{name}, Missing Key '#{key}'")
+					debug(0,"DeepCompare: #{name}, Missing Key '#{key}'")
 					return false
 				end
 			end
@@ -169,7 +175,7 @@ class BrocadeVTMRestController
 			end	
 		else
 			if ( hash1 != hash2 )
-				$stderr.puts("Notice: DeepCompare: #{name}, No Match '#{hash1}' vs '#{hash2}'")
+				debug(0,"DeepCompare: #{name}, No Match '#{hash1}' vs '#{hash2}'")
 				return false
 			end
 		end
@@ -208,6 +214,51 @@ class BrocadeVTMRestController
 		kpf.close
 	end
 
+	def puppetPurge(stateDir)
+		Dir.glob("#{stateDir}/*").each do |type|
+			debug(1, "Purge: Checking state file: #{type}")
+			uri = @uri.clone()
+			items = IO.readlines(type)
+			File.new(type,"w").close()
+			if (!items[0].include?('/'))
+				# dont purge anything in root of configuration tree
+				next
+			end
+			parent = items[0][0..items[0].rindex('/')]
+			uri.path += parent
+			debug(1, "Purge: Checking URI: #{uri}")
+			response = do_get(uri)
+			if response == nil
+				debug(0, "Purge: Failed to read URI: #{uri.path}. Response is nil")
+				next
+			elsif response.code != "200"
+				debug(0, "Purge: Failed to read URI: #{uri.path}. Response code: #{response.code}")
+				next
+			elsif ( response.content_type() != "application/json" )
+				debug(0, "Purge: Failed to read URI: #{uri.path}, Response was not JSON.")
+				next
+			else
+				json = JSON.parse(response.body)
+				if ( json == nil )
+					debug(0, "Purge: Failed to parse JSON: #{uri.path}.")
+					next
+				elsif (! json.has_key?("children") )
+					debug(0, "Purge: Failed to parse JSON: #{uri.path}, Response has no Children.")
+					next
+				end
+				items.each {|item| item.strip!().gsub!('%20', ' ')}
+				json["children"].each do |child|
+					debug(2, "Purge: Child: #{child}" )
+					if (! items.include?("#{parent}#{child["name"]}") )
+						debug(0,"Purge: Removing unknown object: #{parent}#{child["name"]}")
+						deleteObject(child["href"])
+					end
+				end
+			end
+		end
+		return true
+	end
+
 	def loadPreRequisites()
 		@preReq = {}
 		prf = File.open( File.expand_path("../data/precedence.csv", __FILE__) )
@@ -231,7 +282,7 @@ class BrocadeVTMRestController
 
 	def newManifest(uri, object)
 		if( ! uri.path.start_with?(@uri.path) )
-			puts("This object is not in the config tree? Not adding.")
+			debug(-1, "This object is not in the config tree? Not adding.")
 			return nil
 		end
 		type = uri.path.byteslice(@uri.path.length..uri.path.length)
@@ -309,7 +360,7 @@ class BrocadeVTMRestController
 		properties = JSON.parse( @properties )
 		response = do_get(uri)
 		if ( response == nil )
-			$stderr.puts("WALK Failed")
+			debug(-1, "WALK Failed")
 			return
 		end
 		if ( response.content_type() == "application/json" ) 
@@ -325,7 +376,7 @@ class BrocadeVTMRestController
 					debug(2, "Creating Manifest for: #{uri}")
 					name = newManifest(uri,false)
 					if name.nil?
-						$stderr.puts("ERROR - (BUG?) newManifest returned nil for: #{uri}")
+						debug(-1, "ERROR - (BUG?) newManifest returned nil for: #{uri}")
 					elsif ( probe == :BINARY )
 						@manifests[name].setBinary(true)
 					else
@@ -354,7 +405,7 @@ class BrocadeVTMRestController
 					# Existing JSON object
 					name = newManifest(uri,true)
 					if name.nil?
-						$stderr.puts("ERROR - (BUG?) newManifest returned nil for: #{uri}")
+						debug(-1, "(BUG?) newManifest returned nil for: #{uri}")
 					else
 						@objects[name].setJSON(response.body)
 					end
@@ -368,7 +419,7 @@ class BrocadeVTMRestController
 				# Existing binary object
 				name = newManifest(uri,true)
 				if name.nil?
-					$stderr.puts("ERROR - (BUG?) newManifest returned nil for: #{uri}")
+					debug(-1, "(BUG?) newManifest returned nil for: #{uri}")
 				else
 					@objects[name].setBinary(true)
 					@objects[name].setData(response.body)
@@ -407,7 +458,7 @@ class BrocadeVTMRestController
 				debug(4, "Probe: Mandatory parameter needed")
 				name = newManifest(uri,false)
 				if name.nil?
-					$stderr.puts("ERROR - (BUG?) newManifest returned nil for: #{uri}")
+					debug(-1, "(BUG?) newManifest returned nil for: #{uri}")
 					return nil
 				end
 				jsonError = JSON.parse(response.body)

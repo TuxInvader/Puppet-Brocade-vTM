@@ -36,14 +36,17 @@ class brocadevtm::monitors_simple_http (
   $udp__accept_all       = false,
 ){
   include brocadevtm
-  $ip      = $brocadevtm::rest_ip
-  $port    = $brocadevtm::rest_port
-  $user    = $brocadevtm::rest_user
-  $pass    = $brocadevtm::rest_pass
+  $ip              = $brocadevtm::rest_ip
+  $port            = $brocadevtm::rest_port
+  $user            = $brocadevtm::rest_user
+  $pass            = $brocadevtm::rest_pass
+  $purge           = $brocadevtm::purge
+  $purge_state_dir = $brocadevtm::purge_state_dir
 
   info ("Configuring monitors_simple_http ${name}")
   vtmrest { 'monitors/Simple%20HTTP':
     ensure     => $ensure,
+    before     => Class[Brocadevtm::Purge],
     endpoint   => "https://${ip}:${port}/api/tm/3.3/config/active",
     username   => $user,
     password   => $pass,
@@ -51,5 +54,13 @@ class brocadevtm::monitors_simple_http (
     type       => 'application/json',
     internal   => 'monitors_simple_http',
     debug      => 0,
+  }
+
+  if ( $purge ) {
+    ensure_resource('file', "${purge_state_dir}/monitors", {ensure => present})
+    file_line { "monitors/Simple%20HTTP":
+      line => "monitors/Simple%20HTTP",
+      path => "${purge_state_dir}/monitors",
+    }
   }
 }
