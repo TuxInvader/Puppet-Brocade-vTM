@@ -22,6 +22,7 @@ class GetOptions
 		options.builtin = true
 		options.outfile = nil
 		options.binDir = nil
+		options.carryOn = false
 		options.manifestDir = "#{homedir}/manifests/"
 
 		opt_parser = OptionParser.new do |opts|
@@ -75,6 +76,10 @@ class GetOptions
 				options.builtin = false
 			end
 
+			opts.on("-c", "Continue on error") do |carryOn|
+				options.caryOn = true
+			end
+
 			opts.on_tail("-?", "--help", "Show this message") do
 				puts opts
 				puts "\nMandatory Parameters: --version, --user, --password, --outfile\n\n"
@@ -110,6 +115,7 @@ nodefile.close()
 
 vtmrc = BrocadeVTMRestController.new(options.host, options.port, options.version, options.user, options.pass, options.debug)
 vtmrc.setType( WalkTypes::READ )
+vtmrc.continueOnError(options.caryOn)
 vtmrc.walk( )
 vtmrc.dumpNodeConfig(options.outfile, options.allParams, options.builtin, options.manifestDir, options.binDir)
 

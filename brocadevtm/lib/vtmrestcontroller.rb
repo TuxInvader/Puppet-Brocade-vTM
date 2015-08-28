@@ -19,8 +19,8 @@ end
 
 class BrocadeVTMRestController
 
-	def initialize(host, port, restVersion, user, pass, debugLevel=0)
-		@debugLevel = Integer(debugLevel)
+	def initialize(host, port, restVersion, user, pass, loggerLevel=0)
+		@loggerLevel = Integer(loggerLevel)
 		@restVersion = restVersion
 		@uri = URI.parse("https://#{host}:#{port}/api/tm/#{restVersion}/config/active/")
 		@user = user
@@ -39,24 +39,35 @@ class BrocadeVTMRestController
 		@qm = QuirksManager.new()
 		@quirks = @qm.getQuirks()
 		@homedir = File.expand_path( "#{File.dirname(__FILE__)}/.." )
+		@generateOutOfTreeManifests = false
 	end
 
-	def debug(level, msg)
-		if ( @debugLevel >= level )
+	# Logger function to write log messages (level<0 - Error, level==0 - Notice, level>0 - Debug )
+	def logger(level, msg)
+		if ( @loggerLevel >= level )
 			if level < 0
-				$stderr.puts("ERROR: vtmrest: #{level}: #{msg}")
+				$stderr.puts("ERROR: vtmrest: #{msg}")
 			elsif level == 0
-				$stderr.puts("Notice: vtmrest: #{level}: #{msg}")
+				$stdout.puts("Notice: vtmrest: #{msg}")
 			else
 				$stderr.puts("Debug: vtmrest: #{level}: #{msg}")
 			end
 		end
 	end
 
+	# set Walktype to :READ, :PROBE, or :DELETE
 	def setType(walkType)
 			@walkType = walkType
 	end
 
+	# Contiue on Error? Attempt to continue if we encounter problems
+	# Currentlu just allows outoftree manifests to be attempted.  
+	def continueOnError(cont)
+		@generateOutOfTreeManifests = cont
+	end
+
+	# Return a new uri object for the provided path, by cloning our core @uri and
+   # updating the path elements. Return nil if we jump hosts.
 	def parseURI(uri)
 		newURI = @uri.clone()
 		if ( uri.start_with?("/") )
@@ -65,7 +76,7 @@ class BrocadeVTMRestController
 		elsif ( uri.start_with?("http") )
 			fqURI = URI.parse(uri)
 			if ( fqURI.host != @uri.host ) || ( fqURI.port != @uri.port ) 
-				then debug(-1, "Change of host not supported")
+				then logger(-1, "Change of host not supported")
 				return nil
 			else
 				return fqURI
@@ -77,6 +88,7 @@ class BrocadeVTMRestController
 		end
 	end
 
+	# do the get
 	def do_get(uri)
 		request = Net::HTTP::Get.new(uri.request_uri)
 		request.basic_auth @user, @pass
@@ -85,11 +97,12 @@ class BrocadeVTMRestController
 			when Net::HTTPSuccess then
 				return response
 			else
-				debug(-1, "HTTP Call Failed: #{uri}, Response: #{response}")
+				logger(-1, "HTTP Call Failed: #{uri}, Response: #{response}")
 				return nil
 		end
 	end
 
+	# do the put
 	def do_put(uri, body, ct="application/json")
 		request = Net::HTTP::Put.new(uri.request_uri)
 		request.basic_auth @user, @pass
@@ -99,6 +112,7 @@ class BrocadeVTMRestController
 		return response
 	end
 
+	# do the delete
 	def do_delete(uri)
 		request = Net::HTTP::Delete.new(uri.request_uri)
 		request.basic_auth @user, @pass
@@ -106,6 +120,7 @@ class BrocadeVTMRestController
 		return response
 	end
 
+	# GET the provided http string
 	def getObject(object)
 		uri = parseURI(object)
 		response = do_get(uri)
@@ -113,6 +128,7 @@ class BrocadeVTMRestController
 		return response
 	end
 
+	# PUT the provided http string
 	def putObject(object, body, contentType)
 		uri = parseURI(object)
 		response = do_put(uri, body, contentType)
@@ -120,6 +136,7 @@ class BrocadeVTMRestController
 		return response
 	end
 
+	# DELETE the provided http string
 	def deleteObject(object)
 		uri = parseURI(object)
 		response = do_delete(uri)
@@ -156,17 +173,20 @@ class BrocadeVTMRestController
 		return false
 	end
 
+   # Recurse over the hash and compare all elements. Simply using hash == hash can fail
+   # when the keys are in a different order.
 	def deepCompare(name, hash1, hash2)
 		if hash1.is_a?(Hash)
 			hash1.each do |key,value|
 				if ( hash2.include?(key) )
 					return false if ( ! deepCompare("#{name}:#{key}", value,hash2[key]) )
 				else
-					debug(0,"DeepCompare: #{name}, Missing Key '#{key}'")
+					logger(0,"DeepCompare: #{name}, Missing Key '#{key}'")
 					return false
 				end
 			end
 		elsif hash1.is_a?(Array)
+			# sort arrays before comparing
 			sort1 = hash1.sort_by { |h| h.to_s }
 			sort2 = hash2.sort_by { |h| h.to_s }
 			sort1.each do |item1|
@@ -175,7 +195,7 @@ class BrocadeVTMRestController
 			end	
 		else
 			if ( hash1 != hash2 )
-				debug(0,"DeepCompare: #{name}, No Match '#{hash1}' vs '#{hash2}'")
+				logger(0,"DeepCompare: #{name}, No Match '#{hash1}' vs '#{hash2}'")
 				return false
 			end
 		end
@@ -200,6 +220,8 @@ class BrocadeVTMRestController
 		return deleteObject(name)
 	end
 
+	# Load known parameters to use as default answers to mandatory params.
+   # Used when we walk the API.
 	def loadKnownParams()
 		kpf = File.open( File.expand_path("../data/required.csv", __FILE__) )
 		kpf.each_line do |line|
@@ -214,43 +236,48 @@ class BrocadeVTMRestController
 		kpf.close
 	end
 
+	# purge the vTM of unknown configuration objects.
+	# stateDir should contain a file for each object type with a line for each object
+	# Any children we find in an object tree, which do not appear in the file will be
+	# deleted.
 	def puppetPurge(stateDir)
 		Dir.glob("#{stateDir}/*").each do |type|
-			debug(1, "Purge: Checking state file: #{type}")
+			logger(1, "Purge: Checking state file: #{type}")
 			uri = @uri.clone()
+			# Read the state file and then delete it
 			items = IO.readlines(type)
-			File.new(type,"w").close()
+			File.unlink(type)
+			# dont purge anything in root of configuration tree
 			if (items.empty? or (!items[0].include?('/')))
-				# dont purge anything in root of configuration tree
 				next
 			end
 			parent = items[0][0..items[0].rindex('/')]
 			uri.path += parent
-			debug(1, "Purge: Checking URI: #{uri}")
+			logger(1, "Purge: Checking URI: #{uri}")
 			response = do_get(uri)
 			if response == nil
-				debug(0, "Purge: Failed to read URI: #{uri.path}. Response is nil")
+				logger(-1, "Purge: Failed to read URI: #{uri.path}. Response is nil")
 				next
 			elsif response.code != "200"
-				debug(0, "Purge: Failed to read URI: #{uri.path}. Response code: #{response.code}")
+				logger(-1, "Purge: Failed to read URI: #{uri.path}. Response code: #{response.code}")
 				next
 			elsif ( response.content_type() != "application/json" )
-				debug(0, "Purge: Failed to read URI: #{uri.path}, Response was not JSON.")
+				logger(-1, "Purge: Failed to read URI: #{uri.path}, Response was not JSON.")
 				next
 			else
 				json = JSON.parse(response.body)
 				if ( json == nil )
-					debug(0, "Purge: Failed to parse JSON: #{uri.path}.")
+					logger(-1, "Purge: Failed to parse JSON: #{uri.path}.")
 					next
 				elsif (! json.has_key?("children") )
-					debug(0, "Purge: Failed to parse JSON: #{uri.path}, Response has no Children.")
+					logger(-1, "Purge: Failed to parse JSON: #{uri.path}, Response has no Children.")
 					next
 				end
 				items.each {|item| item.strip!().gsub!('%20', ' ')}
 				json["children"].each do |child|
-					debug(2, "Purge: Child: #{child}" )
+					logger(2, "Purge: Child: #{child}" )
 					if (! items.include?("#{parent}#{child["name"]}") )
-						debug(0,"Purge: Removing unknown object: #{parent}#{child["name"]}")
+						logger(0,"Purge: Removing unknown object: #{parent}#{child["name"]}")
 						deleteObject(child["href"])
 					end
 				end
@@ -259,6 +286,8 @@ class BrocadeVTMRestController
 		return true
 	end
 
+	# read in the preRequisites file. This is used by genNodeConfig when generating the
+   # requires paramater on puppet resources.
 	def loadPreRequisites()
 		@preReq = {}
 		prf = File.open( File.expand_path("../data/precedence.csv", __FILE__) )
@@ -280,10 +309,15 @@ class BrocadeVTMRestController
                    "pools", "traffic_ip_groups", "virtual_servers" ]
 	end
 
+   # Generate a new manifest.
 	def newManifest(uri, object)
 		if( ! uri.path.start_with?(@uri.path) )
-			debug(-1, "This object is not in the config tree? Not adding.")
-			return nil
+			logger(-1, "This object is not in the config tree? If you have switched REST versions, this could cause problems")
+			if @generateOutOfTreeManifests
+				logger(-1, "Trying to Continue...")
+			else
+				return nil
+			end
 		end
 		type = uri.path.byteslice(@uri.path.length..uri.path.length)
 		type = type.chop() if ( type.end_with?("/") )
@@ -292,12 +326,12 @@ class BrocadeVTMRestController
 		if ( object )
 			if ( ! @objects.include?(name) )
 				@objects[name] = newPM
-				debug(2,"New Object: #{name}: #{uri}")
+				logger(2,"New Object: #{name}: #{uri}")
 			end
 		else
 			if ( ! @manifests.include?(name) )
 				@manifests[name] = newPM
-				debug(2,"New Manifest: #{name}: #{uri}")
+				logger(2,"New Manifest: #{name}: #{uri}")
 			end
 		end
 		return name
@@ -353,30 +387,31 @@ class BrocadeVTMRestController
 		end
 	end
 
+	# Recursive function to walk the REST API.
 	def walk(uri=@uri.clone())
 		loadKnownParams()
 		loadPreRequisites()
-		debug(1, "Walking: #{uri}" )
+		logger(1, "Walking: #{uri}" )
 		properties = JSON.parse( @properties )
 		response = do_get(uri)
 		if ( response == nil )
-			debug(-1, "WALK Failed")
+			logger(-1, "WALK Failed")
 			return
 		end
 		if ( response.content_type() == "application/json" ) 
 			json = JSON.parse(response.body)
 			if (json.has_key?("children"))
-				debug(2, "Children: #{json}" )
+				logger(2, "Children: #{json}" )
 				if ( json["children"].empty? )
-					debug(2,"Empty Tree: #{uri}")
+					logger(2,"Empty Tree: #{uri}")
 				end
-				debug(2,"Probing: #{uri}")
+				logger(2,"Probing: #{uri}")
 				probe = probe(uri, properties) if @walkType == WalkTypes::PROBE
 				if ( probe != nil )
-					debug(2, "Creating Manifest for: #{uri}")
+					logger(2, "Creating Manifest for: #{uri}")
 					name = newManifest(uri,false)
 					if name.nil?
-						debug(-1, "ERROR - (BUG?) newManifest returned nil for: #{uri}")
+						logger(-1, "ERROR - (BUG?) newManifest returned nil for: #{uri}")
 					elsif ( probe == :BINARY )
 						@manifests[name].setBinary(true)
 					else
@@ -395,23 +430,23 @@ class BrocadeVTMRestController
 					end
 				end
 				json["children"].each do |child|
-					debug(2, child )
+					logger(2, child )
 					nextURI = parseURI( child["href"] )
 					walk( nextURI )
 				end
 			else
-				debug(3, json )
+				logger(3, json )
 				if @walkType == WalkTypes::PROBE or @walkType == WalkTypes::READ
 					# Existing JSON object
 					name = newManifest(uri,true)
 					if name.nil?
-						debug(-1, "(BUG?) newManifest returned nil for: #{uri}")
+						logger(-1, "(BUG?) newManifest returned nil for: #{uri}")
 					else
 						@objects[name].setJSON(response.body)
 					end
 				elsif @walkType == WalkTypes::DELETE && uri.path.end_with?(@probeName)
-					debug(3, "Deleting Object: #{uri}")
-					debug(3, do_delete(uri).body)
+					logger(3, "Deleting Object: #{uri}")
+					logger(3, do_delete(uri).body)
 				end
 			end
 		else
@@ -419,70 +454,75 @@ class BrocadeVTMRestController
 				# Existing binary object
 				name = newManifest(uri,true)
 				if name.nil?
-					debug(-1, "(BUG?) newManifest returned nil for: #{uri}")
+					logger(-1, "(BUG?) newManifest returned nil for: #{uri}")
 				else
 					@objects[name].setBinary(true)
 					@objects[name].setData(response.body)
-					debug(3, response.body )
+					logger(3, response.body )
 				end
 			elsif @walkType == WalkTypes::DELETE && uri.path.end_with?(@probeName)
-				debug(3, "Deleting Object: #{uri}")
-				debug(3, do_delete(uri).body)
+				logger(3, "Deleting Object: #{uri}")
+				logger(3, do_delete(uri).body)
 			end
 		end
 	end
 
+   # function to probe the API by attempting to create a new object within the tree named @probeName
+   # We detect whether the API is expecting JSON or binary data, as well as any mandatory parameters
 	def probe(uri, json)
 		result = { }  
 		testObject = uri.clone()
 		testObject.path = testObject.path + @probeName
-		debug(1,"Probe: #{testObject.path}")
+		logger(1,"Probe: #{testObject.path}")
 		body = JSON.generate(json)
 		response = do_put(testObject,body)
 		case response
 			when Net::HTTPSuccess then
-				debug(4, "Probe: Body: #{response.body}" )
-				debug(4, "Probe: Complete.")
+				logger(4, "Probe: Body: #{response.body}" )
+				logger(4, "Probe: Complete.")
 				return response.body
 			when Net::HTTPUnsupportedMediaType then
-				debug(4, "Probe: Binary Upload Expected" )
+				logger(4, "Probe: Binary Upload Expected" )
 				response = do_put(testObject, "foo\tbar\n", "application/octet-stream")
-				debug(4, response)
-				debug(4, "Probe: Complete.")
+				logger(4, response)
+				logger(4, "Probe: Complete.")
 				return :BINARY
 			when Net::HTTPForbidden then
-				debug(4, "Probe: Invalid Resource")
-				debug(4, "Probe: Complete.")
+				logger(4, "Probe: Invalid Resource")
+				logger(4, "Probe: Complete.")
 				return nil
 			when Net::HTTPBadRequest then
-				debug(4, "Probe: Mandatory parameter needed")
+				logger(4, "Probe: Mandatory parameter needed")
 				name = newManifest(uri,false)
 				if name.nil?
-					debug(-1, "(BUG?) newManifest returned nil for: #{uri}")
+					logger(-1, "(BUG?) newManifest returned nil for: #{uri}")
 					return nil
 				end
 				jsonError = JSON.parse(response.body)
 				newJSON = (findNeededParams(name, uri, nil, jsonError))
 				if ( newJSON == nil )
-					debug(1, "Probe Failed: #{uri}")
+					logger(1, "Probe Failed: #{uri}")
 					return nil
 				end
 				json['properties'] = newJSON
 				return probe(uri, json)
 			else
-				debug(4, "Probe: Unhandled: #{response}" )
+				logger(4, "Probe: Unhandled: #{response}" )
 				return nil
 		end
 	end
 
+	# This is called by the probe when it encounters missing mandatory parameters.
+   # Ask the user what to do, providing a suggested answer if one exists in the knownparams data.
+   # Also update the puppetmanifest object to inform it about the required parameter.
 	def findNeededParams(name, uri, parent, jsonError)
 		if (jsonError.class == Hash && jsonError.has_key?("error_id"))
 			case jsonError["error_id"]
 				when "resource.validation_error" then
-					debug(4, "Resource Validation Error: Top Level")
+					logger(4, "Resource Validation Error: Top Level")
 					return findNeededParams(name, uri, parent, jsonError["error_info"] )
 				when "property.no_default" then
-					debug(4, "Resource Validation Error: No Default for #{parent}")
+					logger(4, "Resource Validation Error: No Default for #{parent}")
 					print("Mandatory Parameter Required - Please enter a value for: #{name} -> #{parent}: ")
 					if @knownParams[name] != nil and @knownParams[name].has_key?(parent)
 						example = @knownParams[name][parent][1]
@@ -497,15 +537,15 @@ class BrocadeVTMRestController
 						example = new
 						example = Integer(example) if example.match(/^\d+$/) 
 					end
-					debug(4, "Adding Required Param: #{parent} to manifest: #{name}")
+					logger(4, "Adding Required Param: #{parent} to manifest: #{name}")
 					@manifests[name].addRequiredParam(parent, example)
 					return example
 				when "filename.forbiddenpath" then
-					debug(4, "Can't use that name. Barf")
+					logger(4, "Can't use that name. Barf")
 				when "json.wrong_type" then
-					debug(4,"vTM reports wrong type")
+					logger(4,"vTM reports wrong type")
 				else
-					debug(4, "Unhandled JSON Error #{jsonError}")
+					logger(4, "Unhandled JSON Error #{jsonError}")
 			end
 		else
 			newFields = {}
