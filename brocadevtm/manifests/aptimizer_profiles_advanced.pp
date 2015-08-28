@@ -12,31 +12,31 @@ class brocadevtm::aptimizer_profiles_advanced (
   $basic__show_info_bar                      = true,
 ){
   include brocadevtm
-  $ip               = $brocadevtm::rest_ip
-  $port             = $brocadevtm::rest_port
-  $user             = $brocadevtm::rest_user
-  $pass             = $brocadevtm::rest_pass
-  $purge            = $brocadevtm::purge
-  $purge_state_dir  = $brocadevtm::purge_state_dir
+  $ip              = $brocadevtm::rest_ip
+  $port            = $brocadevtm::rest_port
+  $user            = $brocadevtm::rest_user
+  $pass            = $brocadevtm::rest_pass
+  $purge           = $brocadevtm::purge
+  $purge_state_dir = $brocadevtm::purge_state_dir
 
   info ("Configuring aptimizer_profiles_advanced ${name}")
   vtmrest { 'aptimizer/profiles/Advanced':
-    ensure      => $ensure,
-    before      => Class[Brocadevtm::Purge],
-    endpoint    => "https://${ip}:${port}/api/tm/3.3/config/active",
-    username    => $user,
-    password    => $pass,
-    content     => template('brocadevtm/aptimizer_profiles.erb'),
-    type        => 'application/json',
-    internal    => 'aptimizer_profiles_advanced',
-    debug       => 0,
+    ensure   => $ensure,
+    before   => Class[Brocadevtm::Purge],
+    endpoint => "https://${ip}:${port}/api/tm/3.3/config/active",
+    username => $user,
+    password => $pass,
+    content  => template('brocadevtm/aptimizer_profiles.erb'),
+    type     => 'application/json',
+    internal => 'aptimizer_profiles_advanced',
+    debug    => 0,
   }
 
   if ( $purge ) {
     ensure_resource('file', "${purge_state_dir}/aptimizer_profiles", {ensure => present})
     file_line { 'aptimizer/profiles/Advanced':
-      line  => 'aptimizer/profiles/Advanced',
-      path  => "${purge_state_dir}/aptimizer_profiles",
+      line => 'aptimizer/profiles/Advanced',
+      path => "${purge_state_dir}/aptimizer_profiles",
     }
   }
 }

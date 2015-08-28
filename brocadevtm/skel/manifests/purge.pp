@@ -21,14 +21,14 @@ class brocadevtm::purge {
 
   if ($purge) {
     vtmrest { 'purge':
-      ensure     => present,
-      endpoint   => "https://${ip}:${port}/api/tm/3.3/config/active",
-      username   => $user,
-      password   => $pass,
-      content    => $purge_state_dir,
-      type       => 'purge',
-      internal   => 'none',
-      debug      => 0,
+      ensure   => present,
+      endpoint => "https://${ip}:${port}/api/tm/3.3/config/active",
+      username => $user,
+      password => $pass,
+      content  => $purge_state_dir,
+      type     => 'purge',
+      internal => 'none',
+      debug    => 0,
     }
 
   }

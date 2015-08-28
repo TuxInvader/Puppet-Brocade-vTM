@@ -128,12 +128,12 @@ class PuppetManifest
 
 		code += "  include brocadevtm\n"
 
-		code += "  $ip               = $brocadevtm::rest_ip\n"
-		code += "  $port             = $brocadevtm::rest_port\n"
-		code += "  $user             = $brocadevtm::rest_user\n"
-		code += "  $pass             = $brocadevtm::rest_pass\n"
-		code += "  $purge            = $brocadevtm::purge\n"
-		code += "  $purge_state_dir  = $brocadevtm::purge_state_dir\n\n"
+		code += "  $ip              = $brocadevtm::rest_ip\n"
+		code += "  $port            = $brocadevtm::rest_port\n"
+		code += "  $user            = $brocadevtm::rest_user\n"
+		code += "  $pass            = $brocadevtm::rest_pass\n"
+		code += "  $purge           = $brocadevtm::purge\n"
+		code += "  $purge_state_dir = $brocadevtm::purge_state_dir\n\n"
 		code += "  info (\"Configuring #{@type_} ${name}\")\n"
 
 		if isClass
@@ -141,24 +141,24 @@ class PuppetManifest
 		else
 			code += "  vtmrest { \"#{@type}/\${name}\":\n"
 		end
-		code += "    ensure      => $ensure,\n"
-		code += "    before      => Class[Brocadevtm::Purge],\n"
-		code += "    endpoint    => \"https://\${ip}:\${port}/api/tm/#{@restVersion}/config/active\",\n"
-		code += "    username    => $user,\n"
-		code += "    password    => $pass,\n"
+		code += "    ensure   => $ensure,\n"
+		code += "    before   => Class[Brocadevtm::Purge],\n"
+		code += "    endpoint => \"https://\${ip}:\${port}/api/tm/#{@restVersion}/config/active\",\n"
+		code += "    username => $user,\n"
+		code += "    password => $pass,\n"
 		if @isBinary
-			code += "    content     => $content,\n"
-			code += "    type        => 'application/octet-stream',\n"
+			code += "    content  => $content,\n"
+			code += "    type     => 'application/octet-stream',\n"
 		else
 			if @template == nil
-				code += "    content     => template('brocadevtm/#{@type_}.erb'),\n"
+				code += "    content  => template('brocadevtm/#{@type_}.erb'),\n"
 			else
-				code += "    content     => template('brocadevtm/#{@template}'),\n"
+				code += "    content  => template('brocadevtm/#{@template}'),\n"
 			end
-			code += "    type        => 'application/json',\n"
-			code += "    internal    => '#{@type_}',\n"
+			code += "    type     => 'application/json',\n"
+			code += "    internal => '#{@type_}',\n"
 		end
-		code += "    debug       => 0,\n"
+		code += "    debug    => 0,\n"
 		code += "  }\n\n"
 		code += "  if ( $purge ) {\n"
 		if (isClass)
@@ -173,14 +173,14 @@ class PuppetManifest
 			end
 			code += "    ensure_resource('file', \"${purge_state_dir}/#{cFile}\", {ensure => present})\n"
 			code += "    file_line { '#{@type}':\n"
-			code += "      line  => '#{@type}',\n"
-			code += "      path  => \"${purge_state_dir}/#{cFile}\",\n"
+			code += "      line => '#{@type}',\n"
+			code += "      path => \"${purge_state_dir}/#{cFile}\",\n"
 			code += "    }\n"
 		else
 			code += "    ensure_resource('file', \"${purge_state_dir}/#{@type_}\", {ensure => present})\n"
 			code += "    file_line { \"#{@type}/\${name}\":\n"
-			code += "      line  => \"#{@type}/${name}\",\n"
-			code += "      path  => \"${purge_state_dir}/#{@type_}\",\n"
+			code += "      line => \"#{@type}/${name}\",\n"
+			code += "      path => \"${purge_state_dir}/#{@type_}\",\n"
 			code += "    }\n"
 		end
 		code += "  }\n"

@@ -54,31 +54,31 @@ define brocadevtm::kerberos_principals (
   $basic__realm    = undef,
 ){
   include brocadevtm
-  $ip               = $brocadevtm::rest_ip
-  $port             = $brocadevtm::rest_port
-  $user             = $brocadevtm::rest_user
-  $pass             = $brocadevtm::rest_pass
-  $purge            = $brocadevtm::purge
-  $purge_state_dir  = $brocadevtm::purge_state_dir
+  $ip              = $brocadevtm::rest_ip
+  $port            = $brocadevtm::rest_port
+  $user            = $brocadevtm::rest_user
+  $pass            = $brocadevtm::rest_pass
+  $purge           = $brocadevtm::purge
+  $purge_state_dir = $brocadevtm::purge_state_dir
 
   info ("Configuring kerberos_principals ${name}")
   vtmrest { "kerberos/principals/${name}":
-    ensure      => $ensure,
-    before      => Class[Brocadevtm::Purge],
-    endpoint    => "https://${ip}:${port}/api/tm/3.3/config/active",
-    username    => $user,
-    password    => $pass,
-    content     => template('brocadevtm/kerberos_principals.erb'),
-    type        => 'application/json',
-    internal    => 'kerberos_principals',
-    debug       => 0,
+    ensure   => $ensure,
+    before   => Class[Brocadevtm::Purge],
+    endpoint => "https://${ip}:${port}/api/tm/3.3/config/active",
+    username => $user,
+    password => $pass,
+    content  => template('brocadevtm/kerberos_principals.erb'),
+    type     => 'application/json',
+    internal => 'kerberos_principals',
+    debug    => 0,
   }
 
   if ( $purge ) {
     ensure_resource('file', "${purge_state_dir}/kerberos_principals", {ensure => present})
     file_line { "kerberos/principals/${name}":
-      line  => "kerberos/principals/${name}",
-      path  => "${purge_state_dir}/kerberos_principals",
+      line => "kerberos/principals/${name}",
+      path => "${purge_state_dir}/kerberos_principals",
     }
   }
 }
