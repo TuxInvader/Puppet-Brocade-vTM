@@ -3,6 +3,7 @@
 
 - vtmrest now allows purging of unknown configuration
 - brocadevtm has new params $purge and $purg_state_dir - see README
+- new dependancy on puppetlabs/stdlib
  
 # Version 0.2.0
 
