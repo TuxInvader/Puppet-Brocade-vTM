@@ -1,6 +1,6 @@
 {
   "name": "tuxinvader-brocadevtm",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "author": "mbodding @ brocade",
   "summary": "Configure and Manage Brocade vTM Application Delivery Controllers",
   "license": "Apache-2.0",

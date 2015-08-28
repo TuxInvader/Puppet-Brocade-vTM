@@ -27,11 +27,11 @@ configuration of that vTM instance.
 
 You could try downloading a copy from one of these locations
 
-    <https://support.riverbed.com/content/support/software/steelapp/traffic-manager.html>
+ <https://support.riverbed.com/content/support/software/steelapp/traffic-manager.html>
 
-    <http://www.brocade.com/en/products-services/application-delivery-controllers.html>
+ <http://www.brocade.com/en/products-services/application-delivery-controllers.html>
 
-    <http://www1.brocade.com/forms/jsp/steelapp-request-trial/index.jsp>
+ <http://www1.brocade.com/forms/jsp/steelapp-request-trial/index.jsp>
 
 
 ## Installation 
