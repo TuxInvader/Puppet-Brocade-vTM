@@ -220,7 +220,7 @@ class BrocadeVTMRestController
 			uri = @uri.clone()
 			items = IO.readlines(type)
 			File.new(type,"w").close()
-			if (!items[0].include?('/'))
+			if (items.empty? or (!items[0].include?('/')))
 				# dont purge anything in root of configuration tree
 				next
 			end
