@@ -27,11 +27,13 @@ configuration of that vTM instance.
 
 You could try downloading a copy from one of these locations
 
- <https://support.riverbed.com/content/support/software/steelapp/traffic-manager.html>
+vTM Info:  <http://www.brocade.com/en/products-services/application-delivery-controllers.html>
 
- <http://www.brocade.com/en/products-services/application-delivery-controllers.html>
+vTM Eval Signup: <http://www1.brocade.com/forms/jsp/steelapp-request-trial/index.jsp>
 
- <http://www1.brocade.com/forms/jsp/steelapp-request-trial/index.jsp>
+Download Location: <https://support.riverbed.com/content/support/software/steelapp/traffic-manager.html>
+
+Docker Version: <https://hub.docker.com/r/tuxinvader/brocade-vtm/>
 
 
 ## Installation 
