@@ -394,11 +394,12 @@ class PuppetManifest
 						if item.is_a?(Hash)
 							puts(" --!!-- TODO : we do not yet write 'require's for Aptimizer or SNI mappings !!--!!")
 						else
-							ro_ = reqObject.gsub(/[\/\.-]|%20/, "_")
-							item_ = item.gsub(/[\/\.-]|%20/, "_").downcase
+							ro_ = reqObject.gsub(/[\/\.\s-]|%20/, "_")
+							item_ = item.gsub(/[\/\.\s-]|%20/, "_").downcase
 							if File.exist?("#{manifestDir}/#{ro_.downcase}_#{item_}.pp")
 								# This is a builtin class
 								if (!builtins)
+									puts("Relationship found for Built-in object: Including: brocadevtm::#{ro_.downcase}_#{item_}")
 									# builtins are disabled, so check and include if needed
 									lines = IO.readlines(outfile)
 									if ( lines.grep(/brocadevtm::#{ro_.downcase}_#{item_}/).empty? )
