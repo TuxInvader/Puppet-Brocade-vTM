@@ -16,15 +16,27 @@ vTM depending where it is running... Including:
 	Cloud APIs (Amazon, RackSpace, Joyent, etc, etc)
 	Docker modules (if you use docker)
 	puppetlabs-vsphere (if you run ESXi)
+	Guest Customisations (if you run ESXi)
 	cloud-init (Openstack and others)
 	./zinstall --replay-from= on generic Linux
 
 Once you have your vTM stood up. This module can help you manage the
 configuration of that vTM instance.
 
+## Where can I get Brocade vTM?
+
+You could try downloading a copy from one of these locations
+
+    <https://support.riverbed.com/content/support/software/steelapp/traffic-manager.html>
+
+    <http://www.brocade.com/en/products-services/application-delivery-controllers.html>
+
+    <http://www1.brocade.com/forms/jsp/steelapp-request-trial/index.jsp>
+
+
 ## Installation 
 
-    puppet module install tuxinvader/brocadevtm
+    puppet module install tuxinvader-brocadevtm
 
 ## Class brocadevtm (init.pp)
 
@@ -46,7 +58,7 @@ If you want puppet to remove unmanaged configuration, then you may set `$purge =
 
 *Warning:* _If you do use `$purge` then you must include the default configuration objects (ie do not use `genNodeConfig -n`)_
 
-## Usage
+## Example Usage
 
 Simple web service example. Uses a single VIP with two virtual servers:
 HTTP and HTTPS. The HTTPS service does SSL offload, and both use the
