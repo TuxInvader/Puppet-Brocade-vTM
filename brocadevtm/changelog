@@ -1,5 +1,5 @@
 
-# Version 0.2.2
+# Version 0.2.3
 
 - genNodeConfig -c option to attempt to carry on when we see errors
 - specifically this is a workaround for https://github.com/TuxInvader/Puppet-Brocade-vTM/issues/2

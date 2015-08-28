@@ -1,6 +1,6 @@
 {
   "name": "tuxinvader-brocadevtm",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "author": "mbodding @ brocde",
   "summary": "Configure and Manage Brocade vTM",
   "license": "Apache-2.0",
