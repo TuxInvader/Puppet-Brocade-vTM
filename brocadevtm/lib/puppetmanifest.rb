@@ -300,7 +300,7 @@ class PuppetManifest
 			decodeJSON()
 
 			if preReq.has_key?(parentFile)
-				checkRequires(parentFile,preReq,manifestDir)
+				checkRequires(parentFile,preReq,manifestDir,builtins,outfile)
 			end
 
 			if (!allParams) or (isBuiltin and !builtins) 
@@ -382,7 +382,7 @@ class PuppetManifest
 
 	end
 
-	def checkRequires(parentFile,preReq,manifestDir)
+	def checkRequires(parentFile,preReq,manifestDir,builtins,outfile)
 		requires = "["
 		preReq[parentFile].each do |req|
 			reqObject = req.shift
@@ -397,6 +397,16 @@ class PuppetManifest
 							ro_ = reqObject.gsub(/[\/\.-]|%20/, "_")
 							item_ = item.gsub(/[\/\.-]|%20/, "_").downcase
 							if File.exist?("#{manifestDir}/#{ro_.downcase}_#{item_}.pp")
+								# This is a builtin class
+								if (!builtins)
+									# builtins are disabled, so check and include if needed
+									lines = IO.readlines(outfile)
+									if ( lines.grep(/brocadevtm::#{ro_.downcase}_#{item_}/).empty? )
+										nodefile = File.open(outfile,"a")
+										nodefile.puts("\ninclude brocadevtm::#{ro_.downcase}_#{item_}\n")
+										nodefile.close()
+									end  
+								end
 								requires += " Class[Brocadevtm::#{ro_}_#{item_}], "
 							else
 								escaped = item.gsub(' ', '%20')
