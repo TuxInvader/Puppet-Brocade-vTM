@@ -17,8 +17,8 @@ class QuirksManager
 		# required: array of required params
 		# writeFunc: Any special function required for writing JSON - returns the json
 		# compareFunc: Any special function required prior to comparing JSON - returns a hash
-		# readFunc: Any special function required prior to reading JSON
-		# deleteFunc: Any special function required prior to deletion
+		# readFunc: Any special function required prior to reading JSON - not used 
+		# deleteFunc: Any special function required prior to deletion - not used
 
 		@quirkHash["ssl_server_keys"] = { manifest: '{"properties":{"basic":{"note":"","public":"","private":"","request":""}}}', 
 													required: [{"name"=>"basic__public","example"=>""},{"name"=>"basic__private","example"=>""}],
@@ -30,10 +30,12 @@ class QuirksManager
 
 	end
 
+	# return the list of types which have quirks (currently this is just ssl)
 	def getQuirks()
 		return @quirks
 	end
 
+	# Return a specific quickhash
 	def getQuirk(name)
 		return @quirkHash[name]
 	end
@@ -55,7 +57,7 @@ class QuirksManager
 	end
 
 	# If the private key is not the full key, then strip it out of the JSON, 
-   # we don't want to hose the private key with the checksum
+   # we don't want to hose the private key by overwriting it with its checksum
 	def stripHashValue(json)
 		hash = JSON.parse(json)
 		if ( ! hash["properties"]["basic"]["private"].start_with?("-----BEGIN") )

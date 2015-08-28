@@ -21,10 +21,12 @@ class PuppetManifest
 		@template = nil;
 	end
 
+	# Add the given parameter to the list of mandatory params for this manifest
 	def addRequiredParam(name, example)
 		@required[name] = { class: example.class, example: example }
 	end
 
+	# Set this manifest as a binary object
 	def setBinary(isBinary)
 		@isBinary = isBinary
 		if isBinary
@@ -32,18 +34,21 @@ class PuppetManifest
 		end
 	end
 			
+	# Set this manifest as a JSON object
 	def setJSON(json)
 		@isBinary = false
 		@json = json
 		@data = nil
 	end
 
+	# Set the binary data of this manifest
 	def setData(data)
 		@isBinary = true
 		@json = nil
 		@data = data
 	end
 
+	# decode the JSON structure into the params hash
 	def decodeJSON()
 		if @isBinary
 			return
@@ -58,6 +63,8 @@ class PuppetManifest
 		end
 	end
 
+	# recursive function used by decodeJSON to generate parameter names
+	# and calculating spacing for the manifest.
 	def genParams(name, data)
 		if data.is_a?(Hash)
 			data.each do |key, value|
@@ -74,8 +81,11 @@ class PuppetManifest
 		end
 	end	
 
+	# Generate the manifest. 
 	def genManifest(outputDir,isClass=false)
 
+		# If we have documentation available in the skel/docs folder then read it.
+		# Else if we have a parent type, refer to that manifest.
 		docfile = "skel/docs/#{@type_}.doc"
 		if ( File.exist?(docfile) )
 			documentation = File.read(docfile)
@@ -93,8 +103,11 @@ class PuppetManifest
 			documentation = ""
 		end
 
+		# build the parameters hash from the raw JSON
 		decodeJSON()
 
+		# Built in objects should be classes, while types should get defines.
+		# There is only one Ping monitor, but theyre are lots of monitors
 		if isClass
 			desc = "# === Class: brocadevtm::#{@type_}\n"
 			code = "class brocadevtm::#{@type_} (\n"
@@ -105,6 +118,8 @@ class PuppetManifest
 			code = "define brocadevtm::#{@type_} (\n"
 			code += "  \$ensure,\n"
 		end
+
+		# content and ensure are the only params for binaries.
 		if @isBinary 
 			if isClass 
 				code += "  \$content = file('brocadevtm/#{@type_}.data'),\n){\n"
@@ -113,11 +128,15 @@ class PuppetManifest
 			end
 		else
 		
+			# required keys have no default, puppet will force the user to enter
+			# a value when they declare an instance of this type
 			@required.each_key do |key|
 				$stderr.puts($key)
 				code += "  \$#{key},\n"
 			end
 
+			# Everything else is optional, and we use the defaults found by
+			# walking the API
 			@params.each do |key,value|
 				value = inspectValue(value)
 				sp = " " * ( @maxKeyLength - key.length )
@@ -126,8 +145,8 @@ class PuppetManifest
 			code += "){\n"
 		end
 
+		# Our manifests all look the same, include the parent class and it's params
 		code += "  include brocadevtm\n"
-
 		code += "  $ip              = $brocadevtm::rest_ip\n"
 		code += "  $port            = $brocadevtm::rest_port\n"
 		code += "  $user            = $brocadevtm::rest_user\n"
@@ -136,6 +155,7 @@ class PuppetManifest
 		code += "  $purge_state_dir = $brocadevtm::purge_state_dir\n\n"
 		code += "  info (\"Configuring #{@type_} ${name}\")\n"
 
+		# Now configure our customer type: vtmrest
 		if isClass
 			code += "  vtmrest { '#{@type}':\n"
 		else
@@ -160,6 +180,9 @@ class PuppetManifest
 		end
 		code += "    debug    => 0,\n"
 		code += "  }\n\n"
+
+		# Now the purge section. figure out where this manifest should store it's name if purge
+		# is enabled.
 		code += "  if ( $purge ) {\n"
 		if (isClass)
 			if @template
@@ -186,6 +209,7 @@ class PuppetManifest
 		code += "  }\n"
 		code += "}\n"
 
+		# Finally write the manifest to disk
 		filename = "#{outputDir}/#{@type_}.pp"
 		manifest = File.open(filename, "w")
 		manifest.puts desc
@@ -194,6 +218,7 @@ class PuppetManifest
 		manifest.close
 	end
 
+	# function to generate the template string for a parameter. This is called by genTemplate()
 	def genTemplateString(name,data,templvar)
 		if data.is_a?(Hash)
 			propStr = "\"#{name}\":{"
@@ -214,6 +239,7 @@ class PuppetManifest
 		end
 	end
 
+	# Generate our template
 	def genTemplate(outputDir)
 
 		if @isBinary
@@ -222,6 +248,7 @@ class PuppetManifest
 
 		parsed = JSON.parse(@json)
 	
+		# Generate the template string for each property
 		erb = '{"properties":{';
 		parsed["properties"].each do |property, data|
 			erb += genTemplateString(property,data,"") 
@@ -230,6 +257,7 @@ class PuppetManifest
 		erb = erb.gsub(',}', '}')
 		erb = erb.gsub('},}','}}')
 
+		# Write the template to disk
 		filename = "#{outputDir}/#{@type_}.erb"
 		template = File.open(filename, "w")
 		template.puts erb
@@ -245,6 +273,7 @@ class PuppetManifest
 
 	end
 
+	# If we're a binary manifest, then store our data in an external file.
 	def genBinary(outputDir)
 
 		if ( ! @isBinary )
@@ -263,21 +292,24 @@ class PuppetManifest
 	end
 
 	# Write a node config to the given outfile.
-   # By default we write all configuration to the outfile, however...
-   # If allParams is false, then ignore params which are using defaults
-   # If builtin is false, then don't create config for built-in objects
+	# By default we write all configuration to the outfile, however...
+	# If allParams is false, then ignore params which are using defaults
+	# If builtin is false, then don't create config for built-in objects (unless they're in use)
 	def genNodeConfig(outfile, allParams, builtins, preReq, manifestDir, binDir=nil)
 
 		isBuiltin = false
 		myfile = "#{manifestDir}/#{@type_}.pp"
 
 		if File.exist?(myfile)
+			# I have my own manifest, I'm a builtin class
 			isBuiltin = true
 			parentFile = File.basename(myfile).chomp(".pp")
 		else
+			# Locate my type definition file
 			parentFile = findParent(myfile, extension=".pp").chomp(".pp")
 		end
 
+		# Generate the classHash which will have all the defaults for my type
 		if parentFile != nil
 			classHash = parseManifest(manifestDir, parentFile)
 			name = @uri.sub(/.*?\/config\/active\/.*\/(.*)/,'\1')
@@ -285,6 +317,7 @@ class PuppetManifest
 			classHash = {}
 		end
 
+		# If I'm binary and a builtin class, then read in my default data
 		if @isBinary
 			if isBuiltin
 				myDataFile = classHash["content"].sub("brocadevtm","#{manifestDir}../files")[7..-4]
@@ -296,13 +329,20 @@ class PuppetManifest
 			else
 				myData = ""
 			end
+
+		# If I'm a JSON object, then decode the data
 		else
 			decodeJSON()
 
+			# Process the preReqs to determine which objects we have dependencies on. This will 
+			# populate the requires meta-data, and inform puppet of our relationships to ensure
+			# objects are created in a sensible order. 
 			if preReq.has_key?(parentFile)
 				checkRequires(parentFile,preReq,manifestDir,builtins,outfile)
 			end
 
+			# If we're generating a sparse config or excluding default built-in classes
+			# then check to see which params are using defaults and drop them.
 			if (!allParams) or (isBuiltin and !builtins) 
 				@params.each do |key,value|
 				value = inspectValue(value)
@@ -317,6 +357,7 @@ class PuppetManifest
 			end
 		end
 
+		# If we're a unmodified built-in, and built-ins are excluded, then we're done
 		if (!builtins) and isBuiltin 
 			if (!@isBinary) and @params.empty?
 				puts("Ignoring BuiltIn JSON Object: #{@type_}")
@@ -327,6 +368,7 @@ class PuppetManifest
 			end
 		end
 
+		# Append my configuration to the output file
 		nodefile = File.open(outfile,"a")
 		if isBuiltin
 			if @isBinary
@@ -382,6 +424,9 @@ class PuppetManifest
 
 	end
 
+	# This function generates the requires meta-data for puppet. We check the prereqs provided
+	# and create a relationship for each object we use. If builtins are set to be excluded, but
+	# we rely on one (eg monitors_ping), then include it here.
 	def checkRequires(parentFile,preReq,manifestDir,builtins,outfile)
 		requires = "["
 		preReq[parentFile].each do |req|
@@ -431,6 +476,8 @@ class PuppetManifest
 		end
 	end
 
+	# Write the binary data out to a file in the binDir. If binDir is not specified then
+	# create a file using the outfile as a prefix.
 	def writeBinFile(outfile, binDir)
 
 		if binDir.nil?
@@ -439,6 +486,7 @@ class PuppetManifest
 			outfile = binDir + "/" + @type_ + ".data"
 		end
 
+		# Write the file as 8bit ascii to avoid corruption
 		outfile = File.expand_path(outfile)
 		out = File.open(outfile, "wb:ASCII-8BIT")
 		out.write(@data)
@@ -448,6 +496,8 @@ class PuppetManifest
 
 	end
 
+	# Generate a classHash of default values from a given manifest.
+	# This classHash can then be used in direct comparisson with @params
 	def parseManifest(manifestDir,parentFile)
 		classHash = {}
 		File.open("#{manifestDir}/#{parentFile}.pp", "r").each_line do |line|
@@ -470,6 +520,8 @@ class PuppetManifest
 		return classHash
 	end
 
+	# Convert values from the format used internally by ruby into the correct format
+	# for writing to puppet manifests.
 	def inspectValue(value)
 		if value == ""
 			value = "undef"
@@ -488,8 +540,8 @@ class PuppetManifest
 	end
 
 	# Check to see if this filename has a parent object. 
-   # If the file type is erb, then compare the file with it's parent.
-   # If the file type is pp, then check for Define, ignore Class.
+	# If the file type is erb, then compare the file with it's parent.
+	# If the file type is pp, then check for Define, ignore Class.
 	def findParent(filename, extension=".erb")
 		parentFile = nil
 		parent = nil
@@ -521,6 +573,7 @@ class PuppetManifest
 		return nil
 	end
 
+	# Dump detailed information about this manifest to stdout
 	def dump()
 		puts( "================================")
 		puts("Type: #{@type}")

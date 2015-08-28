@@ -67,7 +67,7 @@ class BrocadeVTMRestController
 	end
 
 	# Return a new uri object for the provided path, by cloning our core @uri and
-   # updating the path elements. Return nil if we jump hosts.
+	# updating the path elements. Return nil if we jump hosts.
 	def parseURI(uri)
 		newURI = @uri.clone()
 		if ( uri.start_with?("/") )
@@ -173,8 +173,8 @@ class BrocadeVTMRestController
 		return false
 	end
 
-   # Recurse over the hash and compare all elements. Simply using hash == hash can fail
-   # when the keys are in a different order.
+	# Recurse over the hash and compare all elements. Simply using hash == hash can fail
+	# when the keys are in a different order.
 	def deepCompare(name, hash1, hash2)
 		if hash1.is_a?(Hash)
 			hash1.each do |key,value|
@@ -221,7 +221,7 @@ class BrocadeVTMRestController
 	end
 
 	# Load known parameters to use as default answers to mandatory params.
-   # Used when we walk the API.
+	# Used when we walk the API.
 	def loadKnownParams()
 		kpf = File.open( File.expand_path("../data/required.csv", __FILE__) )
 		kpf.each_line do |line|
@@ -287,7 +287,7 @@ class BrocadeVTMRestController
 	end
 
 	# read in the preRequisites file. This is used by genNodeConfig when generating the
-   # requires paramater on puppet resources.
+	# requires paramater on puppet resources.
 	def loadPreRequisites()
 		@preReq = {}
 		prf = File.open( File.expand_path("../data/precedence.csv", __FILE__) )
@@ -305,11 +305,11 @@ class BrocadeVTMRestController
 
 	def loadWalkOrdering()
 		walkOrder = [ "monitors", "rules", "ssl_", "aptimizer", "locations", 
-                   "dns_", "glb_services", "kerberos_keytabs", "kerberos", 
-                   "pools", "traffic_ip_groups", "virtual_servers" ]
+							"dns_", "glb_services", "kerberos_keytabs", "kerberos", 
+							"pools", "traffic_ip_groups", "virtual_servers" ]
 	end
 
-   # Generate a new manifest.
+	# Generate a new manifest.
 	def newManifest(uri, object)
 		if( ! uri.path.start_with?(@uri.path) )
 			logger(-1, "This object is not in the config tree? If you have switched REST versions, this could cause problems")
@@ -338,9 +338,9 @@ class BrocadeVTMRestController
 	end
 
 	# Write a node config to the given outfile.
-   # By default we write all configuration to the outfile, however...
-   # If allParams is false, then ignore params which are using defaults
-   # If builtin is false, then don't create config for built-in objects
+	# By default we write all configuration to the outfile, however...
+	# If allParams is false, then ignore params which are using defaults
+	# If builtin is false, then don't create config for built-in objects
 	def dumpNodeConfig(outfile, allParams=true, builtin=true, manifestDir="#{@homedir}/manifests/", binDir=nil)
 
 		loadPreRequisites()
@@ -467,8 +467,8 @@ class BrocadeVTMRestController
 		end
 	end
 
-   # function to probe the API by attempting to create a new object within the tree named @probeName
-   # We detect whether the API is expecting JSON or binary data, as well as any mandatory parameters
+	# function to probe the API by attempting to create a new object within the tree named @probeName
+	# We detect whether the API is expecting JSON or binary data, as well as any mandatory parameters
 	def probe(uri, json)
 		result = { }  
 		testObject = uri.clone()
@@ -513,8 +513,8 @@ class BrocadeVTMRestController
 	end
 
 	# This is called by the probe when it encounters missing mandatory parameters.
-   # Ask the user what to do, providing a suggested answer if one exists in the knownparams data.
-   # Also update the puppetmanifest object to inform it about the required parameter.
+	# Ask the user what to do, providing a suggested answer if one exists in the knownparams data.
+	# Also update the puppetmanifest object to inform it about the required parameter.
 	def findNeededParams(name, uri, parent, jsonError)
 		if (jsonError.class == Hash && jsonError.has_key?("error_id"))
 			case jsonError["error_id"]
