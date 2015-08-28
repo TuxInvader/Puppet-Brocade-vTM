@@ -1,4 +1,9 @@
 
+# Version 0.2.1
+
+- vtmrest now allows purging of unknown configuration
+- brocadevtm has new params $purge and $purg_state_dir - see README
+ 
 # Version 0.2.0
 
 - genNodeConfig now creates relationships between objects.

@@ -26,6 +26,24 @@ configuration of that vTM instance.
 
     puppet module install tuxinvader/brocadevtm
 
+## Class brocadevtm (init.pp)
+
+When declaring your brocadevtm class, you must provide a `rest_user` and `rest_pass` parameter. All other parameters are optional.
+
+    Defaults:
+      rest_user         = undef
+      rest_pass         = undef
+      rest_ip           = 127.0.0.1
+      rest_port         = 9070
+      purge             = false
+      purge_state_dir   = undef
+
+By default puppet only cares about the configuration which you explicitly declare. If configuration exists on the vTM which is not included in your node manifest, it will be ignored.
+
+If you want puppet to remove unmanaged configuration, then you may set `$purge => true` (and provide a place for the module to store state `$purge_state_dir`). Puppet will then store the names of known resources in the state directory, and will remove all unknown resources from the vTM. 
+
+*Warning:* _If you do use `$purge` then you must not use a sparse configuration (ie declare everything)_
+
 ## Usage
 
 Simple web service example. Uses a single VIP with two virtual servers:
