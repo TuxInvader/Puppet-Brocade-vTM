@@ -40,31 +40,31 @@ class brocadevtm::event_types_default_events (
   $zxtms__objects               = '[]',
 ){
   include brocadevtm
-  $ip              = $brocadevtm::rest_ip
-  $port            = $brocadevtm::rest_port
-  $user            = $brocadevtm::rest_user
-  $pass            = $brocadevtm::rest_pass
-  $purge           = $brocadevtm::purge
-  $purge_state_dir = $brocadevtm::purge_state_dir
+  $ip               = $brocadevtm::rest_ip
+  $port             = $brocadevtm::rest_port
+  $user             = $brocadevtm::rest_user
+  $pass             = $brocadevtm::rest_pass
+  $purge            = $brocadevtm::purge
+  $purge_state_dir  = $brocadevtm::purge_state_dir
 
   info ("Configuring event_types_default_events ${name}")
   vtmrest { 'event_types/Default%20Events':
-    ensure     => $ensure,
-    before     => Class[Brocadevtm::Purge],
-    endpoint   => "https://${ip}:${port}/api/tm/3.3/config/active",
-    username   => $user,
-    password   => $pass,
-    content    => template('brocadevtm/event_types.erb'),
-    type       => 'application/json',
-    internal   => 'event_types_default_events',
-    debug      => 0,
+    ensure      => $ensure,
+    before      => Class[Brocadevtm::Purge],
+    endpoint    => "https://${ip}:${port}/api/tm/3.3/config/active",
+    username    => $user,
+    password    => $pass,
+    content     => template('brocadevtm/event_types.erb'),
+    type        => 'application/json',
+    internal    => 'event_types_default_events',
+    debug       => 0,
   }
 
   if ( $purge ) {
     ensure_resource('file', "${purge_state_dir}/event_types", {ensure => present})
-    file_line { "event_types/Default%20Events":
-      line => "event_types/Default%20Events",
-      path => "${purge_state_dir}/event_types",
+    file_line { 'event_types/Default%20Events':
+      line  => 'event_types/Default%20Events',
+      path  => "${purge_state_dir}/event_types",
     }
   }
 }

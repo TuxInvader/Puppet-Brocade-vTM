@@ -30,30 +30,30 @@ define brocadevtm::license_keys (
   $content,
 ){
   include brocadevtm
-  $ip              = $brocadevtm::rest_ip
-  $port            = $brocadevtm::rest_port
-  $user            = $brocadevtm::rest_user
-  $pass            = $brocadevtm::rest_pass
-  $purge           = $brocadevtm::purge
-  $purge_state_dir = $brocadevtm::purge_state_dir
+  $ip               = $brocadevtm::rest_ip
+  $port             = $brocadevtm::rest_port
+  $user             = $brocadevtm::rest_user
+  $pass             = $brocadevtm::rest_pass
+  $purge            = $brocadevtm::purge
+  $purge_state_dir  = $brocadevtm::purge_state_dir
 
   info ("Configuring license_keys ${name}")
   vtmrest { "license_keys/${name}":
-    ensure     => $ensure,
-    before     => Class[Brocadevtm::Purge],
-    endpoint   => "https://${ip}:${port}/api/tm/3.3/config/active",
-    username   => $user,
-    password   => $pass,
-    content    => $content,
-    type       => 'application/octet-stream',
-    debug      => 0,
+    ensure      => $ensure,
+    before      => Class[Brocadevtm::Purge],
+    endpoint    => "https://${ip}:${port}/api/tm/3.3/config/active",
+    username    => $user,
+    password    => $pass,
+    content     => $content,
+    type        => 'application/octet-stream',
+    debug       => 0,
   }
 
   if ( $purge ) {
     ensure_resource('file', "${purge_state_dir}/license_keys", {ensure => present})
     file_line { "license_keys/${name}":
-      line => "license_keys/${name}",
-      path => "${purge_state_dir}/license_keys",
+      line  => "license_keys/${name}",
+      path  => "${purge_state_dir}/license_keys",
     }
   }
 }

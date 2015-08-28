@@ -48,31 +48,31 @@ define brocadevtm::locations (
   $basic__type      = 'config',
 ){
   include brocadevtm
-  $ip              = $brocadevtm::rest_ip
-  $port            = $brocadevtm::rest_port
-  $user            = $brocadevtm::rest_user
-  $pass            = $brocadevtm::rest_pass
-  $purge           = $brocadevtm::purge
-  $purge_state_dir = $brocadevtm::purge_state_dir
+  $ip               = $brocadevtm::rest_ip
+  $port             = $brocadevtm::rest_port
+  $user             = $brocadevtm::rest_user
+  $pass             = $brocadevtm::rest_pass
+  $purge            = $brocadevtm::purge
+  $purge_state_dir  = $brocadevtm::purge_state_dir
 
   info ("Configuring locations ${name}")
   vtmrest { "locations/${name}":
-    ensure     => $ensure,
-    before     => Class[Brocadevtm::Purge],
-    endpoint   => "https://${ip}:${port}/api/tm/3.3/config/active",
-    username   => $user,
-    password   => $pass,
-    content    => template('brocadevtm/locations.erb'),
-    type       => 'application/json',
-    internal   => 'locations',
-    debug      => 0,
+    ensure      => $ensure,
+    before      => Class[Brocadevtm::Purge],
+    endpoint    => "https://${ip}:${port}/api/tm/3.3/config/active",
+    username    => $user,
+    password    => $pass,
+    content     => template('brocadevtm/locations.erb'),
+    type        => 'application/json',
+    internal    => 'locations',
+    debug       => 0,
   }
 
   if ( $purge ) {
     ensure_resource('file', "${purge_state_dir}/locations", {ensure => present})
     file_line { "locations/${name}":
-      line => "locations/${name}",
-      path => "${purge_state_dir}/locations",
+      line  => "locations/${name}",
+      path  => "${purge_state_dir}/locations",
     }
   }
 }

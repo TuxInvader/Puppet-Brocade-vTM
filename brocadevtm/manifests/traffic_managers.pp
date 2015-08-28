@@ -448,31 +448,31 @@ define brocadevtm::traffic_managers (
   $snmp__username                         = undef,
 ){
   include brocadevtm
-  $ip              = $brocadevtm::rest_ip
-  $port            = $brocadevtm::rest_port
-  $user            = $brocadevtm::rest_user
-  $pass            = $brocadevtm::rest_pass
-  $purge           = $brocadevtm::purge
-  $purge_state_dir = $brocadevtm::purge_state_dir
+  $ip               = $brocadevtm::rest_ip
+  $port             = $brocadevtm::rest_port
+  $user             = $brocadevtm::rest_user
+  $pass             = $brocadevtm::rest_pass
+  $purge            = $brocadevtm::purge
+  $purge_state_dir  = $brocadevtm::purge_state_dir
 
   info ("Configuring traffic_managers ${name}")
   vtmrest { "traffic_managers/${name}":
-    ensure     => $ensure,
-    before     => Class[Brocadevtm::Purge],
-    endpoint   => "https://${ip}:${port}/api/tm/3.3/config/active",
-    username   => $user,
-    password   => $pass,
-    content    => template('brocadevtm/traffic_managers.erb'),
-    type       => 'application/json',
-    internal   => 'traffic_managers',
-    debug      => 0,
+    ensure      => $ensure,
+    before      => Class[Brocadevtm::Purge],
+    endpoint    => "https://${ip}:${port}/api/tm/3.3/config/active",
+    username    => $user,
+    password    => $pass,
+    content     => template('brocadevtm/traffic_managers.erb'),
+    type        => 'application/json',
+    internal    => 'traffic_managers',
+    debug       => 0,
   }
 
   if ( $purge ) {
     ensure_resource('file', "${purge_state_dir}/traffic_managers", {ensure => present})
     file_line { "traffic_managers/${name}":
-      line => "traffic_managers/${name}",
-      path => "${purge_state_dir}/traffic_managers",
+      line  => "traffic_managers/${name}",
+      path  => "${purge_state_dir}/traffic_managers",
     }
   }
 }

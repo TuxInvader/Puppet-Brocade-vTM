@@ -54,8 +54,8 @@ class brocadevtm (
     if ( $purge_state_dir == undef ) {
       fail('You must set a $purge_state_dir if using $purge = true')
     }
-    file { "$purge_state_dir":
-      ensure => directory,
+    file { $purge_state_dir:
+      ensure  => directory,
     }
   }
 
