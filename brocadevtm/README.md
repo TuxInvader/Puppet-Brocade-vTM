@@ -40,9 +40,11 @@ When declaring your brocadevtm class, you must provide a `rest_user` and `rest_p
 
 By default puppet only cares about the configuration which you explicitly declare. If configuration exists on the vTM which is not included in your node manifest, it will be ignored.
 
+*Warning* _Purge is Dangerous!_
+
 If you want puppet to remove unmanaged configuration, then you may set `$purge => true` (and provide a place for the module to store state `$purge_state_dir`). Puppet will then store the names of known resources in the state directory, and will remove all unknown resources from the vTM. 
 
-*Warning:* _If you do use `$purge` then you must not use a sparse configuration (ie declare everything)_
+*Warning:* _If you do use `$purge` then you must include the default configuration objects (ie do not use `genNodeConfig -n`)_
 
 ## Usage
 
