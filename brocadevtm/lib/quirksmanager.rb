@@ -8,8 +8,9 @@ require 'digest'
 
 class QuirksManager
 
-	def initialize()
+	def initialize(restVersion)
 	
+		@restVersion = restVersion
 		@quirks = [ "ssl_server_keys", "ssl_client_keys" ]
 		@quirkHash = {}
 
@@ -23,7 +24,8 @@ class QuirksManager
 		@quirkHash["ssl_server_keys"] = { manifest: '{"properties":{"basic":{"note":"","public":"","private":"","request":""}}}', 
 													required: [{"name"=>"basic__public","example"=>""},{"name"=>"basic__private","example"=>""}],
 												 	compareFunc: "hashPrivateKey", writeFunc: "stripHashValue" }
-						
+
+		@quirkHash["monitors"] = { writeFunc: "setEditableKeys" }
 	
 		# SSL Client and Server keys need the same additional processing
 		@quirkHash["ssl_client_keys"] = @quirkHash["ssl_server_keys"]
@@ -44,7 +46,7 @@ class QuirksManager
 
 	# Create a Base64 encoded SHA256 hash of the private key data for comparison with REST API
 	# Compare functions should accept a JSON string, and return a hash for comparison
-	def hashPrivateKey(json)
+	def hashPrivateKey(uri, json)
 		hash = JSON.parse(json)
 		if ( ! hash["properties"]["basic"]["private"].start_with?("-----BEGIN") )
 			# private is not a private key, maybe we stored the hash? Do nothing.
@@ -58,7 +60,7 @@ class QuirksManager
 
 	# If the private key is not the full key, then strip it out of the JSON, 
    # we don't want to hose the private key by overwriting it with its checksum
-	def stripHashValue(json)
+	def stripHashValue(uri, json)
 		hash = JSON.parse(json)
 		if ( ! hash["properties"]["basic"]["private"].start_with?("-----BEGIN") )
 			hash["properties"]["basic"].delete("private")
@@ -66,6 +68,49 @@ class QuirksManager
 		else
 			return json
 		end
+	end
+
+	# Add expert_keys to monitor put requests so that they can be seen in the UI.
+	def setEditableKeys(uri, json)
+
+		# Editable keys not available prior to REST Version 3.5 (vTM 10.1)
+		if @restVersion < 3.5
+			return json
+		end
+
+		# monitor types 'rtsp', 'sip', 'tcp_transaction'
+		hash = JSON.parse(json)
+		type = hash["properties"]["basic"]["type"]
+		case type
+		when "http"
+			uri.query = "expert_keys=editable_keys,can_use_ssl"
+			hash["properties"]["basic"]["editable_keys"] = ["authentication","body_regex","host_header","path","status_regex"]
+			hash["properties"]["basic"]["can_use_ssl"] = true
+			json = JSON.generate(hash)
+		when "rtsp"
+			uri.query = "expert_keys=editable_keys"
+			hash["properties"]["basic"]["editable_keys"] = ["rtsp_body_regex","rtsp_path","rtsp_status_regex"]
+			json = JSON.generate(hash)
+		when "program"
+			uri.query = "expert_keys=can_use_ssl"
+			hash["properties"]["basic"]["can_use_ssl"] = true
+			json = JSON.generate(hash)
+		when "sip"
+			uri.query = "expert_keys=editable_keys,can_use_ssl,can_edit_ssl"
+			if hash["properties"]["sip"]["transport"] == "udp"
+				hash["properties"]["basic"]["editable_keys"] = ["sip_status_regex","sip_body_regex","udp_accept_all"]
+			else
+				hash["properties"]["basic"]["editable_keys"] = ["sip_status_regex","sip_body_regex"]
+			end
+			hash["properties"]["basic"]["can_use_ssl"] = true
+			json = JSON.generate(hash)
+		when "tcp_transaction"
+			uri.query = "expert_keys=editable_keys,can_use_ssl"
+			hash["properties"]["basic"]["editable_keys"] = ["write_string","close_string","response_regex"]
+			hash["properties"]["basic"]["can_use_ssl"] = true
+			json = JSON.generate(hash)
+		end
+		return json
 	end
 
 end
