@@ -21,7 +21,7 @@ class BrocadeVTMRestController
 
 	def initialize(host, port, restVersion, user, pass, loggerLevel=0)
 		@loggerLevel = Integer(loggerLevel)
-		@restVersion = restVersion
+		@restVersion = Float(restVersion)
 		@uri = URI.parse("https://#{host}:#{port}/api/tm/#{restVersion}/config/active/")
 		@user = user
 		@pass = pass
@@ -36,7 +36,7 @@ class BrocadeVTMRestController
 		@knownParams = {}
 		@preReq = {} 
 		@rewalk = {}
-		@qm = QuirksManager.new()
+		@qm = QuirksManager.new(@restVersion)
 		@quirks = @qm.getQuirks()
 		@homedir = File.expand_path( "#{File.dirname(__FILE__)}/.." )
 		@generateOutOfTreeManifests = false
@@ -146,7 +146,8 @@ class BrocadeVTMRestController
 
 	# Puppet Compare Function
 	def puppetCompare(name, content, type, internal) 
-		vtmResponse = getObject(name);
+		uri = parseURI(name)
+		vtmResponse = do_get(uri)
 		if ( vtmResponse == nil )
 			return nil
 		elsif ( vtmResponse.code != "200" )
@@ -155,7 +156,7 @@ class BrocadeVTMRestController
 		if type == "application/json"
 			qh = @qm.getQuirk(internal);
 			if ( qh != nil and qh.is_a?(Hash) and qh.has_key?(:compareFunc) )
-				puppet = @qm.send(qh[:compareFunc], content)
+				puppet = @qm.send(qh[:compareFunc], uri, content)
 			else
 				puppet = JSON.parse(content)
 			end
@@ -205,14 +206,14 @@ class BrocadeVTMRestController
 	# Puppet Create function
 	def puppetCreate(name, content, type, internal)
 
+		uri = parseURI(name)
 		if type == "application/json"
 			qh = @qm.getQuirk(internal);
 			if ( qh != nil and qh.is_a?(Hash) and qh.has_key?(:writeFunc) )
-				content = @qm.send(qh[:writeFunc], content)
+				content = @qm.send(qh[:writeFunc], uri, content)
 			end
 		end
-		return putObject(name,content,type)
-
+		return do_put(uri, content, type)
 	end
 
 	# Puppet Delete function
