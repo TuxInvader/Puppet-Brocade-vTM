@@ -9,6 +9,16 @@ This is a puppet module for configuring the Brocade vTM - formerly:
 	Riverbed Stingray
 	Riverbed SteelApp
 
+#### Current Release Candidates
+
+If you want to manage vTMs running version 9.9 upto 10.1 then please uses 0.33.x
+
+If you want to manage all 10.1 vTMs then you please use 0.35.x
+
+See notes on Module versioning below....
+
+#### Deploying vTM
+
 This module does not envolve itself with the deployment of the vTM. 
 There are many ways for you to automate the deployment of the
 vTM depending where it is running... Including:
@@ -51,11 +61,6 @@ Eg.
 
 + module version 0.33.64 would be Module version 0, patch 64 for the 3.3 REST API.
 + Module version 5.35.2 would be Module version 5, patch 2, for the 3.5 REST API.
-
-#### Current Release Candidates
-
-If you want to manage vTMs running version 9.9 upto 10.1 then please uses 0.33.x
-If you want to manage all 10.1 vTMs then you please use 0.35.x
 
 ## Installation 
 
