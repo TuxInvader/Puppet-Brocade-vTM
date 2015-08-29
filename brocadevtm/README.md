@@ -35,6 +35,22 @@ Download Location: <https://support.riverbed.com/content/support/software/steela
 
 Docker Version: <https://hub.docker.com/r/tuxinvader/brocade-vtm/>
 
+## Module versioning
+
+The versioning of this module does not follow [Semantic Versioning](http://semver.org/) exactly.
+
+I want to indicate the REST API version being provided in the version number, and so rather than using 
+
+> Major . Minor . Patch
+
+ we use 
+
+> ModuleVersion . API-Major . API-Minor - Patch
+
+Eg. module version 1.3.3-rc1 would be Module version 1, release candidate 1 for the 3.3 REST API.
+Eg. Module version 5.3.5-011 would be Module version 5, patch release 11, for the 3.5 REST API.
+
+
 ## Installation 
 
     puppet module install tuxinvader-brocadevtm
