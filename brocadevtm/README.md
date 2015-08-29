@@ -11,9 +11,9 @@ This is a puppet module for configuring the Brocade vTM - formerly:
 
 #### Current Release Candidates
 
-If you want to manage vTMs running version 9.9 upto 10.1 then please uses 0.33.x
+If you want to manage vTMs running versions from 9.9 upto 10.1 then please use 0.33.x
 
-If you want to manage all 10.1 vTMs then you please use 0.35.x
+However if all of your vTMs are running 10.1 then please use 0.35.x
 
 See notes on Module versioning below....
 
