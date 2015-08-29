@@ -170,7 +170,7 @@ I recommend that you run genManifests against a freshly built/clean vTM host,
 unless you explicitly want to include some of your configuration as default
 manifests.
 
-## Tools (genNodeConfig)
+### Tools (genNodeConfig)
 
 This tool is the most useful one for most people. It allows you to build a
 manifest by importing the configuration of a preconfigured vTM.
@@ -216,7 +216,7 @@ Note: The vTM does not provide private SSL keys via the REST api. So this tool c
 your private keys. Instead it will store a SHA256 fingerprint as provided by REST. You
 will need to manually add your private keys to your manifest if you want them
 
-## Tools (cleanup)
+### Tools (cleanup)
 
 Delete the files in manifests, templates, files, and optionally skel/docs,
 and then copy in the initial configuration from the skel folder.
@@ -237,7 +237,7 @@ To clean up all files including the documentation in skel/docs
 The initial configuration only contains init.pp, you will need to execute
 genManifests after running cleanup
 
-## Tools (updateDocs)
+### Tools (updateDocs)
 
 You will need to have a copy of the REST schemas available to use this.
 The schemas can be found in $ZEUSHOME/zxtm/etc of any 10.0 and newer version
@@ -264,7 +264,7 @@ updateDocs places a markdown file for each REST schema in the skel/docs
 folder. The genManifests tool will look in this folder as it builds
 manifests, so you should ensure you use the same API version in both.
 
-## Tools (genManifests)
+### Tools (genManifests)
 
 I only wrote the init.pp manifest myself, the remainder are generate by a ruby
 script. The script walks the vTM REST API and then writes a manifests for each
