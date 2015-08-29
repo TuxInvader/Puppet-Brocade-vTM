@@ -27,13 +27,13 @@ configuration of that vTM instance.
 
 You could try one of these locations:
 
-Brocade vTM Info:  <http://www.brocade.com/en/products-services/application-delivery-controllers.html>
++ [Brocade vTM Information](http://www.brocade.com/en/products-services/application-delivery-controllers.html "vTM Home Page")
 
-Brocade vTM Eval Signup: <http://www1.brocade.com/forms/jsp/steelapp-request-trial/index.jsp>
++ [Brocade vTM Evaluation Signup](http://www1.brocade.com/forms/jsp/steelapp-request-trial/index.jsp> "vTM Evaluation")
 
-Download Location: <https://support.riverbed.com/content/support/software/steelapp/traffic-manager.html>
++ [Brocade vTM Download Location](https://support.riverbed.com/content/support/software/steelapp/traffic-manager.html "vTM Downloads")
 
-Docker Version: <https://hub.docker.com/r/tuxinvader/brocade-vtm/>
++ [Brocade vTM Docker Image](https://hub.docker.com/r/tuxinvader/brocade-vtm/> "Docker Image")
 
 ## Module versioning
 
@@ -43,17 +43,27 @@ I want to indicate the REST API version being provided in the version number, an
 
 > Major . Minor . Patch
 
- we use 
+We include the rest API verion in the Minor number. 
 
-> ModuleVersion . API-Major . API-Minor - Patch
+> ModuleVersion . API-Major + API-Minor . Patch
 
-Eg. module version 1.3.3-rc1 would be Module version 1, release candidate 1 for the 3.3 REST API.
-Eg. Module version 5.3.5-011 would be Module version 5, patch release 11, for the 3.5 REST API.
+Eg. 
 
++ module version 0.33.64 would be Module version 0, patch 64 for the 3.3 REST API.
++ Module version 5.35.2 would be Module version 5, patch 2, for the 3.5 REST API.
+
+#### Current Release Candidates
+
+If you want to manage vTMs running version 9.9 upto 10.1 then please uses 0.33.x
+If you want to manage all 10.1 vTMs then you please use 0.35.x
 
 ## Installation 
 
     puppet module install tuxinvader-brocadevtm
+
+    puppet module install tuxinvader-brocadevtm -v 0.35.0
+
+    puppet module install tuxinvader-brocadevtm -v '>=0.35.0 <0.36.0'
 
 ## Class brocadevtm (init.pp)
 
@@ -69,11 +79,12 @@ When declaring your brocadevtm class, you must provide a `rest_user` and `rest_p
 
 By default puppet only cares about the configuration which you explicitly declare. If configuration exists on the vTM which is not included in your node manifest, it will be ignored.
 
-*Warning* _Purge is Dangerous!_
+#### Using Purge
 
 If you want puppet to remove unmanaged configuration, then you may set `$purge => true` (and provide a place for the module to store state `$purge_state_dir`). Puppet will then store the names of known resources in the state directory, and will remove all unknown resources from the vTM. 
 
-*Warning:* _If you do use `$purge` then you must include the default configuration objects (ie do not use `genNodeConfig -n`)_
+*Warning:* _Purge is Dangerous!_
+*Warning:* _If you do use `$purge` then you must include the default configuration objects. (ie do not use `genNodeConfig -n`)_
 
 ## Example Usage
 
