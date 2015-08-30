@@ -347,6 +347,17 @@ class BrocadeVTMRestController
 		loadPreRequisites()
 
 		@objects.each do |name,manifest|
+			if (!manifest.isBinary)
+				type_ = manifest.getType
+				parent = manifest.findParent("#{manifestDir}/#{type_}",".pp")
+				if ( parent != nil )
+					qh = @qm.getQuirk(parent.chomp(".pp"));
+					if ( qh != nil and qh.is_a?(Hash) and qh.has_key?(:readFunc) )
+						json = @qm.send(qh[:readFunc], manifest.getJSON )
+						manifest.setJSON(json)
+					end
+				end
+			end
 			preReq = Marshal.load(Marshal.dump(@preReq))
 			manifest.genNodeConfig(outfile, allParams, builtin, preReq, manifestDir, binDir)
 		end
