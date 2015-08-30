@@ -18,7 +18,7 @@ class QuirksManager
 		# required: array of required params
 		# writeFunc: Any special function required for writing JSON - returns the json
 		# compareFunc: Any special function required prior to comparing JSON - returns a hash
-		# readFunc: Any special function required prior to reading JSON - not used 
+		# readFunc: Any special function required when reading JSON - returns the json
 		# deleteFunc: Any special function required prior to deletion - not used
 
 		@quirkHash["ssl_server_keys"] = { manifest: '{"properties":{"basic":{"note":"","public":"","private":"","request":""}}}', 
@@ -26,6 +26,7 @@ class QuirksManager
 												 	compareFunc: "hashPrivateKey", writeFunc: "stripHashValue" }
 
 		@quirkHash["monitors"] = { writeFunc: "setEditableKeys" }
+		@quirkHash["pools"] = { readFunc: "nodePriorities" }
 	
 		# SSL Client and Server keys need the same additional processing
 		@quirkHash["ssl_client_keys"] = @quirkHash["ssl_server_keys"]
@@ -111,6 +112,27 @@ class QuirksManager
 			json = JSON.generate(hash)
 		end
 		return json
+	end
+
+	# Insert the node priority and weight values if they are missing.
+	def nodePriorities(json)
+		hash = JSON.parse(json)
+		modified = false
+		hash["properties"]["basic"]["nodes_table"].each do |node|
+			if (! node.include?("priority"))
+				node["priority"] = 1
+				modified = true
+			end
+			if (! node.include?("weight"))
+				node["weight"] = 1
+				modified = true
+			end
+		end
+		if modified
+			return JSON.generate(hash)
+		else
+			return json
+		end
 	end
 
 end
