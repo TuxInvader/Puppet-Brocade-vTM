@@ -26,6 +26,26 @@ class PuppetManifest
 		@required[name] = { class: example.class, example: example }
 	end
 
+	# Get the isBinary flag
+	def isBinary
+		return @isBinary
+	end
+
+	# Get the type, as it would appear on disk
+	def getType
+		return @type_
+	end
+
+	# Get the current JSON blob
+	def getJSON
+		return @json
+	end
+
+	# Get the current binary data
+	def getData
+		return @data
+	end
+
 	# Set this manifest as a binary object
 	def setBinary(isBinary)
 		@isBinary = isBinary
