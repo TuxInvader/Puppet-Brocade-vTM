@@ -1,4 +1,8 @@
 
+# Version 0.33.1 and 0.35.1
+
+- genNodeConfig now inserts priority and weight for each node if they are missing
+
 # Version 0.33.0 and 0.35.0
 
 - Version number now indicates REST API version in the minor number field.
