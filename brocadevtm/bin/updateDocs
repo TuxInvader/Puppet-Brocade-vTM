@@ -5,7 +5,7 @@ require 'optparse'
 require 'ostruct'
 require 'fileutils'
 
-require_relative '../lib/docbuilder'
+require_relative '../lib/brocade/docbuilder'
 
 class GetOptions
 
@@ -77,9 +77,10 @@ end
 
 raise 'You must supply a -d or --dir parameter' if options.dir.nil?
 
+puts( options.dir )
 Dir.glob("#{options.dir}/config-*").each do |dir|
 	puts(dir)
-	db = DocBuilder.new(dir)
+	db = BrocadeREST::DocBuilder.new(dir)
 	db.buildDoc
 	db.writeDoc(options.outdir)
 end

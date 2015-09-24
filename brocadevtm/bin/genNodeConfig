@@ -5,14 +5,12 @@ require 'optparse'
 require 'ostruct'
 require 'fileutils'
 
-require_relative '../lib/puppetmanifest'
-require_relative '../lib/vtmrestcontroller'
+require_relative '../lib/brocade/vtmcontroller'
+require_relative '../lib/brocade/puppetmanifest'
 
 class GetOptions
 
 	def self.parse(args)
-
-		homedir = File.expand_path( "#{File.dirname(__FILE__)}/.." )
 
 		options = OpenStruct.new
 		options.debug = 0
@@ -23,7 +21,8 @@ class GetOptions
 		options.outfile = nil
 		options.binDir = nil
 		options.carryOn = false
-		options.manifestDir = "#{homedir}/manifests/"
+		options.homedir = File.expand_path( "#{File.dirname(__FILE__)}/.." )
+		options.manifestDir = "#{options.homedir}/manifests/"
 
 		opt_parser = OptionParser.new do |opts|
 
@@ -113,7 +112,10 @@ nodefile = File.open(options.outfile, "w")
 nodefile.puts(initblob)
 nodefile.close()
 
-vtmrc = BrocadeVTMRestController.new(options.host, options.port, options.version, options.user, options.pass, options.debug)
+uri = "https://#{options.host}:#{options.port}/api/tm/#{options.version}/config/active"
+vtmrc = BrocadeREST::VTMController.new(options.user, options.pass, uri, BrocadeREST::PuppetManifest, options.debug)
+
+vtmrc.loadPreRequisites("#{options.homedir}/lib/brocade/data/precedence.csv")
 vtmrc.setType( WalkTypes::READ )
 vtmrc.continueOnError(options.caryOn)
 vtmrc.walk( )

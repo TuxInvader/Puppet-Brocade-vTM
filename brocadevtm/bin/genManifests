@@ -4,8 +4,8 @@ require 'io/console'
 require 'optparse'
 require 'ostruct'
 
-require_relative '../lib/vtmrestcontroller'
-require_relative '../lib/puppetmanifest'
+require_relative '../lib/brocade/vtmcontroller'
+require_relative '../lib/brocade/puppetmanifest'
 
 class GetOptions
 
@@ -109,9 +109,11 @@ puts(" OK - Walking....")
 puts("===============================================================")
 
 homedir = File.expand_path( "#{File.dirname(__FILE__)}/.." )
-vtmrc = BrocadeVTMRestController.new(options.host, options.port, options.version, options.user, options.pass, options.debug)
+uri = "https://#{options.host}:#{options.port}/api/tm/#{options.version}/config/active"
+vtmrc = BrocadeREST::VTMController.new(options.user, options.pass, uri, BrocadeREST::PuppetManifest, options.debug)
+vtmrc.loadKnownParams("#{homedir}/lib/brocade/data/required.csv")
 vtmrc.setType( WalkTypes::PROBE )
-vtmrc.walk( )
+vtmrc.walk() 
 puts("")
 
 puts("===============================================================")
