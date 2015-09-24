@@ -1,0 +1,9 @@
+actions,basic__type,string,email
+ddns_server_zones,basic__origin,string,_TESTOBJECT_
+ddns_server_zones,basic__zonefile,string,_TESTOBJECT_
+kerberos_principals,basic__keytab,string,_TESTOBJECT_
+kerberos_principals,basic__service,string,_TESTOBJECT_
+locations,basic__id,integer,1
+user_authenticators,basic__type,string,ldap
+virtual_servers,basic__pool,string,_TESTOBJECT_
+virtual_servers,basic__port,integer,80

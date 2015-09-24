@@ -1,0 +1,23 @@
+# Format
+# type : requirement, local variable, local type, exclusion1,exclusion2
+pools,Monitors,basic__monitors,Array
+pools,Persistence,basic__persistence_class,String
+pools,Bandwidth,basic__bandwidth_class,String
+pools,Cloud_api_credentials,auto_scaling__cloud_credentials,String
+pools,Kerberos_principals,kerberos_protocol_transition__principal,String
+virtual_servers,Pools,basic__pool,String,discard,builtin_dns
+virtual_servers,Traffic_ip_groups,basic__listen_on_traffic_ips,Array
+virtual_servers,Rules,basic__completionrules,Array
+virtual_servers,Rules,basic__request_rules,Array
+virtual_servers,Glb_services,basic__glb_services,Array
+virtual_servers,Aptimizer_profiles,aptimizer__profile,name:aptimize_profiles|urls:aptimizer_scopes
+virtual_servers,Dns_server_zones,dns__zones,Array
+virtual_servers,Ssl_cas,ssl__client_cert_cas,Array
+virtual_servers,Ssl_server_keys,ssl__server_cert_host_mapping,Array
+virtual_servers,Ssl_server_keys,ssl__server_cert_default,String
+virtual_servers,Kerberos_principals,kerberos_protocol_transition__principal,String
+virtual_servers,Protection,basic__protection_class,String
+virtual_servers,Service_level_monitors,basic__slm_class,String
+kerberos_principals,Kerberos_keytabs,basic__keytab,String
+glb_services,Locations,basic__chained_location_order,Array
+dns_server_zones,Dns_server_zone_files,basic__zonefile,String
