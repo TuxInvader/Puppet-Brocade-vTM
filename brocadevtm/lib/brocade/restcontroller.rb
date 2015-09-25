@@ -187,6 +187,10 @@ module BrocadeREST
 		# when the keys are in a different order.
 		def deepCompare(name, hash1, hash2)
 			if hash1.is_a?(Hash)
+				if hash2.nil?
+					logger(0,"DeepCompare: #{name}, No Match '#{hash1}' vs 'nil'")
+					return false	
+				end
 				hash1.each do |key,value|
 					if ( hash2.include?(key) )
 						return false if ( ! deepCompare("#{name}:#{key}", value,hash2[key]) )
@@ -384,12 +388,12 @@ module BrocadeREST
 		end
 
 		# Dump out the Manifests to the console, and write to outputDir if provided
-		def dumpConfig(type=:manifests, manOut=nil, tmpOut=nil, binOut=nil )
+		def dumpConfig(type=:manifests, manOut=nil, tmpOut=nil, binOut=nil, instvar=true)
 			if (type == :manifests) or ( type == :all )
 				@manifests.each do |name,manifest|
 					manifest.dump()
 					if tmpOut != nil
-						manifest.genTemplate(tmpOut)
+						manifest.genTemplate(tmpOut,instvar)
 					end
 					if manOut != nil
 						manifest.genManifest(manOut)
@@ -406,7 +410,7 @@ module BrocadeREST
 						next;
 					end
 					if tmpOut != nil
-						manifest.genTemplate(tmpOut)
+						manifest.genTemplate(tmpOut,instvar)
 					end
 					if manOut != nil
 						manifest.genManifest(manOut, true)

@@ -122,33 +122,36 @@ module BrocadeREST
 		end	
 
 		# function to generate the template string for a parameter. This is called by genTemplate()
-		def genTemplateString(name,data,templvar)
+		def genTemplateString(name,data,templvar,prefix)
+
 			if data.is_a?(Hash)
 				propStr = "{" 
 				data.each do |key, value|
 					propStr += '"'+key+'":'
 					templvar.nil? ? nextVar=key : nextVar = "#{templvar}__#{key}"
-					propStr += genTemplateString(key, value, nextVar) + ","
+					propStr += genTemplateString(key, value, nextVar, prefix) + ","
 				end
 				return propStr + "}"
 			elsif @traverseArrays and data.is_a?(Array) and (!data.empty?)
 				propStr = "[" 
 				templvar.nil? ? nextVar="aRrAy" : nextVar = "#{templvar}__aRrAy"
-				propStr += genTemplateString(name,data[0],nextVar) + ","
+				propStr += genTemplateString(name,data[0],nextVar, prefix) + ","
 				return propStr + "]"
 			elsif data.is_a?(Integer) or data.is_a?(Float)
-				return "<%= @"+templvar+" %>"
+				return "<%= "+prefix+templvar+" %>"
 			elsif data.is_a?(Array)
-				return "<%= @"+templvar+" %>"
+				return "<%= "+prefix+templvar+" %>"
 			elsif data == false or data == true
-				return "<%= @"+templvar+" %>"
+				return "<%= "+prefix+templvar+" %>"
 			else
-				return "\"<%= @"+templvar+" %>\""
+				return "\"<%= "+prefix+templvar+" %>\""
 			end
 		end
 
 		# Generate our template
-		def genTemplate(outputDir)
+		def genTemplate(outputDir, instvar)
+
+			instvar ? prefix="@" : prefix=""
 
 			if @isBinary
 				return true;
@@ -159,10 +162,10 @@ module BrocadeREST
 			# Generate the template string for each property
 			if @root.nil?
 				erb = ''
-				erb += genTemplateString(nil,parsed,nil)
+				erb += genTemplateString(nil,parsed,nil,prefix)
 			else
 				erb = "{\"#{@root}\":"
-				erb += genTemplateString(nil,parsed[@root],nil)
+				erb += genTemplateString(nil,parsed[@root],nil,prefix)
 				erb += "}"
 			end
 			erb = erb.gsub(',}', '}')
