@@ -200,6 +200,11 @@ module BrocadeREST
 					end
 				end
 			elsif hash1.is_a?(Array)
+				# Check array lengths match
+				if hash1.length != hash2.length
+					logger(0, "DeepCompare: #{name}, Size differs: #{hash1.length} vs #{hash2.length}")
+					return false
+				end
 				# sort arrays before comparing
 				sort1 = hash1.sort_by { |h| h.to_s }
 				sort2 = hash2.sort_by { |h| h.to_s }
