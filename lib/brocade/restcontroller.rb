@@ -172,7 +172,7 @@ module BrocadeREST
 					input = JSON.parse(content)
 				end
 				rest = JSON.parse(restResponse.body)
-				return deepCompare(name,rest,input)
+				return deepCompare(name,input,rest)
 			else
 				rest = restResponse.body
 				input = content.force_encoding(rest.encoding)
