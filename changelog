@@ -1,4 +1,4 @@
-Unpublished... # Version 0.33.2 and 0.35.2
+# Version 0.33.3 and 0.35.3
 
 - Ignore the content of the nodes table if we have autoscaling enabled.
 - brocaderest class has new 'failfast' option, which defaults to yes (returns failure as soon as an attirbute differs)

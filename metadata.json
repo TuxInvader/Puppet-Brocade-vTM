@@ -1,6 +1,6 @@
 {
   "name": "tuxinvader-brocadevtm",
-  "version": "0.33.2",
+  "version": "0.33.3",
   "author": "mbodding @ brocade",
   "summary": "Configure and Manage Brocade vTM Application Delivery Controllers",
   "license": "MIT",
