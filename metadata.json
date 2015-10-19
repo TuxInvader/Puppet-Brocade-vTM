@@ -1,9 +1,9 @@
 {
   "name": "tuxinvader-brocadevtm",
-  "version": "0.33.1",
+  "version": "0.33.2",
   "author": "mbodding @ brocade",
   "summary": "Configure and Manage Brocade vTM Application Delivery Controllers",
-  "license": "Apache-2.0",
+  "license": "MIT",
   "source": "https://github.com/TuxInvader/Puppet-Brocade-vTM",
   "project_page": "https://github.com/TuxInvader/Puppet-Brocade-vTM",
   "issues_url": "https://github.com/TuxInvader/Puppet-Brocade-vTM/issues",

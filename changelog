@@ -1,3 +1,9 @@
+Unpublished... # Version 0.33.2 and 0.35.2
+
+- Ignore the content of the nodes table if we have autoscaling enabled.
+- brocaderest class has new 'failfast' option, which defaults to yes (returns failure as soon as an attirbute differs)
+  setting failfast to false will compare all attributes exhaustively.
+- The vtmrest provider now uses Puppet::Util::Logging.
 
 # Version 0.33.1 and 0.35.1
 
