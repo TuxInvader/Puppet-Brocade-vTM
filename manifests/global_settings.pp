@@ -1224,6 +1224,7 @@ class brocadevtm::global_settings (
     content  => template('brocadevtm/global_settings.erb'),
     type     => 'application/json',
     internal => 'global_settings',
+    failfast => $brocadevtm::failfast,
     debug    => 0,
   }
 

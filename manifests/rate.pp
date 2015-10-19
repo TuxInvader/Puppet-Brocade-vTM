@@ -58,6 +58,7 @@ define brocadevtm::rate (
     content  => template('brocadevtm/rate.erb'),
     type     => 'application/json',
     internal => 'rate',
+    failfast => $brocadevtm::failfast,
     debug    => 0,
   }
 

@@ -57,6 +57,7 @@ class brocadevtm::event_types_infrastructure_problem_resolved (
     content  => template('brocadevtm/event_types.erb'),
     type     => 'application/json',
     internal => 'event_types_infrastructure_problem_resolved',
+    failfast => $brocadevtm::failfast,
     debug    => 0,
   }
 

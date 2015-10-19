@@ -78,6 +78,7 @@ define brocadevtm::user_groups (
     content  => template('brocadevtm/user_groups.erb'),
     type     => 'application/json',
     internal => 'user_groups',
+    failfast => $brocadevtm::failfast,
     debug    => 0,
   }
 

@@ -53,6 +53,7 @@ class brocadevtm::monitors_simple_https (
     content  => template('brocadevtm/monitors.erb'),
     type     => 'application/json',
     internal => 'monitors_simple_https',
+    failfast => $brocadevtm::failfast,
     debug    => 0,
   }
 

@@ -12,12 +12,13 @@ Puppet::Type.newtype(:vtmrest) do
    Example:
 
 		vtmrest { 'pools/testpool':
-			ensure => present,
+			ensure   => present,
 			endpoint => 'https://vtm1:9070/api/tm/3.2/config/active',
 			username => 'puppet',
 			password => 'master',
-			content => template ('stingray/pools.erb'),
-			debug => 4
+			content  => template ('stingray/pools.erb'),
+			debug    => 4,
+			failfast => false,
 		}
 
 	In this example, Puppet will ensure that the vTM configuration of 
@@ -28,8 +29,8 @@ Puppet::Type.newtype(:vtmrest) do
 			endpoint => 'https://vtm1:9070/api/tm/3.2/config/active',
 			username => 'puppet',
 			password => 'master',
-			type => 'application/octet-stream',
-			content => "rate.use('myClass', request.getRemoteIP());"
+			type     => 'application/octet-stream',
+			content  => "rate.use('myClass', request.getRemoteIP());"
 		}
 
 	In this example we upload a rule and provide the content-type of 'application/octet-stream'
@@ -72,6 +73,10 @@ Puppet::Type.newtype(:vtmrest) do
 
 	newparam(:internal) do
 		desc 'The internal resource name as known by the vTM Rest Controller'
+	end
+
+	newparam(:failfast) do
+		desc 'Should object camparisons fail quickly (failfast) or should attributes be compared exhaustively'
 	end
 
 	newparam(:debug) do

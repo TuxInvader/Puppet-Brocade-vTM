@@ -53,6 +53,7 @@ class brocadevtm::monitors_full_http (
     content  => template('brocadevtm/monitors.erb'),
     type     => 'application/json',
     internal => 'monitors_full_http',
+    failfast => $brocadevtm::failfast,
     debug    => 0,
   }
 

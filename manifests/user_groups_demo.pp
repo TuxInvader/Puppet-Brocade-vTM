@@ -29,6 +29,7 @@ class brocadevtm::user_groups_demo (
     content  => template('brocadevtm/user_groups.erb'),
     type     => 'application/json',
     internal => 'user_groups_demo',
+    failfast => $brocadevtm::failfast,
     debug    => 0,
   }
 

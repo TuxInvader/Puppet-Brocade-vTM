@@ -157,6 +157,7 @@ define brocadevtm::glb_services (
     content  => template('brocadevtm/glb_services.erb'),
     type     => 'application/json',
     internal => 'glb_services',
+    failfast => $brocadevtm::failfast,
     debug    => 0,
   }
 

@@ -62,6 +62,7 @@ define brocadevtm::ssl_client_keys (
     content  => template('brocadevtm/ssl_client_keys.erb'),
     type     => 'application/json',
     internal => 'ssl_client_keys',
+    failfast => $brocadevtm::failfast,
     debug    => 0,
   }
 

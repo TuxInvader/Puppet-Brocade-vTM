@@ -121,6 +121,7 @@ define brocadevtm::traffic_ip_groups (
     content  => template('brocadevtm/traffic_ip_groups.erb'),
     type     => 'application/json',
     internal => 'traffic_ip_groups',
+    failfast => $brocadevtm::failfast,
     debug    => 0,
   }
 

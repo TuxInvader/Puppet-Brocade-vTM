@@ -53,6 +53,7 @@ class brocadevtm::monitors_ping (
     content  => template('brocadevtm/monitors.erb'),
     type     => 'application/json',
     internal => 'monitors_ping',
+    failfast => $brocadevtm::failfast,
     debug    => 0,
   }
 

@@ -53,6 +53,7 @@ class brocadevtm::monitors_server_first (
     content  => template('brocadevtm/monitors.erb'),
     type     => 'application/json',
     internal => 'monitors_server_first',
+    failfast => $brocadevtm::failfast,
     debug    => 0,
   }
 

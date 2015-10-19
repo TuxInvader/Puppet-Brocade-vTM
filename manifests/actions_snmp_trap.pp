@@ -48,6 +48,7 @@ class brocadevtm::actions_snmp_trap (
     content  => template('brocadevtm/actions.erb'),
     type     => 'application/json',
     internal => 'actions_snmp_trap',
+    failfast => $brocadevtm::failfast,
     debug    => 0,
   }
 

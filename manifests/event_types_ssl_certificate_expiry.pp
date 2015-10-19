@@ -57,6 +57,7 @@ class brocadevtm::event_types_ssl_certificate_expiry (
     content  => template('brocadevtm/event_types.erb'),
     type     => 'application/json',
     internal => 'event_types_ssl_certificate_expiry',
+    failfast => $brocadevtm::failfast,
     debug    => 0,
   }
 

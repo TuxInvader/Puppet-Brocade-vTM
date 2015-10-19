@@ -56,6 +56,7 @@ define brocadevtm::bandwidth (
     content  => template('brocadevtm/bandwidth.erb'),
     type     => 'application/json',
     internal => 'bandwidth',
+    failfast => $brocadevtm::failfast,
     debug    => 0,
   }
 

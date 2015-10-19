@@ -48,6 +48,7 @@ class brocadevtm::actions_syslog (
     content  => template('brocadevtm/actions.erb'),
     type     => 'application/json',
     internal => 'actions_syslog',
+    failfast => $brocadevtm::failfast,
     debug    => 0,
   }
 

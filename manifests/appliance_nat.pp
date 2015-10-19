@@ -87,6 +87,7 @@ class brocadevtm::appliance_nat (
     content  => template('brocadevtm/appliance_nat.erb'),
     type     => 'application/json',
     internal => 'appliance_nat',
+    failfast => $brocadevtm::failfast,
     debug    => 0,
   }
 

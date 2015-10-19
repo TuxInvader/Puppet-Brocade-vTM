@@ -53,6 +53,7 @@ class brocadevtm::monitors_dns (
     content  => template('brocadevtm/monitors.erb'),
     type     => 'application/json',
     internal => 'monitors_dns',
+    failfast => $brocadevtm::failfast,
     debug    => 0,
   }
 

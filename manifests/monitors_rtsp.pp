@@ -53,6 +53,7 @@ class brocadevtm::monitors_rtsp (
     content  => template('brocadevtm/monitors.erb'),
     type     => 'application/json',
     internal => 'monitors_rtsp',
+    failfast => $brocadevtm::failfast,
     debug    => 0,
   }
 

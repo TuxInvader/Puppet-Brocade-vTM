@@ -46,6 +46,7 @@ class brocadevtm::application_firewall (
     content  => template('brocadevtm/application_firewall.erb'),
     type     => 'application/json',
     internal => 'application_firewall',
+    failfast => $brocadevtm::failfast,
     debug    => 0,
   }
 

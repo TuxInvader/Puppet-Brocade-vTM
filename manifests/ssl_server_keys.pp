@@ -62,6 +62,7 @@ define brocadevtm::ssl_server_keys (
     content  => template('brocadevtm/ssl_server_keys.erb'),
     type     => 'application/json',
     internal => 'ssl_server_keys',
+    failfast => $brocadevtm::failfast,
     debug    => 0,
   }
 

@@ -57,6 +57,7 @@ class brocadevtm::event_types_connection_failures (
     content  => template('brocadevtm/event_types.erb'),
     type     => 'application/json',
     internal => 'event_types_connection_failures',
+    failfast => $brocadevtm::failfast,
     debug    => 0,
   }
 

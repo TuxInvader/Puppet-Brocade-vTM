@@ -95,6 +95,7 @@ define brocadevtm::rule_authenticators (
     content  => template('brocadevtm/rule_authenticators.erb'),
     type     => 'application/json',
     internal => 'rule_authenticators',
+    failfast => $brocadevtm::failfast,
     debug    => 0,
   }
 

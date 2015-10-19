@@ -450,6 +450,7 @@ define brocadevtm::pools (
     content  => template('brocadevtm/pools.erb'),
     type     => 'application/json',
     internal => 'pools',
+    failfast => $brocadevtm::failfast,
     debug    => 0,
   }
 

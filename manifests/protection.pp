@@ -169,6 +169,7 @@ define brocadevtm::protection (
     content  => template('brocadevtm/protection.erb'),
     type     => 'application/json',
     internal => 'protection',
+    failfast => $brocadevtm::failfast,
     debug    => 0,
   }
 

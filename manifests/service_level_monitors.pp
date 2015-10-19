@@ -62,6 +62,7 @@ define brocadevtm::service_level_monitors (
     content  => template('brocadevtm/service_level_monitors.erb'),
     type     => 'application/json',
     internal => 'service_level_monitors',
+    failfast => $brocadevtm::failfast,
     debug    => 0,
   }
 

@@ -55,6 +55,7 @@ class brocadevtm::security (
     content  => template('brocadevtm/security.erb'),
     type     => 'application/json',
     internal => 'security',
+    failfast => $brocadevtm::failfast,
     debug    => 0,
   }
 

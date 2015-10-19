@@ -211,6 +211,7 @@ define brocadevtm::user_authenticators (
     content  => template('brocadevtm/user_authenticators.erb'),
     type     => 'application/json',
     internal => 'user_authenticators',
+    failfast => $brocadevtm::failfast,
     debug    => 0,
   }
 

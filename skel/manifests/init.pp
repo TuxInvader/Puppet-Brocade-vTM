@@ -22,6 +22,11 @@
 # [*purge_state_dir*]
 # State directory for tracking managed configuration
 #
+# [*failfast*]
+# Should the module report an object misconfiguration ASAP or should we compare all 
+# attributes before reporting the error? Defaults to true (fail fast).
+# Set this to false if you want to log all differences between the object and the manifest.
+#
 # === Examples
 #
 #  class { 'brocadevtm':
@@ -39,6 +44,7 @@ class brocadevtm (
   $rest_ip         = '127.0.0.1',
   $rest_port       = '9070',
   $purge           = false,
+  $failfast        = true,
 ) {
 
   if ( $rest_user == undef ) {

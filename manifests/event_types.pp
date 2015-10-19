@@ -231,6 +231,7 @@ define brocadevtm::event_types (
     content  => template('brocadevtm/event_types.erb'),
     type     => 'application/json',
     internal => 'event_types',
+    failfast => $brocadevtm::failfast,
     debug    => 0,
   }
 

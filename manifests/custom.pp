@@ -50,6 +50,7 @@ define brocadevtm::custom (
     content  => template('brocadevtm/custom.erb'),
     type     => 'application/json',
     internal => 'custom',
+    failfast => $brocadevtm::failfast,
     debug    => 0,
   }
 

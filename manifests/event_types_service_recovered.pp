@@ -57,6 +57,7 @@ class brocadevtm::event_types_service_recovered (
     content  => template('brocadevtm/event_types.erb'),
     type     => 'application/json',
     internal => 'event_types_service_recovered',
+    failfast => $brocadevtm::failfast,
     debug    => 0,
   }
 

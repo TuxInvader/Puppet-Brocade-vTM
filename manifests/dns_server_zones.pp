@@ -51,6 +51,7 @@ define brocadevtm::dns_server_zones (
     content  => template('brocadevtm/dns_server_zones.erb'),
     type     => 'application/json',
     internal => 'dns_server_zones',
+    failfast => $brocadevtm::failfast,
     debug    => 0,
   }
 

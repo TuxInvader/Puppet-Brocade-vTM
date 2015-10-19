@@ -53,6 +53,7 @@ class brocadevtm::monitors_pop (
     content  => template('brocadevtm/monitors.erb'),
     type     => 'application/json',
     internal => 'monitors_pop',
+    failfast => $brocadevtm::failfast,
     debug    => 0,
   }
 

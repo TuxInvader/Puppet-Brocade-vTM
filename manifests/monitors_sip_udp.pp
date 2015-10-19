@@ -53,6 +53,7 @@ class brocadevtm::monitors_sip_udp (
     content  => template('brocadevtm/monitors.erb'),
     type     => 'application/json',
     internal => 'monitors_sip_udp',
+    failfast => $brocadevtm::failfast,
     debug    => 0,
   }
 

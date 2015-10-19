@@ -465,6 +465,7 @@ define brocadevtm::traffic_managers (
     content  => template('brocadevtm/traffic_managers.erb'),
     type     => 'application/json',
     internal => 'traffic_managers',
+    failfast => $brocadevtm::failfast,
     debug    => 0,
   }
 

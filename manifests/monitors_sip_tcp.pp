@@ -53,6 +53,7 @@ class brocadevtm::monitors_sip_tcp (
     content  => template('brocadevtm/monitors.erb'),
     type     => 'application/json',
     internal => 'monitors_sip_tcp',
+    failfast => $brocadevtm::failfast,
     debug    => 0,
   }
 

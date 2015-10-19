@@ -29,6 +29,7 @@ class brocadevtm::aptimizer_profiles_sharepoint_2013 (
     content  => template('brocadevtm/aptimizer_profiles.erb'),
     type     => 'application/json',
     internal => 'aptimizer_profiles_sharepoint_2013',
+    failfast => $brocadevtm::failfast,
     debug    => 0,
   }
 

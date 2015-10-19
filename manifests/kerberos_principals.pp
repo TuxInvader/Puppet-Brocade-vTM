@@ -71,6 +71,7 @@ define brocadevtm::kerberos_principals (
     content  => template('brocadevtm/kerberos_principals.erb'),
     type     => 'application/json',
     internal => 'kerberos_principals',
+    failfast => $brocadevtm::failfast,
     debug    => 0,
   }
 

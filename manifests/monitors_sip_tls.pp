@@ -53,6 +53,7 @@ class brocadevtm::monitors_sip_tls (
     content  => template('brocadevtm/monitors.erb'),
     type     => 'application/json',
     internal => 'monitors_sip_tls',
+    failfast => $brocadevtm::failfast,
     debug    => 0,
   }
 

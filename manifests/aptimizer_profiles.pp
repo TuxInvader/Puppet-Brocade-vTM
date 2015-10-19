@@ -68,6 +68,7 @@ define brocadevtm::aptimizer_profiles (
     content  => template('brocadevtm/aptimizer_profiles.erb'),
     type     => 'application/json',
     internal => 'aptimizer_profiles',
+    failfast => $brocadevtm::failfast,
     debug    => 0,
   }
 

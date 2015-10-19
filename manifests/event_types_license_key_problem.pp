@@ -57,6 +57,7 @@ class brocadevtm::event_types_license_key_problem (
     content  => template('brocadevtm/event_types.erb'),
     type     => 'application/json',
     internal => 'event_types_license_key_problem',
+    failfast => $brocadevtm::failfast,
     debug    => 0,
   }
 

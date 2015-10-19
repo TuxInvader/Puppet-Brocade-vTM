@@ -65,6 +65,7 @@ define brocadevtm::locations (
     content  => template('brocadevtm/locations.erb'),
     type     => 'application/json',
     internal => 'locations',
+    failfast => $brocadevtm::failfast,
     debug    => 0,
   }
 

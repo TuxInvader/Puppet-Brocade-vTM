@@ -74,6 +74,7 @@ define brocadevtm::cloud_api_credentials (
     content  => template('brocadevtm/cloud_api_credentials.erb'),
     type     => 'application/json',
     internal => 'cloud_api_credentials',
+    failfast => $brocadevtm::failfast,
     debug    => 0,
   }
 

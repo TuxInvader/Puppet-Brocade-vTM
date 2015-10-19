@@ -29,6 +29,7 @@ class brocadevtm::aptimizer_profiles_basic (
     content  => template('brocadevtm/aptimizer_profiles.erb'),
     type     => 'application/json',
     internal => 'aptimizer_profiles_basic',
+    failfast => $brocadevtm::failfast,
     debug    => 0,
   }
 

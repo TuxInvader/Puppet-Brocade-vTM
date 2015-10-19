@@ -177,6 +177,7 @@ define brocadevtm::monitors (
     content  => template('brocadevtm/monitors.erb'),
     type     => 'application/json',
     internal => 'monitors',
+    failfast => $brocadevtm::failfast,
     debug    => 0,
   }
 

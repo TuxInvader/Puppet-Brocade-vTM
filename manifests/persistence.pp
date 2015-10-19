@@ -70,6 +70,7 @@ define brocadevtm::persistence (
     content  => template('brocadevtm/persistence.erb'),
     type     => 'application/json',
     internal => 'persistence',
+    failfast => $brocadevtm::failfast,
     debug    => 0,
   }
 

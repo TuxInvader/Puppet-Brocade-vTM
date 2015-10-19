@@ -156,6 +156,7 @@ define brocadevtm::actions (
     content  => template('brocadevtm/actions.erb'),
     type     => 'application/json',
     internal => 'actions',
+    failfast => $brocadevtm::failfast,
     debug    => 0,
   }
 

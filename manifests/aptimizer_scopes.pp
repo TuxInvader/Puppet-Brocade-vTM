@@ -57,6 +57,7 @@ define brocadevtm::aptimizer_scopes (
     content  => template('brocadevtm/aptimizer_scopes.erb'),
     type     => 'application/json',
     internal => 'aptimizer_scopes',
+    failfast => $brocadevtm::failfast,
     debug    => 0,
   }
 

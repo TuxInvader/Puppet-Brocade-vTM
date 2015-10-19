@@ -57,6 +57,7 @@ class brocadevtm::event_types_routing_software (
     content  => template('brocadevtm/event_types.erb'),
     type     => 'application/json',
     internal => 'event_types_routing_software',
+    failfast => $brocadevtm::failfast,
     debug    => 0,
   }
 

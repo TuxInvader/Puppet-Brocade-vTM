@@ -768,6 +768,7 @@ define brocadevtm::virtual_servers (
     content  => template('brocadevtm/virtual_servers.erb'),
     type     => 'application/json',
     internal => 'virtual_servers',
+    failfast => $brocadevtm::failfast,
     debug    => 0,
   }
 

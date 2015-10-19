@@ -29,6 +29,7 @@ class brocadevtm::user_groups_monitoring (
     content  => template('brocadevtm/user_groups.erb'),
     type     => 'application/json',
     internal => 'user_groups_monitoring',
+    failfast => $brocadevtm::failfast,
     debug    => 0,
   }
 

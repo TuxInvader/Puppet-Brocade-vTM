@@ -28,6 +28,7 @@ class brocadevtm::aptimizer_scopes_any_hostname_or_path (
     content  => template('brocadevtm/aptimizer_scopes.erb'),
     type     => 'application/json',
     internal => 'aptimizer_scopes_any_hostname_or_path',
+    failfast => $brocadevtm::failfast,
     debug    => 0,
   }
 

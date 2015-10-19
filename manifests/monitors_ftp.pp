@@ -53,6 +53,7 @@ class brocadevtm::monitors_ftp (
     content  => template('brocadevtm/monitors.erb'),
     type     => 'application/json',
     internal => 'monitors_ftp',
+    failfast => $brocadevtm::failfast,
     debug    => 0,
   }
 

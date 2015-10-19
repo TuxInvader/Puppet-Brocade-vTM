@@ -57,6 +57,7 @@ class brocadevtm::event_types_critical_problem_occurred (
     content  => template('brocadevtm/event_types.erb'),
     type     => 'application/json',
     internal => 'event_types_critical_problem_occurred',
+    failfast => $brocadevtm::failfast,
     debug    => 0,
   }
 

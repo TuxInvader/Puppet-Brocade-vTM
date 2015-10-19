@@ -57,6 +57,7 @@ class brocadevtm::event_types_trafficscript_error (
     content  => template('brocadevtm/event_types.erb'),
     type     => 'application/json',
     internal => 'event_types_trafficscript_error',
+    failfast => $brocadevtm::failfast,
     debug    => 0,
   }
 
