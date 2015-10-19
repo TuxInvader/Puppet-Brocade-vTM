@@ -1,62 +1,70 @@
 require_relative '../../../brocade/vtmcontroller'
 require_relative '../../../brocade/puppetmanifest'
 require 'json'
+require 'puppet/util/logging'
 
 Puppet::Type.type(:vtmrest).provide(:ruby) do
 
+	include Puppet::Util::Logging
+
 	def exists?
 
+		initVtmrc
 		if resource[:type] == 'purge'
-			return vtmrc.objectPurge(resource[:content])
+			return @vtmrc.objectPurge(resource[:content])
 		end
 
-		#$stdout.puts("Notice: Content #{resource[:content]}")
-		$response = vtmrc.objectCompare(resource[:name], resource[:content], resource[:type], resource[:internal])
+		$response = @vtmrc.objectCompare(resource[:name], resource[:content], resource[:type], resource[:internal], resource[:failfast])
 		if $response == true
-			#$stdout.puts("Notice: Object #{resource[:name]} OK")
+			send_log(:notice, "Object #{resource[:name]} OK")
 			return true;
 		elsif $response == false
-			$stderr.puts("Notice: Object #{resource[:name]} differs from catalog")
+			send_log(:warning, "Object #{resource[:name]} differs from catalog")
+			@vtmrc.getErrors.each do |error|
+				send_log(:warning, error)
+			end
 			return false
 		else
-			if $response == nil
-				$stderr.puts("Notice: Object #{resource[:name]} does not exist")
-			else
-				$stderr.puts("Notice: VTM Error, REST Response #{$response.code}.")
-				$stderr.puts($response.body)
+			send_log(:crit, "REST call Failed for: #{resource[:name]} ")
+			@vtmrc.getErrors.each do |error|
+				send_log(:crit, error)
 			end
 			return false;
 		end
-
 	end
 
 	def create
-		$stdout.puts("Notice: Creating #{resource[:name]}")
+		initVtmrc
+		#$stdout.puts("Notice: Creating #{resource[:name]}")
 		#if ( resource[:type] == "application/json" )
 		#	$stdout.puts("Notice: Content #{resource[:content]}")
 		#end
-		$response = vtmrc.objectCreate(resource[:name], resource[:content], resource[:type], resource[:internal])
+		send_log(:info, "Creating: #{resource[:name]}")
+		$response = @vtmrc.objectCreate(resource[:name], resource[:content], resource[:type], resource[:internal])
 		if $response == nil || ( ! $response.code.start_with?("20") )
-			$stderr.puts("Notice: FAILED #{resource[:name]}")
-			$stderr.puts("Notice: VTM Response Code: #{$response.code}")
-			$stderr.puts("Notice: VTM Response Body: #{$response.body}")
+			send_log(:warning, "Failed to create: #{resource[:name]}")
+			@vtmrc.getErrors.each do |error|
+				send_log(:notice, error)
+			end
 			raise(Puppet::Error, "Failed to create '#{resource[:name]}'")
 			return false
 		end
+		send_log(:notice, "Object #{resource[:name]} Created.")
 		return true
 	end
 
 	def destroy
-		$stdout.puts("Notice: Removing #{resource[:name]}")
-		vtmrc.objectDelete(resource[:name])
+		send_log(:notice, "Removing: #{resource[:name]}")
+		@vtmrc.objectDelete(resource[:name])
 	end
 
 	private
 
-	def vtmrc
+	def initVtmrc
 		@vtmrc = BrocadeREST::VTMController.new(resource[:username], \
-						resource[:password], resource[:endpoint], \
-						nil, resource[:debug])
+				resource[:password], resource[:endpoint], \
+				nil, resource[:debug])
 	end
+
 
 end
