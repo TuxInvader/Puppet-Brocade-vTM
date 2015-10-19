@@ -110,6 +110,7 @@ module BrocadeREST
 				end
 				code += "    type     => 'application/json',\n"
 				code += "    internal => '#{@type_}',\n"
+				code += "    failfast => $brocadevtm::failfast,\n"
 			end
 			code += "    debug    => 0,\n"
 			code += "  }\n\n"

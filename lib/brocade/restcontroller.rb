@@ -1,7 +1,5 @@
 #!/usr/bin/ruby
 
-# Show all Expert keys QS == show_expert_keys=_all_
-
 require 'json'
 require 'net/https'
 require 'uri'
@@ -40,6 +38,7 @@ module BrocadeREST
 			@qm = nil
 			@workdir = nil
 			@generateOutOfTreeManifests = false
+			@errors = [];
 		end
 
 		# Logger function to write log messages (level<0 - Error, level==0 - Notice, level>0 - Debug )
@@ -53,6 +52,13 @@ module BrocadeREST
 					$stderr.puts("Debug: BrocadeREST: #{level}: #{msg}")
 				end
 			end
+		end
+
+		# Return errors not yet reported.
+		def getErrors() 
+			$errors = @errors
+			#@errors = []
+			return $errors;
 		end
 
 		# set Walktype to :READ, :PROBE, or :DELETE
@@ -101,7 +107,7 @@ module BrocadeREST
 				when Net::HTTPSuccess then
 					return response
 				else
-					logger(-1, "HTTP Call Failed: #{uri}, Response: #{response}")
+					logger(1, "HTTP Call Failed: #{uri}, Response: #{response}")
 					return response
 			end
 		end
@@ -152,13 +158,15 @@ module BrocadeREST
 		end
 
 		# Object Compare Function
-		def objectCompare(name, content, type, internal) 
+		def objectCompare(name, content, type, internal, failFast=true) 
 			uri = parseURI(name)
 			restResponse = do_get(uri)
 			if ( restResponse == nil )
+				@errors.push("Something Went wrong with the REST call. Nil response")
 				return nil
 			elsif ( restResponse.code != "200" )
-				return restResponse
+				@errors.push("HTTP Call Failed: #{name}, Response: #{restResponse}")
+				return false
 			end
 			if type == "application/json"
 				if (!@qm.nil?)
@@ -172,7 +180,11 @@ module BrocadeREST
 					input = JSON.parse(content)
 				end
 				rest = JSON.parse(restResponse.body)
-				return deepCompare(name,input,rest)
+				if failFast
+					return deepCompare(name,input,rest,failFast)
+				else
+					( deepCompare(name,input,rest,failFast) > 0 ) ? (return false) : (return true)
+				end
 			else
 				rest = restResponse.body
 				input = content.force_encoding(rest.encoding)
@@ -180,45 +192,54 @@ module BrocadeREST
 					return true
 				end
 			end
+			@errors.push("Binary object exists, but does not match.")
 			return false
 		end
 
 		# Recurse over the hash and compare all elements. Simply using hash == hash can fail
 		# when the keys are in a different order.
-		def deepCompare(name, hash1, hash2)
+		def deepCompare(name, hash1, hash2, failFast, errors=0)
 			if hash1.is_a?(Hash)
 				if hash2.nil?
-					logger(0,"DeepCompare: #{name}, No Match '#{hash1}' vs 'nil'")
-					return false	
+					logger(1,"DeepCompare: #{name}, No Match '#{hash1}' vs 'nil'")
+					@errors.push("DeepCompare: #{name}, No Match '#{hash1}' vs 'nil'")
+					failFast ? (return false) : (return errors+1)
 				end
 				hash1.each do |key,value|
 					if ( hash2.include?(key) )
-						return false if ( ! deepCompare("#{name}:#{key}", value,hash2[key]) )
+						result = deepCompare("#{name}:#{key}", value, hash2[key], failFast, errors)
+						( failFast and (!result) ) ? (return false) : errors = result
 					else
-						logger(0,"DeepCompare: #{name}, Missing Key '#{key}'")
-						return false
+						logger(1,"DeepCompare: #{name}, Missing Key '#{key}'")
+						@errors.push("DeepCompare: #{name}, Missing Key '#{key}'")
+						failFast ? (return false) : (return errors+1)
 					end
 				end
+				failFast ? (return true) : (return errors)
 			elsif hash1.is_a?(Array)
 				# Check array lengths match
 				if hash1.length != hash2.length
-					logger(0, "DeepCompare: #{name}, Size differs: #{hash1.length} vs #{hash2.length}")
-					return false
+					logger(1, "DeepCompare: #{name}, Size differs: #{hash1.length} vs #{hash2.length}")
+					@errors.push("DeepCompare: #{name}, Size differs: #{hash1.length} vs #{hash2.length}")
+					failFast ? (return false) : (return errors+1)
 				end
 				# sort arrays before comparing
 				sort1 = hash1.sort_by { |h| h.to_s }
 				sort2 = hash2.sort_by { |h| h.to_s }
 				sort1.each do |item1|
 					item2 = sort2.shift
-					return false if ( ! deepCompare("#{name}:#{item1}", item1,item2) )
+					result = deepCompare("#{name}:#{item1}", item1, item2, failFast, errors)
+					( failFast and (!result) ) ? ( return false ) : errors = result
 				end	
+				failFast ? ( return true ) : ( return errors )
 			else
 				if ( hash1 != hash2 )
-					logger(0,"DeepCompare: #{name}, No Match '#{hash1}' vs '#{hash2}'")
-					return false
+					logger(1,"DeepCompare: #{name}, No Match '#{hash1}' vs '#{hash2}'")
+					@errors.push("DeepCompare: #{name}, No Match: #{hash1} vs #{hash2}")
+					failFast ? (return false) : (return errors+1)
 				end
 			end
-			return true
+			failFast ? (return true) : (return errors)
 		end
 
 		# Object Create function
