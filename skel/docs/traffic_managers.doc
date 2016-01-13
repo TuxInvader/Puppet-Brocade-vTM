@@ -131,6 +131,9 @@
 # Whether or not the license agreement has been accepted.  This determines
 # whether or not the Initial Configuration wizard is displayed.
 #
+# [*appliance__manageazureroutes*]
+# Whether or not the software manages the Azure policy routing.
+#
 # [*appliance__manageec2conf*]
 # Whether or not the software manages the EC2 config.
 #

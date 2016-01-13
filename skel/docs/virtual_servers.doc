@@ -193,6 +193,9 @@
 # [*dns__max_udpsize*]
 # Maximum UDP answer size.
 #
+# [*dns__rrset_order*]
+# Response record ordering.
+#
 # [*dns__verbose*]
 # Whether or not the DNS Server should emit verbose logging. This is useful
 # for diagnosing problems.
@@ -230,6 +233,9 @@
 #
 # [*gzip__enabled*]
 # Compress web pages sent back by the server.
+#
+# [*gzip__etag_rewrite*]
+# How the ETag header should be manipulated when compressing content.
 #
 # [*gzip__include_mime*]
 # MIME types to compress. Complete MIME types can be used, or a type can end
@@ -402,6 +408,14 @@
 # validate client certificates. If no certificate authorities are selected,
 # and client certificates are requested, then all client certificates will be
 # accepted.
+# Type:array
+# Properties:
+#
+# [*ssl__elliptic_curves*]
+# The SSL elliptic curve preference list for SSL connections to this virtual
+# server using TLS version 1.0 or higher. Leaving this empty will make the
+# virtual server use the globally configured curve preference list. The named
+# curves P256, P384 and P521 may be configured.
 # Type:array
 # Properties:
 #

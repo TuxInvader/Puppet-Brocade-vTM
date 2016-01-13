@@ -83,6 +83,12 @@
 # Whether or not connections to the back-ends appear to originate from the
 # source client IP address.
 #
+# [*auto_scaling__addnode_delaytime*]
+# The time in seconds from the creation of the node which the traffic manager
+# should wait before adding the node to the autoscaled pool. Set this to allow
+# applications on the newly created node time to intialize before being sent
+# traffic.
+#
 # [*auto_scaling__cloud_credentials*]
 # The Cloud Credentials object containing authentication credentials to use in
 # cloud API calls.
@@ -256,6 +262,21 @@
 # Certificates catalog be used if the back-end server requests client
 # authentication.
 #
+# [*ssl__common_name_match*]
+# A list of names against which the 'common name' of the certificate is
+# matched; these names are used in addition to the node's hostname or IP
+# address as specified in the config file or added by the autoscaler process.
+# Type:array
+# Properties:
+#
+# [*ssl__elliptic_curves*]
+# The SSL elliptic curve preference list for SSL connections from this pool
+# using TLS version 1.0 or higher. Leaving this empty will make the pool use
+# the globally configured preference list. The named curves P256, P384 and
+# P521 may be configured.
+# Type:array
+# Properties:
+#
 # [*ssl__enable*]
 # Whether or not the pool should encrypt data before sending it to a back-end
 # node.
@@ -330,7 +351,8 @@
 # [*ssl__strict_verify*]
 # Whether or not strict certificate verification should be performed. This
 # will turn on checks to disallow server certificates that don't match the
-# server name, are self-signed, expired, revoked, or have an unknown CA.
+# server name or a name in the ssl_common_name_match list, are self-signed,
+# expired, revoked, or have an unknown CA.
 #
 # [*tcp__nagle*]
 # Whether or not Nagle's algorithm should be used for TCP connections to the
@@ -375,6 +397,7 @@ define brocadevtm::pools (
   $basic__passive_monitoring                = true,
   $basic__persistence_class                 = undef,
   $basic__transparent                       = false,
+  $auto_scaling__addnode_delaytime          = 0,
   $auto_scaling__cloud_credentials          = undef,
   $auto_scaling__cluster                    = undef,
   $auto_scaling__data_center                = undef,
@@ -416,6 +439,8 @@ define brocadevtm::pools (
   $node__retry_fail_time                    = 60,
   $smtp__send_starttls                      = true,
   $ssl__client_auth                         = false,
+  $ssl__common_name_match                   = '[]',
+  $ssl__elliptic_curves                     = '[]',
   $ssl__enable                              = false,
   $ssl__enhance                             = false,
   $ssl__send_close_alerts                   = true,
@@ -444,7 +469,7 @@ define brocadevtm::pools (
   vtmrest { "pools/${name}":
     ensure   => $ensure,
     before   => Class[Brocadevtm::Purge],
-    endpoint => "https://${ip}:${port}/api/tm/3.3/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/3.4/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/pools.erb'),

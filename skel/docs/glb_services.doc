@@ -78,6 +78,9 @@
 # "monitors"=>{"description"=>"The monitors that are present in a location.",
 # "type"=>"array", "uniqueItems"=>true, "items"=>{"type"=>"string"}}}
 #
+# [*basic__peer_health_timeout*]
+# Peer reported monitor state timeout in seconds.
+#
 # [*basic__return_ips_on_fail*]
 # Return all or none of the IPs under complete failure.
 #

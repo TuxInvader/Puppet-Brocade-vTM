@@ -132,6 +132,9 @@
 # Whether or not the license agreement has been accepted.  This determines
 # whether or not the Initial Configuration wizard is displayed.
 #
+# [*appliance__manageazureroutes*]
+# Whether or not the software manages the Azure policy routing.
+#
 # [*appliance__manageec2conf*]
 # Whether or not the software manages the EC2 config.
 #
@@ -404,6 +407,7 @@ define brocadevtm::traffic_managers (
   $appliance__ip                          = '[]',
   $appliance__ipv4_forwarding             = false,
   $appliance__licence_agreed              = false,
+  $appliance__manageazureroutes           = true,
   $appliance__manageec2conf               = true,
   $appliance__manageiptrans               = true,
   $appliance__managereturnpath            = true,
@@ -459,7 +463,7 @@ define brocadevtm::traffic_managers (
   vtmrest { "traffic_managers/${name}":
     ensure   => $ensure,
     before   => Class[Brocadevtm::Purge],
-    endpoint => "https://${ip}:${port}/api/tm/3.3/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/3.4/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/traffic_managers.erb'),

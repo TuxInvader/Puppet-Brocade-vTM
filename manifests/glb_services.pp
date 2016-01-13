@@ -79,6 +79,9 @@
 # "monitors"=>{"description"=>"The monitors that are present in a location.",
 # "type"=>"array", "uniqueItems"=>true, "items"=>{"type"=>"string"}}}
 #
+# [*basic__peer_health_timeout*]
+# Peer reported monitor state timeout in seconds.
+#
 # [*basic__return_ips_on_fail*]
 # Return all or none of the IPs under complete failure.
 #
@@ -151,7 +154,7 @@ define brocadevtm::glb_services (
   vtmrest { "glb_services/${name}":
     ensure   => $ensure,
     before   => Class[Brocadevtm::Purge],
-    endpoint => "https://${ip}:${port}/api/tm/3.3/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/3.4/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/glb_services.erb'),

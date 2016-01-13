@@ -194,6 +194,9 @@
 # [*dns__max_udpsize*]
 # Maximum UDP answer size.
 #
+# [*dns__rrset_order*]
+# Response record ordering.
+#
 # [*dns__verbose*]
 # Whether or not the DNS Server should emit verbose logging. This is useful
 # for diagnosing problems.
@@ -231,6 +234,9 @@
 #
 # [*gzip__enabled*]
 # Compress web pages sent back by the server.
+#
+# [*gzip__etag_rewrite*]
+# How the ETag header should be manipulated when compressing content.
 #
 # [*gzip__include_mime*]
 # MIME types to compress. Complete MIME types can be used, or a type can end
@@ -403,6 +409,14 @@
 # validate client certificates. If no certificate authorities are selected,
 # and client certificates are requested, then all client certificates will be
 # accepted.
+# Type:array
+# Properties:
+#
+# [*ssl__elliptic_curves*]
+# The SSL elliptic curve preference list for SSL connections to this virtual
+# server using TLS version 1.0 or higher. Leaving this empty will make the
+# virtual server use the globally configured curve preference list. The named
+# curves P256, P384 and P521 may be configured.
 # Type:array
 # Properties:
 #
@@ -665,6 +679,7 @@ define brocadevtm::virtual_servers (
   $cookie__secure                          = 'no_modify',
   $dns__edns_udpsize                       = 4096,
   $dns__max_udpsize                        = 4096,
+  $dns__rrset_order                        = 'fixed',
   $dns__verbose                            = false,
   $dns__zones                              = '[]',
   $ftp__data_source_port                   = 0,
@@ -674,6 +689,7 @@ define brocadevtm::virtual_servers (
   $ftp__ssl_data                           = true,
   $gzip__compress_level                    = 1,
   $gzip__enabled                           = false,
+  $gzip__etag_rewrite                      = 'wrap',
   $gzip__include_mime                      = '["text/html","text/plain"]',
   $gzip__max_size                          = 10000000,
   $gzip__min_size                          = 1000,
@@ -715,6 +731,7 @@ define brocadevtm::virtual_servers (
   $smtp__expect_starttls                   = true,
   $ssl__add_http_headers                   = false,
   $ssl__client_cert_cas                    = '[]',
+  $ssl__elliptic_curves                    = '[]',
   $ssl__issued_certs_never_expire          = '[]',
   $ssl__ocsp_enable                        = false,
   $ssl__ocsp_issuers                       = '[]',
@@ -762,7 +779,7 @@ define brocadevtm::virtual_servers (
   vtmrest { "virtual_servers/${name}":
     ensure   => $ensure,
     before   => Class[Brocadevtm::Purge],
-    endpoint => "https://${ip}:${port}/api/tm/3.3/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/3.4/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/virtual_servers.erb'),

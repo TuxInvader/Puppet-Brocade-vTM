@@ -116,6 +116,12 @@
 # SSL3/TLS connection that is permitted.  To disable the minimum interval for
 # handshakes the key should be set to the value "0".
 #
+# [*admin__ssl_elliptic_curves*]
+# The SSL elliptic curve preference list for admin and internal connections.
+# The named curves P256, P384 and P521 may be configured.
+# Type:array
+# Properties:
+#
 # [*admin__ssl_insert_extra_fragment*]
 # Whether or not SSL3 and TLS1 use one-byte fragments as a BEAST
 # countermeasure for admin server and internal connections.
@@ -253,6 +259,9 @@
 # setting. If the process fails this many times, it must be restarted manually
 # from the Diagnose page.  Zero means no limit.
 #
+# [*auditlog__via_syslog*]
+# Whether to output audit log message to the syslog.
+#
 # [*autoscaler__slm_interval*]
 # The interval at which the parent sends new SLM status to the autoscaler.
 #
@@ -380,8 +389,9 @@
 # recovered from a failure and have dropped their traffic IPs.
 #
 # [*fault_tolerance__frontend_check_ips*]
-# The IP addresses used to check front-end connectivity. Set this to an empty
-# string if the traffic manager is on an Intranet with no external
+# The IP addresses used to check front-end connectivity. The text "%gateway%"
+# will be replaced with the default gateway on each system. Set this to an
+# empty string if the traffic manager is on an Intranet with no external
 # connectivity.
 # Type:array
 # Properties:
@@ -763,6 +773,13 @@
 # [*ssl__disable_stitched_cbc_hmac*]
 # Enable or disable use of "stitched" CBC/HMAC mode ciphers
 #
+# [*ssl__elliptic_curves*]
+# The SSL elliptic curve preference list for SSL connections using TLS version
+# 1.0 or higher, unless overridden by virtual server or pool settings. The
+# named curves P256, P384 and P521 may be configured.
+# Type:array
+# Properties:
+#
 # [*ssl__honor_fallback_scsv*]
 # Whether or not ssl-decrypting Virtual Servers honor the Fallback SCSV to
 # protect connections against downgrade attacks.
@@ -866,6 +883,29 @@
 # requires it (i.e. the key is stored on secure hardware and the traffic
 # manager only has a placeholder/identifier key). With this option enabled,
 # your traffic manager will instead try to use hardware for all SSL decrypts.
+#
+# [*ssl_hardware__azure_api_version*]
+# The version of the Azure Key Vault REST API.
+#
+# [*ssl_hardware__azure_client_id*]
+# The client identifier used when accessing the Microsoft Azure Key Vault.
+#
+# [*ssl_hardware__azure_client_secret*]
+# The client secret used when accessing the Microsoft Azure Key Vault.
+#
+# [*ssl_hardware__azure_connect_timeout*]
+# Timeout for establishing a connection to the Azure Key Vault REST API. Using
+# a value of 0 will use libcurl's built-in timeout.
+#
+# [*ssl_hardware__azure_idle_timeout*]
+# Idle timeout for a connection to the Azure Key Vault REST API. Using a value
+# of 0 will deactivate the timeout.
+#
+# [*ssl_hardware__azure_vault_url*]
+# The URL for the REST API of the Microsoft Azure Key Vault.
+#
+# [*ssl_hardware__azure_verify_rest_api_cert*]
+# Whether or not the Azure Key Vault REST API certificate should be verified.
 #
 # [*ssl_hardware__driver_pkcs11_debug*]
 # Print verbose information about the PKCS11 hardware security module to the
@@ -1003,6 +1043,16 @@
 # percentage of system RAM, "20%" for example, or an absolute size such as
 # "200MB".
 #
+# [*web_cache__url_store_keep_free*]
+# Percentage of space to keep free in the URL store.
+#
+# [*web_cache__url_store_max_mallocs*]
+# How many times to attempt to malloc space for a cache URL before giving up.
+# 0 means never give up.
+#
+# [*web_cache__url_store_num_bins*]
+# The number of bins to use for the URL store. 0 means no binning.
+#
 # [*web_cache__verbose*]
 # Add an X-Cache-Info header to every HTTP response, showing whether the
 # request and/or the response was cacheable.
@@ -1042,6 +1092,7 @@ class brocadevtm::global_settings (
   $admin__ssl3_ciphers                         = 'SSL_RSA_WITH_AES_128_GCM_SHA256,SSL_RSA_WITH_AES_128_CBC_SHA256,SSL_RSA_WITH_AES_128_CBC_SHA,SSL_RSA_WITH_AES_256_GCM_SHA384,SSL_RSA_WITH_AES_256_CBC_SHA256,SSL_RSA_WITH_AES_256_CBC_SHA,SSL_RSA_WITH_3DES_EDE_CBC_SHA',
   $admin__ssl3_diffie_hellman_key_length       = 'dh_2048',
   $admin__ssl3_min_rehandshake_interval        = 1000,
+  $admin__ssl_elliptic_curves                  = '[]',
   $admin__ssl_insert_extra_fragment            = false,
   $admin__ssl_max_handshake_message_size       = 10240,
   $admin__ssl_prevent_timing_side_channels     = false,
@@ -1062,6 +1113,7 @@ class brocadevtm::global_settings (
   $aptimizer__max_original_content_buffer_size = '2MB',
   $aptimizer__watchdog_interval                = 300,
   $aptimizer__watchdog_limit                   = 3,
+  $auditlog__via_syslog                        = false,
   $autoscaler__verbose                         = false,
   $cluster_comms__allow_update_default         = true,
   $cluster_comms__allowed_update_hosts         = '["127.0.0.1"]',
@@ -1158,6 +1210,7 @@ class brocadevtm::global_settings (
   $ssl__cache_per_virtualserver                = true,
   $ssl__cache_size                             = 6151,
   $ssl__crl_mem_size                           = '5MB',
+  $ssl__elliptic_curves                        = '[]',
   $ssl__honor_fallback_scsv                    = true,
   $ssl__insert_extra_fragment                  = false,
   $ssl__max_handshake_message_size             = 10240,
@@ -1179,6 +1232,10 @@ class brocadevtm::global_settings (
   $ssl__support_tls1_1                         = true,
   $ssl__support_tls1_2                         = true,
   $ssl_hardware__accel                         = false,
+  $ssl_hardware__azure_client_id               = undef,
+  $ssl_hardware__azure_client_secret           = undef,
+  $ssl_hardware__azure_vault_url               = undef,
+  $ssl_hardware__azure_verify_rest_api_cert    = true,
   $ssl_hardware__driver_pkcs11_debug           = false,
   $ssl_hardware__driver_pkcs11_lib             = undef,
   $ssl_hardware__driver_pkcs11_slot_desc       = undef,
@@ -1218,7 +1275,7 @@ class brocadevtm::global_settings (
   vtmrest { 'global_settings':
     ensure   => $ensure,
     before   => Class[Brocadevtm::Purge],
-    endpoint => "https://${ip}:${port}/api/tm/3.3/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/3.4/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/global_settings.erb'),

@@ -115,6 +115,12 @@
 # SSL3/TLS connection that is permitted.  To disable the minimum interval for
 # handshakes the key should be set to the value "0".
 #
+# [*admin__ssl_elliptic_curves*]
+# The SSL elliptic curve preference list for admin and internal connections.
+# The named curves P256, P384 and P521 may be configured.
+# Type:array
+# Properties:
+#
 # [*admin__ssl_insert_extra_fragment*]
 # Whether or not SSL3 and TLS1 use one-byte fragments as a BEAST
 # countermeasure for admin server and internal connections.
@@ -252,6 +258,9 @@
 # setting. If the process fails this many times, it must be restarted manually
 # from the Diagnose page.  Zero means no limit.
 #
+# [*auditlog__via_syslog*]
+# Whether to output audit log message to the syslog.
+#
 # [*autoscaler__slm_interval*]
 # The interval at which the parent sends new SLM status to the autoscaler.
 #
@@ -379,8 +388,9 @@
 # recovered from a failure and have dropped their traffic IPs.
 #
 # [*fault_tolerance__frontend_check_ips*]
-# The IP addresses used to check front-end connectivity. Set this to an empty
-# string if the traffic manager is on an Intranet with no external
+# The IP addresses used to check front-end connectivity. The text "%gateway%"
+# will be replaced with the default gateway on each system. Set this to an
+# empty string if the traffic manager is on an Intranet with no external
 # connectivity.
 # Type:array
 # Properties:
@@ -762,6 +772,13 @@
 # [*ssl__disable_stitched_cbc_hmac*]
 # Enable or disable use of "stitched" CBC/HMAC mode ciphers
 #
+# [*ssl__elliptic_curves*]
+# The SSL elliptic curve preference list for SSL connections using TLS version
+# 1.0 or higher, unless overridden by virtual server or pool settings. The
+# named curves P256, P384 and P521 may be configured.
+# Type:array
+# Properties:
+#
 # [*ssl__honor_fallback_scsv*]
 # Whether or not ssl-decrypting Virtual Servers honor the Fallback SCSV to
 # protect connections against downgrade attacks.
@@ -865,6 +882,29 @@
 # requires it (i.e. the key is stored on secure hardware and the traffic
 # manager only has a placeholder/identifier key). With this option enabled,
 # your traffic manager will instead try to use hardware for all SSL decrypts.
+#
+# [*ssl_hardware__azure_api_version*]
+# The version of the Azure Key Vault REST API.
+#
+# [*ssl_hardware__azure_client_id*]
+# The client identifier used when accessing the Microsoft Azure Key Vault.
+#
+# [*ssl_hardware__azure_client_secret*]
+# The client secret used when accessing the Microsoft Azure Key Vault.
+#
+# [*ssl_hardware__azure_connect_timeout*]
+# Timeout for establishing a connection to the Azure Key Vault REST API. Using
+# a value of 0 will use libcurl's built-in timeout.
+#
+# [*ssl_hardware__azure_idle_timeout*]
+# Idle timeout for a connection to the Azure Key Vault REST API. Using a value
+# of 0 will deactivate the timeout.
+#
+# [*ssl_hardware__azure_vault_url*]
+# The URL for the REST API of the Microsoft Azure Key Vault.
+#
+# [*ssl_hardware__azure_verify_rest_api_cert*]
+# Whether or not the Azure Key Vault REST API certificate should be verified.
 #
 # [*ssl_hardware__driver_pkcs11_debug*]
 # Print verbose information about the PKCS11 hardware security module to the
@@ -1001,6 +1041,16 @@
 # The maximum size of the HTTP web page cache.  This is specified as either a
 # percentage of system RAM, "20%" for example, or an absolute size such as
 # "200MB".
+#
+# [*web_cache__url_store_keep_free*]
+# Percentage of space to keep free in the URL store.
+#
+# [*web_cache__url_store_max_mallocs*]
+# How many times to attempt to malloc space for a cache URL before giving up.
+# 0 means never give up.
+#
+# [*web_cache__url_store_num_bins*]
+# The number of bins to use for the URL store. 0 means no binning.
 #
 # [*web_cache__verbose*]
 # Add an X-Cache-Info header to every HTTP response, showing whether the
