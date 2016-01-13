@@ -1,0 +1,50 @@
+#
+# BGP Neighbor
+# The "conf/bgpneighbors" directory contains configuration files for BGP
+# neighbors.  The name of a file is the name of the neighbor configuration
+# that it defines.  BGP neighbors can be managed under the "System > Fault
+# Tolerance > BGP Neighbors" section of the Admin UI, or by using functions
+# under the "BGPNeighbors" section of the SOAP API and CLI.
+#
+# === Parameters
+#
+# [*basic__address*]
+# The IP address of the BGP neighbor
+#
+# [*basic__advertisement_interval*]
+# The minimum interval between the sending of BGP routing updates to neighbors
+#
+# [*basic__as_number*]
+# The AS number for the BGP neighbor
+#
+# [*basic__authentication_password*]
+# The password to be used for authentication of sessions with neighbors
+#
+# [*basic__holdtime*]
+# The period after which the BGP session with the neighbor is deemed to have
+# become idle - and requires re-establishment - if the neighbor falls silent.
+#
+# [*basic__keepalive*]
+# The interval at which messages are sent to the BGP neighbor to keep the
+# mutual BGP session established.
+#
+# [*basic__machines*]
+# The traffic managers that are to use this neighbor
+# Type:array
+# Properties:
+#
+# === Examples
+#
+# <CLASS-OR-TYPE-DECLARATION>
+#     ensure => present,
+# }
+#
+#
+# === Authors
+#
+# Mark Boddington <mbodding@brocade>
+#
+# === Copyright
+#
+# Copyright 2015 Brocade
+#
