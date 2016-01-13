@@ -9,11 +9,18 @@ This is a puppet module for configuring the Brocade vTM - formerly:
 	Riverbed Stingray
 	Riverbed SteelApp
 
-#### Current Release Candidates
+#### REST Version Mapping
 
-If you want to manage vTMs running versions from 9.9 upto 10.1 then please use 0.33.x
+If you want to manage vTMs running versions from 9.9 and up then you may use 1.33.x
 
-However if all of your vTMs are running 10.1 then please use 0.35.x
+However if you want access to all features of your current vTM, then use the latest API version available
+
+| vTM Version | REST API | Puppet Module Version |
+| ------ | ------ | ------ |
+| 9.9 | 3.3 | 1.33.x |
+| 10.0 | 3.4 | 1.33.x |
+| 10.1 | 3.5 | 1.35.x |
+| 10.2 | 3.6 | 1.36.x |
 
 See notes on Module versioning below....
 
@@ -41,7 +48,7 @@ You could try one of these locations:
 
 + [Brocade vTM Evaluation Signup](http://www1.brocade.com/forms/jsp/steelapp-request-trial/index.jsp> "vTM Evaluation")
 
-+ [Brocade vTM Download Location](https://support.riverbed.com/content/support/software/steelapp/traffic-manager.html "vTM Downloads")
++ [Brocade vTM Download Location](http://www1.brocade.com/forms/jsp/steelapp-traffic-manager-developer/download.jsp "vTM Downloads")
 
 + [Brocade vTM Docker Image](https://hub.docker.com/r/tuxinvader/brocade-vtm/> "Docker Image")
 
@@ -66,9 +73,9 @@ Eg.
 
     puppet module install tuxinvader-brocadevtm
 
-    puppet module install tuxinvader-brocadevtm -v 0.35.0
+    puppet module install tuxinvader-brocadevtm -v 1.35.0
 
-    puppet module install tuxinvader-brocadevtm -v '>=0.35.0 <0.36.0'
+    puppet module install tuxinvader-brocadevtm -v '>=1.35.0 <1.36.0'
 
 ## Class brocadevtm (init.pp)
 
