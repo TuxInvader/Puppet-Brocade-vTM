@@ -37,7 +37,7 @@
 # client/server as appropriate.
 #
 # [*basic__bandwidth_class*]
-# The bandwidth management class should this server should use, if any.
+# The bandwidth management class that this server should use, if any.
 #
 # [*basic__close_with_rst*]
 # Whether or not connections from clients should be closed with a RST packet,
@@ -204,6 +204,9 @@
 # Whether or not the traffic manager should modify the "secure" tag of any
 # cookies set by a back-end web server.
 #
+# [*dns__edns_client_subnet*]
+# Enable/Disable use of EDNS client subnet option
+#
 # [*dns__edns_udpsize*]
 # EDNS UDP size advertised in responses.
 #
@@ -297,6 +300,83 @@
 # [*http__mime_detect*]
 # Auto-detect MIME types if the server does not provide them.
 #
+# [*http2__connect_timeout*]
+# The time, in seconds, to wait for a request on a new HTTP/2 connection.  If
+# no request is received within this time, the connection will be closed. This
+# setting overrides the "connect_timeout" setting. If set to "0" (zero), the
+# value of "connect_timeout" will be used instead.
+#
+# [*http2__data_frame_size*]
+# This setting controls the preferred frame size used when sending body data
+# to the client. If the client specifies a smaller maximum size than this
+# setting, the client's maximum size will be used. Every data frame sent has
+# at least a 9-byte header, in addition to this frame size, prepended to it.
+#
+# [*http2__enabled*]
+# This setting allows the HTTP/2 protocol to be used by a HTTP virtual server.
+# Unless use of HTTP/2 is negotiated by the client, the virtual server will
+# fall back to HTTP 1.x automatically.
+#
+# [*http2__header_table_size*]
+# This setting controls the amount of memory allowed for header compression on
+# each HTTP/2 connection.
+#
+# [*http2__headers_index_blacklist*]
+# A list of header names that should never be compressed using indexing.
+# Type:array
+# Properties:
+#
+# [*http2__headers_index_default*]
+# The HTTP/2 HPACK compression scheme allows for HTTP headers to be compressed
+# using indexing. Sensitive headers can be marked as "never index", which
+# prevents them from being compressed using indexing. When this setting is
+# "Yes", only headers included in "http2!headers_index_blacklist" are marked
+# as "never index". When this setting is "No", all headers will be marked as
+# "never index" unless they are included in "http2!headers_index_whitelist".
+#
+# [*http2__headers_index_whitelist*]
+# A list of header names that can be compressed using indexing when the value
+# of "http2!headers_index_default" is set to "No".
+# Type:array
+# Properties:
+#
+# [*http2__idle_timeout_no_streams*]
+# The time, in seconds, to wait for a new HTTP/2 request on a previously used
+# HTTP/2 connection that has no open HTTP/2 streams. If an HTTP/2 request is
+# not received within this time, the connection will be closed. A value of "0"
+# (zero) will disable the timeout.
+#
+# [*http2__idle_timeout_open_streams*]
+# The time, in seconds, to wait for data on an idle HTTP/2 connection, which
+# has open streams, when no data has been sent recently (e.g. for long-polled
+# requests). If data is not sent within this time, all open streams and the
+# HTTP/2 connection will be closed. A value of "0" (zero) will disable the
+# timeout.
+#
+# [*http2__max_concurrent_streams*]
+# This setting controls the number of streams a client is permitted to open
+# concurrently on a single connection.
+#
+# [*http2__max_frame_size*]
+# This setting controls the maximum HTTP/2 frame size clients are permitted to
+# send to the traffic manager.
+#
+# [*http2__max_header_padding*]
+# The maximum size, in bytes, of the random-length padding to add to HTTP/2
+# header frames. The padding, a random number of zero bytes up to the maximum
+# specified.
+#
+# [*http2__merge_cookie_headers*]
+# Whether Cookie headers received from an HTTP/2 client should be merged into
+# a single Cookie header using RFC6265 rules before forwarding to an HTTP/1.1
+# server. Some web applications do not handle multiple Cookie headers
+# correctly.
+#
+# [*http2__stream_window_size*]
+# This setting controls the flow control window for each HTTP/2 stream. This
+# will limit the memory used for buffering when the client is sending body
+# data faster than the pool node is reading it.
+#
 # [*kerberos_protocol_transition__enabled*]
 # Whether or not the virtual server should use Kerberos Protocol Transition.
 #
@@ -315,9 +395,9 @@
 # file system.
 #
 # [*log__filename*]
-# The name of the file in which to store the request logs. Appliances will
-# ignore this. The filename can contain macros which will be expanded by the
-# traffic manager to generate the full filename.
+# The name of the file in which to store the request logs. The filename can
+# contain macros which will be expanded by the traffic manager to generate the
+# full filename.
 #
 # [*log__format*]
 # The log file format. This specifies the line of text that will be written to
@@ -695,6 +775,7 @@ define brocadevtm::virtual_servers (
   $cookie__path_regex                      = undef,
   $cookie__path_replace                    = undef,
   $cookie__secure                          = 'no_modify',
+  $dns__edns_client_subnet                 = true,
   $dns__edns_udpsize                       = 4096,
   $dns__max_udpsize                        = 4096,
   $dns__rrset_order                        = 'fixed',
@@ -718,6 +799,20 @@ define brocadevtm::virtual_servers (
   $http__location_rewrite                  = 'if_host_matches',
   $http__mime_default                      = 'text/plain',
   $http__mime_detect                       = false,
+  $http2__connect_timeout                  = 0,
+  $http2__data_frame_size                  = 4096,
+  $http2__enabled                          = true,
+  $http2__header_table_size                = 4096,
+  $http2__headers_index_blacklist          = '[]',
+  $http2__headers_index_default            = true,
+  $http2__headers_index_whitelist          = '[]',
+  $http2__idle_timeout_no_streams          = 120,
+  $http2__idle_timeout_open_streams        = 600,
+  $http2__max_concurrent_streams           = 200,
+  $http2__max_frame_size                   = 16384,
+  $http2__max_header_padding               = 0,
+  $http2__merge_cookie_headers             = true,
+  $http2__stream_window_size               = 65535,
   $kerberos_protocol_transition__enabled   = false,
   $kerberos_protocol_transition__principal = undef,
   $kerberos_protocol_transition__target    = undef,
@@ -797,7 +892,7 @@ define brocadevtm::virtual_servers (
   vtmrest { "virtual_servers/${name}":
     ensure   => $ensure,
     before   => Class[Brocadevtm::Purge],
-    endpoint => "https://${ip}:${port}/api/tm/3.5/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/3.6/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/virtual_servers.erb'),

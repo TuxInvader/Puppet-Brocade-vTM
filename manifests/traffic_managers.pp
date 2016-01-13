@@ -128,6 +128,9 @@
 # [*appliance__ipv4_forwarding*]
 # Whether or not IPv4 forwarding is enabled.
 #
+# [*appliance__ipv6_forwarding*]
+# Whether or not IPv6 forwarding is enabled.
+#
 # [*appliance__licence_agreed*]
 # Whether or not the license agreement has been accepted.  This determines
 # whether or not the Initial Configuration wizard is displayed.
@@ -214,6 +217,9 @@
 #
 # [*appliance__ssh_enabled*]
 # Whether or not the SSH server is enabled on the appliance.
+#
+# [*appliance__ssh_password_allowed*]
+# Whether or not the SSH server allows password based login.
 #
 # [*appliance__ssh_port*]
 # The port that the SSH server should listen on.
@@ -435,6 +441,7 @@ define brocadevtm::traffic_managers (
   $appliance__if                          = '[]',
   $appliance__ip                          = '[]',
   $appliance__ipv4_forwarding             = false,
+  $appliance__ipv6_forwarding             = false,
   $appliance__licence_agreed              = false,
   $appliance__manageazureroutes           = true,
   $appliance__manageec2conf               = true,
@@ -456,6 +463,7 @@ define brocadevtm::traffic_managers (
   $appliance__shim_proxy_host             = undef,
   $appliance__shim_proxy_port             = undef,
   $appliance__ssh_enabled                 = true,
+  $appliance__ssh_password_allowed        = true,
   $appliance__ssh_port                    = 22,
   $appliance__timezone                    = 'US/Pacific',
   $appliance__vlans                       = '[]',
@@ -497,7 +505,7 @@ define brocadevtm::traffic_managers (
   vtmrest { "traffic_managers/${name}":
     ensure   => $ensure,
     before   => Class[Brocadevtm::Purge],
-    endpoint => "https://${ip}:${port}/api/tm/3.5/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/3.6/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/traffic_managers.erb'),

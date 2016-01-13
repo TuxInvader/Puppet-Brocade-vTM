@@ -51,7 +51,7 @@ define brocadevtm::aptimizer_scopes (
   vtmrest { "aptimizer/scopes/${name}":
     ensure   => $ensure,
     before   => Class[Brocadevtm::Purge],
-    endpoint => "https://${ip}:${port}/api/tm/3.5/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/3.6/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/aptimizer_scopes.erb'),

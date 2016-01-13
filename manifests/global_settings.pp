@@ -47,6 +47,21 @@
 # defer the processing of new client-first connections until the client has
 # sent some data.
 #
+# [*basic__cluster_identifier*]
+# Cluster identifier. Generally supplied by Services Director.
+#
+# [*basic__cpu_starvation_check_interval*]
+# How frequently should child processes check for CPU starvation? A value of 0
+# disables the detection.
+#
+# [*basic__cpu_starvation_check_tolerance*]
+# How much delay in milliseconds between starvation checks do we allow before
+# we assume that the machine or its HyperVisor are overloaded.
+#
+# [*basic__http2_no_cipher_blacklist_check*]
+# Disable the cipher blacklist check in HTTP2 (mainly intended for testing
+# purposes)
+#
 # [*basic__internal_config_logging*]
 # Whether or not messages pertaining to internal configuration files should be
 # logged to the event log.
@@ -264,6 +279,9 @@
 # restarted within the interval defined by the aptimizer!watchdog_interval
 # setting. If the process fails this many times, it must be restarted manually
 # from the Diagnose page.  Zero means no limit.
+#
+# [*auditlog__via_eventd*]
+# Whether to mirror the audit log to EventD.
 #
 # [*auditlog__via_syslog*]
 # Whether to output audit log message to the syslog.
@@ -553,24 +571,24 @@
 # decimal or IPv4 address format.
 #
 # [*ospfv2__area_type*]
-# The type of the OSPF area in which the traffic manager will operate. This
-# must be the same for all routers in the area, as required by OSPF.
+# The type of OSPF area in which the traffic manager will operate. This must
+# be the same for all routers in the area, as required by OSPF.
 #
 # [*ospfv2__authentication_key_id_a*]
-# OSPFv2 authentication key ID. If set to 0, the key is disabled. If there are
-# no enabled keys, OSPFv2 authentication is not used.
+# OSPFv2 authentication key ID. If set to 0, which is the default value, the
+# key is disabled.
 #
 # [*ospfv2__authentication_key_id_b*]
-# OSPFv2 authentication key ID. If set to 0, the key is disabled. If there are
-# no enabled keys, OSPFv2 authentication is not used.
+# OSPFv2 authentication key ID. If set to 0, which is the default value, the
+# key is disabled.
 #
 # [*ospfv2__authentication_shared_secret_a*]
-# OSPFv2 authentication shared secret (MD5). If set to blank, the key is
-# disabled. If there are no enabled keys, OSPFv2 authentication is not used.
+# OSPFv2 authentication shared secret (MD5). If set to blank, which is the
+# default value, the key is disabled.
 #
 # [*ospfv2__authentication_shared_secret_b*]
-# OSPFv2 authentication shared secret (MD5). If set to blank, the key is
-# disabled. If there are no enabled keys, OSPFv2 authentication is not used.
+# OSPFv2 authentication shared secret (MD5). If set to blank, which is the
+# default value, the key is disabled.
 #
 # [*ospfv2__enabled*]
 # Whether OSPFv2 Route Health Injection is enabled
@@ -805,6 +823,17 @@
 # The maximum size (in bytes) of SSL handshake messages that SSL connections
 # will accept. To accept any size of handshake message the key should be set
 # to the value "0".
+#
+# [*ssl__obscure_alert_descriptions*]
+# Whether SSL/TLS alert descriptions should be obscured (where reasonable)
+# when sent to a remote peer. Alert descriptions are useful for diagnosing
+# SSL/TLS connection issues when connecting to a remote peer. However those
+# diagnostics may provide information that an attacker could use to compromise
+# the system (as a concrete example, see Moeller, B., "Security of CBC
+# Ciphersuites in SSL/TLS: Problems and Countermeasures"). If not enabled,
+# alert descriptions that are known to facilitate compromise will still be
+# obscured.  Otherwise, if enabled, alert descriptions that can be safely
+# mapped to a more general one, will be.
 #
 # [*ssl__ocsp_cache_size*]
 # The maximum number of cached client certificate OCSP results stored. This
@@ -1047,6 +1076,12 @@
 # either a percentage of the total cache size, "2%" for example, or an
 # absolute size such as "20MB".
 #
+# [*web_cache__max_handles*]
+# Maximum number of webcache handles to allow per process. This is a limit on
+# the maximum number of cached objects being simultaneously served, not a
+# limit on the maximum that can be in the cache. A value of 0 indicates that
+# we should use the system per-process limit on number of FDs.
+#
 # [*web_cache__max_path_length*]
 # The maximum length of the path (including query string) for the resource
 # being cached. If the path exceeds this length then it will not be added to
@@ -1096,6 +1131,7 @@ class brocadevtm::global_settings (
   $basic__afm_enabled                          = false,
   $basic__chunk_size                           = 16384,
   $basic__client_first_opt                     = false,
+  $basic__cluster_identifier                   = undef,
   $basic__license_servers                      = '[]',
   $basic__max_fds                              = 1048576,
   $basic__monitor_memory_size                  = 4096,
@@ -1132,6 +1168,7 @@ class brocadevtm::global_settings (
   $aptimizer__max_original_content_buffer_size = '2MB',
   $aptimizer__watchdog_interval                = 300,
   $aptimizer__watchdog_limit                   = 3,
+  $auditlog__via_eventd                        = false,
   $auditlog__via_syslog                        = false,
   $autoscaler__verbose                         = false,
   $bgp__as_number                              = 65534,
@@ -1205,7 +1242,7 @@ class brocadevtm::global_settings (
   $rest_api__replicate_timeout                 = 10,
   $security__login_banner                      = undef,
   $security__login_banner_accept               = false,
-  $security__login_delay                       = 0,
+  $security__login_delay                       = 4,
   $security__max_login_attempts                = 0,
   $security__max_login_external                = false,
   $security__max_login_suspension_time         = 15,
@@ -1296,7 +1333,7 @@ class brocadevtm::global_settings (
   vtmrest { 'global_settings':
     ensure   => $ensure,
     before   => Class[Brocadevtm::Purge],
-    endpoint => "https://${ip}:${port}/api/tm/3.5/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/3.6/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/global_settings.erb'),

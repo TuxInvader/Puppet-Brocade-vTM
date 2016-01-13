@@ -13,7 +13,10 @@
 # The IP address of the BGP neighbor
 #
 # [*basic__advertisement_interval*]
-# The minimum interval between the sending of BGP routing updates to neighbors
+# The minimum interval between the sending of BGP routing updates to
+# neighbors. Note that as a result of jitter, as defined for BGP, the interval
+# during which no advertisements are sent will be between 75% and 100% of this
+# value.
 #
 # [*basic__as_number*]
 # The AS number for the BGP neighbor
@@ -71,7 +74,7 @@ define brocadevtm::bgpneighbors (
   vtmrest { "bgpneighbors/${name}":
     ensure   => $ensure,
     before   => Class[Brocadevtm::Purge],
-    endpoint => "https://${ip}:${port}/api/tm/3.5/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/3.6/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/bgpneighbors.erb'),

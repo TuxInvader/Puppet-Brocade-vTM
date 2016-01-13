@@ -127,6 +127,9 @@
 # [*appliance__ipv4_forwarding*]
 # Whether or not IPv4 forwarding is enabled.
 #
+# [*appliance__ipv6_forwarding*]
+# Whether or not IPv6 forwarding is enabled.
+#
 # [*appliance__licence_agreed*]
 # Whether or not the license agreement has been accepted.  This determines
 # whether or not the Initial Configuration wizard is displayed.
@@ -213,6 +216,9 @@
 #
 # [*appliance__ssh_enabled*]
 # Whether or not the SSH server is enabled on the appliance.
+#
+# [*appliance__ssh_password_allowed*]
+# Whether or not the SSH server allows password based login.
 #
 # [*appliance__ssh_port*]
 # The port that the SSH server should listen on.

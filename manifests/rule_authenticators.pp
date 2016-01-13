@@ -89,7 +89,7 @@ define brocadevtm::rule_authenticators (
   vtmrest { "rule_authenticators/${name}":
     ensure   => $ensure,
     before   => Class[Brocadevtm::Purge],
-    endpoint => "https://${ip}:${port}/api/tm/3.5/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/3.6/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/rule_authenticators.erb'),

@@ -1,19 +1,19 @@
-# === Class: brocadevtm::event_types_all_custom_trafficscript_events
+# === Class: brocadevtm::event_types_audit_events
 #
 # This class is a direct implementation of brocadvtm::event_types
 #
 # Please refer to the documentation in that module for more information
 #
-class brocadevtm::event_types_all_custom_trafficscript_events (
+class brocadevtm::event_types_audit_events (
   $ensure                       = present,
   $basic__actions               = '[]',
   $basic__built_in              = true,
-  $basic__note                  = 'Events created using the TrafficScript function event.emit().',
+  $basic__note                  = 'Audit log events.',
   $cloudcredentials__event_tags = '[]',
   $cloudcredentials__objects    = '[]',
   $config__event_tags           = '[]',
   $faulttolerance__event_tags   = '[]',
-  $general__event_tags          = '[]',
+  $general__event_tags          = '["audit"]',
   $glb__event_tags              = '[]',
   $glb__objects                 = '[]',
   $java__event_tags             = '[]',
@@ -33,7 +33,7 @@ class brocadevtm::event_types_all_custom_trafficscript_events (
   $slm__objects                 = '[]',
   $ssl__event_tags              = '[]',
   $sslhw__event_tags            = '[]',
-  $trafficscript__event_tags    = '["*"]',
+  $trafficscript__event_tags    = '[]',
   $vservers__event_tags         = '[]',
   $vservers__objects            = '[]',
   $zxtms__event_tags            = '[]',
@@ -47,8 +47,8 @@ class brocadevtm::event_types_all_custom_trafficscript_events (
   $purge           = $brocadevtm::purge
   $purge_state_dir = $brocadevtm::purge_state_dir
 
-  info ("Configuring event_types_all_custom_trafficscript_events ${name}")
-  vtmrest { 'event_types/All%20Custom%20TrafficScript%20Events':
+  info ("Configuring event_types_audit_events ${name}")
+  vtmrest { 'event_types/Audit%20Events':
     ensure   => $ensure,
     before   => Class[Brocadevtm::Purge],
     endpoint => "https://${ip}:${port}/api/tm/3.6/config/active",
@@ -56,15 +56,15 @@ class brocadevtm::event_types_all_custom_trafficscript_events (
     password => $pass,
     content  => template('brocadevtm/event_types.erb'),
     type     => 'application/json',
-    internal => 'event_types_all_custom_trafficscript_events',
+    internal => 'event_types_audit_events',
     failfast => $brocadevtm::failfast,
     debug    => 0,
   }
 
   if ( $purge ) {
     ensure_resource('file', "${purge_state_dir}/event_types", {ensure => present})
-    file_line { 'event_types/All%20Custom%20TrafficScript%20Events':
-      line => 'event_types/All%20Custom%20TrafficScript%20Events',
+    file_line { 'event_types/Audit%20Events':
+      line => 'event_types/Audit%20Events',
       path => "${purge_state_dir}/event_types",
     }
   }

@@ -51,7 +51,7 @@ class brocadevtm::event_types_resource_starvation (
   vtmrest { 'event_types/Resource%20Starvation':
     ensure   => $ensure,
     before   => Class[Brocadevtm::Purge],
-    endpoint => "https://${ip}:${port}/api/tm/3.5/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/3.6/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/event_types.erb'),
