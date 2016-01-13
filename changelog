@@ -1,3 +1,7 @@
+# Version 1.xx.0
+
+No Changes 0.xx.3 released as version 1.
+
 # Version 0.33.3 and 0.35.3
 
 - Ignore the content of the nodes table if we have autoscaling enabled.
