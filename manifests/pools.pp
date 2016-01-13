@@ -46,6 +46,13 @@
 # back-end node before marking it as failed.  This is only used when
 # "passive_monitoring" is enabled.
 #
+# [*basic__node_delete_behavior*]
+# Specify the deletion behavior for nodes in this pool.
+#
+# [*basic__node_drain_to_delete_timeout*]
+# The maximum time that a node will be allowed to remain in a draining state
+# after it has been deleted. A value of 0 means no maximum time.
+#
 # [*basic__nodes_table*]
 # A table of all nodes in this pool. A node should be specified as a
 # "<ip>:<port>" pair, and has a state, weight and priority.
@@ -283,10 +290,10 @@
 #
 # [*ssl__enhance*]
 # SSL protocol enhancements allow your traffic manager to prefix each new SSL
-# connection with information about the client. This enables Riverbed Web
+# connection with information about the client. This enables Brocade Web
 # Servers to run multiple SSL sites, and to discover the client's IP address.
-# Only enable this if you are using nodes for this pool which are Riverbed Web
-# Servers or Stingray Traffic Managers, whose virtual servers have the
+# Only enable this if you are using nodes for this pool which are Brocade Web
+# Servers or Brocade Virtual Traffic Managers, whose virtual servers have the
 # "ssl_trust_magic" setting enabled.
 #
 # [*ssl__send_close_alerts*]
@@ -392,6 +399,8 @@ define brocadevtm::pools (
   $basic__monitors                          = '[]',
   $basic__node_close_with_rst               = false,
   $basic__node_connection_attempts          = 3,
+  $basic__node_delete_behavior              = 'immediate',
+  $basic__node_drain_to_delete_timeout      = 0,
   $basic__nodes_table                       = '[]',
   $basic__note                              = undef,
   $basic__passive_monitoring                = true,
@@ -469,7 +478,7 @@ define brocadevtm::pools (
   vtmrest { "pools/${name}":
     ensure   => $ensure,
     before   => Class[Brocadevtm::Purge],
-    endpoint => "https://${ip}:${port}/api/tm/3.4/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/3.5/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/pools.erb'),

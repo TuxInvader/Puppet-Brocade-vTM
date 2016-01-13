@@ -163,7 +163,7 @@ define brocadevtm::protection (
   vtmrest { "protection/${name}":
     ensure   => $ensure,
     before   => Class[Brocadevtm::Purge],
-    endpoint => "https://${ip}:${port}/api/tm/3.4/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/3.5/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/protection.erb'),

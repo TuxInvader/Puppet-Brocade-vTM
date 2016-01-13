@@ -1,12 +1,12 @@
 # === Class: brocadevtm::application_firewall
 #
-# Stingray Application Firewall
+# Brocade Virtual Web Application Firewall
 # The "conf/zeusafm.conf" file contains configuration files for the
 # application firewall. Some keys present in the "zeusafm.conf" are not
-# documented here. Refer to the Stingray Application Firewall documentation
-# for further details. The configuration can be edited under the "System >
-# Application Firewall" section of the Administration Server or by using
-# functions under the "AFM" section of the SOAP API and CLI.
+# documented here. Refer to the Brocade Virtual Web Application Firewall
+# documentation for further details. The configuration can be edited under the
+# "System > Application Firewall" section of the Administration Server or by
+# using functions under the "AFM" section of the SOAP API and CLI.
 #
 # === Parameters
 #
@@ -40,7 +40,7 @@ class brocadevtm::application_firewall (
   vtmrest { 'application_firewall':
     ensure   => $ensure,
     before   => Class[Brocadevtm::Purge],
-    endpoint => "https://${ip}:${port}/api/tm/3.4/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/3.5/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/application_firewall.erb'),

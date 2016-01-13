@@ -23,6 +23,19 @@
 # to the request that contains the original protocol used by the client to
 # connect to the traffic manager.
 #
+# [*basic__auto_upgrade_protocols*]
+# A case-insensitive list of HTTP "Upgrade" header values that will trigger
+# the HTTP connection upgrade auto-detection.
+# Type:array
+# Properties:
+#
+# [*basic__autodetect_upgrade_headers*]
+# Whether the traffic manager should check for HTTP responses that confirm an
+# HTTP connection is transitioning to the WebSockets protocol.  If that such a
+# response is detected, the traffic manager will cease any protocol-specific
+# processing on the connection and just pass incoming data to the
+# client/server as appropriate.
+#
 # [*basic__bandwidth_class*]
 # The bandwidth management class should this server should use, if any.
 #
@@ -112,6 +125,9 @@
 # href="?fold_open=SSL%20Configuration&section=Global%20Settings#a_ssl!honor_fal
 # lback_scsv"> "ssl!honor_fallback_scsv"</a> from the Global Settings section
 # of the System tab will be enforced.
+#
+# [*basic__transparent*]
+# Whether or not bound sockets should be configured for transparent proxying.
 #
 # [*aptimizer__enabled*]
 # Whether the virtual server should aptimize web content.
@@ -254,10 +270,10 @@
 # Compress documents with no given size.
 #
 # [*http__chunk_overhead_forwarding*]
-# Handling of HTTP chunk overhead.  When Stingray receives data from a server
-# or client that consists purely of protocol overhead (contains no payload),
+# Handling of HTTP chunk overhead.  When vTM receives data from a server or
+# client that consists purely of protocol overhead (contains no payload),
 # forwarding of such segments is delayed until useful payload data arrives
-# (setting "lazy").  Changing this key to "eager" will make Stingray incur the
+# (setting "lazy").  Changing this key to "eager" will make vTM incur the
 # overhead of immediately passing such data on; it should only be used with
 # HTTP peers whose chunk handling requires it.
 #
@@ -642,6 +658,7 @@ define brocadevtm::virtual_servers (
   $basic__add_cluster_ip                   = true,
   $basic__add_x_forwarded_for              = false,
   $basic__add_x_forwarded_proto            = false,
+  $basic__autodetect_upgrade_headers       = true,
   $basic__bandwidth_class                  = undef,
   $basic__close_with_rst                   = false,
   $basic__completionrules                  = '[]',
@@ -662,6 +679,7 @@ define brocadevtm::virtual_servers (
   $basic__ssl_client_cert_headers          = 'none',
   $basic__ssl_decrypt                      = false,
   $basic__ssl_honor_fallback_scsv          = 'use_default',
+  $basic__transparent                      = false,
   $aptimizer__enabled                      = false,
   $aptimizer__profile                      = '[]',
   $connection__keepalive                   = true,
@@ -779,7 +797,7 @@ define brocadevtm::virtual_servers (
   vtmrest { "virtual_servers/${name}":
     ensure   => $ensure,
     before   => Class[Brocadevtm::Purge],
-    endpoint => "https://${ip}:${port}/api/tm/3.4/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/3.5/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/virtual_servers.erb'),

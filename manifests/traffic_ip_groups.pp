@@ -55,15 +55,30 @@
 # [*basic__note*]
 # A note, used to describe this Traffic IP Group
 #
+# [*basic__rhi_bgp_metric_base*]
+# The base BGP routing metric for this Traffic IP group. This is the
+# advertised routing cost for the active traffic manager in the cluster. It
+# can be used to set up inter-cluster failover.
+#
+# [*basic__rhi_bgp_passive_metric_offset*]
+# The BGP routing metric offset for this Traffic IP group. This is the
+# difference between the advertised routing cost for the active and passive
+# traffic manager in the cluster.
+#
 # [*basic__rhi_ospfv2_metric_base*]
-# The base routing metric for this Traffic IP group. This is the advertised
-# routing cost for the active traffic manager in the cluster. It can be used
-# to set up inter-cluster failover.
+# The base OSPFv2 routing metric for this Traffic IP group. This is the
+# advertised routing cost for the active traffic manager in the cluster. It
+# can be used to set up inter-cluster failover.
 #
 # [*basic__rhi_ospfv2_passive_metric_offset*]
-# The routing metric offset for this Traffic IP group. This is the difference
-# between the advertised routing cost for the active and passive traffic
-# manager in the cluster.
+# The OSPFv2 routing metric offset for this Traffic IP group. This is the
+# difference between the advertised routing cost for the active and passive
+# traffic manager in the cluster.
+#
+# [*basic__rhi_protocols*]
+# A list of protocols to be used for RHI. Currently must be 'ospf' or 'bgp' or
+# both. The default, if empty, is 'ospf', which means that it is not possible
+# to specify no protocol.
 #
 # [*basic__slaves*]
 # A list of traffic managers that are in 'passive' mode. This means that in a
@@ -99,8 +114,11 @@ define brocadevtm::traffic_ip_groups (
   $basic__mode                             = 'singlehosted',
   $basic__multicast                        = undef,
   $basic__note                             = undef,
+  $basic__rhi_bgp_metric_base              = 10,
+  $basic__rhi_bgp_passive_metric_offset    = 10,
   $basic__rhi_ospfv2_metric_base           = 10,
   $basic__rhi_ospfv2_passive_metric_offset = 10,
+  $basic__rhi_protocols                    = 'ospf',
   $basic__slaves                           = '[]',
 ){
   include brocadevtm
@@ -115,7 +133,7 @@ define brocadevtm::traffic_ip_groups (
   vtmrest { "traffic_ip_groups/${name}":
     ensure   => $ensure,
     before   => Class[Brocadevtm::Purge],
-    endpoint => "https://${ip}:${port}/api/tm/3.4/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/3.5/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/traffic_ip_groups.erb'),

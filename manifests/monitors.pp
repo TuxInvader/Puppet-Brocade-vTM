@@ -10,8 +10,21 @@
 # [*basic__back_off*]
 # Should the monitor slowly increase the delay after it has failed?
 #
+# [*basic__can_edit_ssl*]
+# Whether or not SSL configuration is available via the Admin Server UI for
+# this monitor.  This is for use by monitors pre-packaged with the software.
+#
+# [*basic__can_use_ssl*]
+# Whether or not monitors of this type are capable of using SSL.
+#
 # [*basic__delay*]
 # The minimum time between calls to a monitor.
+#
+# [*basic__editable_keys*]
+# Which of the monitor's configuration keys may be edited via the Admin Server
+# UI.
+# Type:array
+# Properties:
 #
 # [*basic__failures*]
 # The number of times in a row that a node must fail execution of the monitor
@@ -171,7 +184,7 @@ define brocadevtm::monitors (
   vtmrest { "monitors/${name}":
     ensure   => $ensure,
     before   => Class[Brocadevtm::Purge],
-    endpoint => "https://${ip}:${port}/api/tm/3.4/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/3.5/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/monitors.erb'),

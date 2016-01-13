@@ -50,6 +50,12 @@
 # Whether or not messages pertaining to internal configuration files should be
 # logged to the event log.
 #
+# [*basic__license_servers*]
+# A list of license servers for FLA licensing.  A license server should be
+# specified as a "<ip/host>:<port>" pair.
+# Type:array
+# Properties:
+#
 # [*basic__max_fds*]
 # The maximum number of file descriptors that your traffic manager will
 # allocate.
@@ -280,6 +286,13 @@
 # consumers, when the license limit is reached the allowance will be evenly
 # distributed between the remaining consumers. Each consumer will, however be
 # permitted to write at least this much data.
+#
+# [*bgp__as_number*]
+# The number of the BGP AS in which the traffic manager will operate. Must be
+# entered in decimal.
+#
+# [*bgp__enabled*]
+# Whether BGP Route Health Injection is enabled
 #
 # [*cluster_comms__allow_update_default*]
 # The default value of "allow_update" for new cluster members.  If you have
@@ -850,6 +863,11 @@
 # [*ssl__ssl3_ciphers*]
 # The SSL ciphers to use. For information on supported ciphers see the online
 # help.
+#
+# [*ssl__ssl3_diffie_hellman_client_min_key_length*]
+# The minimum length in bits of the Diffie-Hellman key that the Traffic
+# Manager will accept when connecting using Diffie-Hellman key agreement as a
+# client.
 #
 # [*ssl__ssl3_diffie_hellman_key_length*]
 # The length in bits of the Diffie-Hellman key for ciphers that use

@@ -13,8 +13,34 @@
 # when another traffic manager initially joins the cluster, after joining the
 # cluster these restrictions are no longer used. Care must be taken when
 # changing this setting, as it can cause the administration server to become
-# inaccessable.</br>Access to the admin UI will not be affected until it is
+# inaccessible.</br>Access to the admin UI will not be affected until it is
 # restarted.
+# Type:array
+# Properties:
+#
+# [*ssh_intrusion__bantime*]
+# The amount of time in seconds to ban an offending host for.
+#
+# [*ssh_intrusion__blacklist*]
+# The list of hosts to permanently ban, identified by IP address or DNS
+# hostname in a space-separated list.
+# Type:array
+# Properties:
+#
+# [*ssh_intrusion__enabled*]
+# Whether or not the SSH Intrusion Prevention tool is enabled.
+#
+# [*ssh_intrusion__findtime*]
+# The window of time in seconds the maximum number of connection attempts
+# applies to. More than (maxretry) failed attempts in this time span will
+# trigger a ban.
+#
+# [*ssh_intrusion__maxretry*]
+# The number of failed connection attempts a host can make before being banned.
+#
+# [*ssh_intrusion__whitelist*]
+# The list of hosts to never ban, identified by IP address, DNS hostname or
+# subnet mask, in a space-separated list.
 # Type:array
 # Properties:
 #
@@ -34,8 +60,14 @@
 # Copyright 2015 Brocade
 #
 class brocadevtm::security (
-  $ensure        = present,
-  $basic__access = '[]',
+  $ensure                   = present,
+  $basic__access            = '[]',
+  $ssh_intrusion__bantime   = 600,
+  $ssh_intrusion__blacklist = '[]',
+  $ssh_intrusion__enabled   = false,
+  $ssh_intrusion__findtime  = 600,
+  $ssh_intrusion__maxretry  = 6,
+  $ssh_intrusion__whitelist = '[]',
 ){
   include brocadevtm
   $ip              = $brocadevtm::rest_ip
@@ -49,7 +81,7 @@ class brocadevtm::security (
   vtmrest { 'security':
     ensure   => $ensure,
     before   => Class[Brocadevtm::Purge],
-    endpoint => "https://${ip}:${port}/api/tm/3.4/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/3.5/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/security.erb'),

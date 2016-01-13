@@ -51,6 +51,12 @@
 # Whether or not messages pertaining to internal configuration files should be
 # logged to the event log.
 #
+# [*basic__license_servers*]
+# A list of license servers for FLA licensing.  A license server should be
+# specified as a "<ip/host>:<port>" pair.
+# Type:array
+# Properties:
+#
 # [*basic__max_fds*]
 # The maximum number of file descriptors that your traffic manager will
 # allocate.
@@ -281,6 +287,13 @@
 # consumers, when the license limit is reached the allowance will be evenly
 # distributed between the remaining consumers. Each consumer will, however be
 # permitted to write at least this much data.
+#
+# [*bgp__as_number*]
+# The number of the BGP AS in which the traffic manager will operate. Must be
+# entered in decimal.
+#
+# [*bgp__enabled*]
+# Whether BGP Route Health Injection is enabled
 #
 # [*cluster_comms__allow_update_default*]
 # The default value of "allow_update" for new cluster members.  If you have
@@ -852,6 +865,11 @@
 # The SSL ciphers to use. For information on supported ciphers see the online
 # help.
 #
+# [*ssl__ssl3_diffie_hellman_client_min_key_length*]
+# The minimum length in bits of the Diffie-Hellman key that the Traffic
+# Manager will accept when connecting using Diffie-Hellman key agreement as a
+# client.
+#
 # [*ssl__ssl3_diffie_hellman_key_length*]
 # The length in bits of the Diffie-Hellman key for ciphers that use
 # Diffie-Hellman key agreement.
@@ -1078,6 +1096,7 @@ class brocadevtm::global_settings (
   $basic__afm_enabled                          = false,
   $basic__chunk_size                           = 16384,
   $basic__client_first_opt                     = false,
+  $basic__license_servers                      = '[]',
   $basic__max_fds                              = 1048576,
   $basic__monitor_memory_size                  = 4096,
   $basic__rate_class_limit                     = 25000,
@@ -1089,7 +1108,7 @@ class brocadevtm::global_settings (
   $basic__tip_class_limit                      = 10000,
   $admin__honor_fallback_scsv                  = true,
   $admin__ssl3_allow_rehandshake               = 'rfc5746',
-  $admin__ssl3_ciphers                         = 'SSL_RSA_WITH_AES_128_GCM_SHA256,SSL_RSA_WITH_AES_128_CBC_SHA256,SSL_RSA_WITH_AES_128_CBC_SHA,SSL_RSA_WITH_AES_256_GCM_SHA384,SSL_RSA_WITH_AES_256_CBC_SHA256,SSL_RSA_WITH_AES_256_CBC_SHA,SSL_RSA_WITH_3DES_EDE_CBC_SHA',
+  $admin__ssl3_ciphers                         = 'SSL_RSA_WITH_AES_128_GCM_SHA256,SSL_RSA_WITH_AES_128_CBC_SHA256,SSL_RSA_WITH_AES_128_CBC_SHA,SSL_RSA_WITH_AES_256_GCM_SHA384,SSL_RSA_WITH_AES_256_CBC_SHA256,SSL_RSA_WITH_AES_256_CBC_SHA,SSL_RSA_WITH_3DES_EDE_CBC_SHA,SSL_DHE_DSS_WITH_AES_128_CBC_SHA,SSL_DHE_DSS_WITH_AES_256_CBC_SHA,SSL_DHE_DSS_WITH_3DES_EDE_CBC_SHA',
   $admin__ssl3_diffie_hellman_key_length       = 'dh_2048',
   $admin__ssl3_min_rehandshake_interval        = 1000,
   $admin__ssl_elliptic_curves                  = '[]',
@@ -1115,6 +1134,8 @@ class brocadevtm::global_settings (
   $aptimizer__watchdog_limit                   = 3,
   $auditlog__via_syslog                        = false,
   $autoscaler__verbose                         = false,
+  $bgp__as_number                              = 65534,
+  $bgp__enabled                                = false,
   $cluster_comms__allow_update_default         = true,
   $cluster_comms__allowed_update_hosts         = '["127.0.0.1"]',
   $cluster_comms__state_sync_interval          = 3,
@@ -1224,7 +1245,7 @@ class brocadevtm::global_settings (
   $ssl__signature_algorithms                   = undef,
   $ssl__ssl3_allow_rehandshake                 = 'safe',
   $ssl__ssl3_ciphers                           = undef,
-  $ssl__ssl3_diffie_hellman_key_length         = 'dh_1024',
+  $ssl__ssl3_diffie_hellman_key_length         = 'dh_2048',
   $ssl__ssl3_min_rehandshake_interval          = 1000,
   $ssl__support_ssl2                           = false,
   $ssl__support_ssl3                           = false,
@@ -1275,7 +1296,7 @@ class brocadevtm::global_settings (
   vtmrest { 'global_settings':
     ensure   => $ensure,
     before   => Class[Brocadevtm::Purge],
-    endpoint => "https://${ip}:${port}/api/tm/3.4/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/3.5/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/global_settings.erb'),

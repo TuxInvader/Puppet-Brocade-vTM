@@ -51,7 +51,7 @@ class brocadevtm::event_types_license_key_recovered (
   vtmrest { 'event_types/License%20Key%20Recovered':
     ensure   => $ensure,
     before   => Class[Brocadevtm::Purge],
-    endpoint => "https://${ip}:${port}/api/tm/3.4/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/3.5/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/event_types.erb'),

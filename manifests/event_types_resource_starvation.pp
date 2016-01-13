@@ -8,7 +8,7 @@ class brocadevtm::event_types_resource_starvation (
   $ensure                       = present,
   $basic__actions               = '[]',
   $basic__built_in              = true,
-  $basic__note                  = 'Events triggered when we have run out of system resources or hit a configured limit in the Stingray Traffic Manager.',
+  $basic__note                  = 'Events triggered when we have run out of system resources or hit a configured limit in the Virtual Traffic Manager.',
   $cloudcredentials__event_tags = '[]',
   $cloudcredentials__objects    = '[]',
   $config__event_tags           = '[]',
@@ -51,7 +51,7 @@ class brocadevtm::event_types_resource_starvation (
   vtmrest { 'event_types/Resource%20Starvation':
     ensure   => $ensure,
     before   => Class[Brocadevtm::Purge],
-    endpoint => "https://${ip}:${port}/api/tm/3.4/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/3.5/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/event_types.erb'),

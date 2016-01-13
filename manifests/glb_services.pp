@@ -92,8 +92,7 @@
 # Properties:
 #
 # [*basic__ttl*]
-# The TTL that should be used for the domains handled by this config, or "-1"
-# if the original TTL should be left as is.
+# The TTL for the DNS resource records handled by the GLB service.
 #
 # [*log__enabled*]
 # Log connections to this GLB service?
@@ -154,7 +153,7 @@ define brocadevtm::glb_services (
   vtmrest { "glb_services/${name}":
     ensure   => $ensure,
     before   => Class[Brocadevtm::Purge],
-    endpoint => "https://${ip}:${port}/api/tm/3.4/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/3.5/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/glb_services.erb'),

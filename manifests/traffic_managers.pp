@@ -184,21 +184,22 @@
 # The client key provided by the portal for this server.
 #
 # [*appliance__shim_enabled*]
-# Enable the Cloud Steelhead discovery agent on this appliance.
+# Enable the Riverbed Cloud SteelHead discovery agent on this appliance.
 #
 # [*appliance__shim_ips*]
-# The IP addresses of the Cloud Steelheads to use, as a space or comma
-# separated list. If using priority load balancing this should be in ascending
-# order of priority (highest priority last).
+# The IP addresses of the Riverbed Cloud SteelHeads to use, as a space or
+# comma separated list. If using priority load balancing this should be in
+# ascending order of priority (highest priority last).
 #
 # [*appliance__shim_load_balance*]
-# The load balancing method for the selecting a Cloud Steelhead appliance.
+# The load balancing method for selecting a Riverbed Cloud SteelHead appliance.
 #
 # [*appliance__shim_log_level*]
 # The minimum severity that the discovery agent will record to its log.
 #
 # [*appliance__shim_mode*]
-# The mode used to discover Cloud Steelheads in the local cloud or data center.
+# The mode used to discover Riverbed Cloud SteelHeads in the local cloud or
+# data center.
 #
 # [*appliance__shim_portal_url*]
 # The hostname or IP address of the local portal to use.
@@ -279,13 +280,20 @@
 # The ID of the VPC the instance is in, should be set when the appliance is
 # first booted. Not required for non-VPC EC2 or non-EC2 systems.
 #
+# [*fault_tolerance__bgp_router_id*]
+# The BGP router id
+# If set to empty, then the IPv4 address used to communicate with the default
+# IPv4 gateway is used instead.
+# Specifying 0.0.0.0 will stop the traffic manager routing software from
+# running the BGP protocol.
+#
 # [*fault_tolerance__ospfv2_ip*]
 # The traffic manager's permanent IPv4 address which the routing software will
 # use for peering and transit traffic, and as its OSPF router ID.
 # If set to empty, then the address used to communicate with the default IPv4
 # gateway is used instead.
 # Specifying 0.0.0.0 will stop the traffic manager routing software from
-# running.
+# running the OSPF protocol.
 #
 # [*fault_tolerance__ospfv2_neighbor_addrs*]
 # The IP addresses of routers which are expected to be found as OSPFv2
@@ -303,6 +311,27 @@
 # The routing software log level. Values are: 0 - emergency 1 - alert 2 -
 # critical 3 - error 4 - warning 5 - notification 6 - informational 7 - debug
 # Messages with priority less or equal to the set level will be logged.
+#
+# [*iptables__config_enabled*]
+# Whether the Traffic Manager should configure the iptables built-in chains to
+# call Traffic Manager defined rules (e.g. the IP transparency chain). This
+# should only be disabled in case of conflict with other software that manages
+# iptables, e.g. firewalls. When disabled, you will need to add rules manually
+# to use these features - see the user manual for details.
+#
+# [*iptrans__chain*]
+# The iptables named chain to use for IP transparency rules.
+#
+# [*iptrans__fwmark*]
+# The netfilter forwarding mark to use for IP transparency rules
+#
+# [*iptrans__iptables_enabled*]
+# Whether IP transparency may be used via netfilter/iptables. This requires
+# Linux 2.6.24 and the iptables socket extension. For older Linux versions,
+# the "ztrans" kernel module may be used instead.
+#
+# [*iptrans__routing_table*]
+# The special routing table ID to use for IP transparency rules
 #
 # [*java__port*]
 # The port the Java Extension handler process should listen on.  This port
@@ -413,7 +442,7 @@ define brocadevtm::traffic_managers (
   $appliance__managereturnpath            = true,
   $appliance__managevpcconf               = true,
   $appliance__name_servers                = '[]',
-  $appliance__ntpservers                  = '["0.riverbed.pool.ntp.org","1.riverbed.pool.ntp.org","2.riverbed.pool.ntp.org","3.riverbed.pool.ntp.org"]',
+  $appliance__ntpservers                  = '["0.vyatta.pool.ntp.org","1.vyatta.pool.ntp.org","2.vyatta.pool.ntp.org","3.vyatta.pool.ntp.org"]',
   $appliance__routes                      = '[]',
   $appliance__search_domains              = '[]',
   $appliance__shim_client_id              = undef,
@@ -435,8 +464,13 @@ define brocadevtm::traffic_managers (
   $cluster_comms__external_ip             = undef,
   $cluster_comms__port                    = 9080,
   $ec2__trafficips_public_enis            = '[]',
+  $fault_tolerance__bgp_router_id         = undef,
   $fault_tolerance__ospfv2_ip             = undef,
   $fault_tolerance__ospfv2_neighbor_addrs = '["%gateway%"]',
+  $iptables__config_enabled               = true,
+  $iptrans__fwmark                        = 320,
+  $iptrans__iptables_enabled              = true,
+  $iptrans__routing_table                 = 320,
   $java__port                             = 9060,
   $rest_api__bind_ips                     = '["*"]',
   $rest_api__port                         = 9070,
@@ -463,7 +497,7 @@ define brocadevtm::traffic_managers (
   vtmrest { "traffic_managers/${name}":
     ensure   => $ensure,
     before   => Class[Brocadevtm::Purge],
-    endpoint => "https://${ip}:${port}/api/tm/3.4/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/3.5/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/traffic_managers.erb'),
