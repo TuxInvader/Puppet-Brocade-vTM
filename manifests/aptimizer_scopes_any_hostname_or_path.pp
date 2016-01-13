@@ -22,7 +22,7 @@ class brocadevtm::aptimizer_scopes_any_hostname_or_path (
   vtmrest { 'aptimizer/scopes/Any%20hostname%20or%20path':
     ensure   => $ensure,
     before   => Class[Brocadevtm::Purge],
-    endpoint => "https://${ip}:${port}/api/tm/3.6/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/3.7/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/aptimizer_scopes.erb'),

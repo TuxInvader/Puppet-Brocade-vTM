@@ -79,6 +79,13 @@
 # Type:array
 # Properties:
 #
+# [*basic__mss*]
+# The maximum TCP segment size. This will place a maximum on the size of TCP
+# segments that are sent by this machine, and will advertise to the client
+# this value as the maximum size of TCP segment to send to this machine.
+# Setting this to zero causes the default maximum TCP segment size to be
+# advertised and used.
+#
 # [*basic__note*]
 # A description for the virtual server.
 #
@@ -130,7 +137,7 @@
 # Whether or not bound sockets should be configured for transparent proxying.
 #
 # [*aptimizer__enabled*]
-# Whether the virtual server should aptimize web content.
+# Whether the virtual server should optimize web content.
 #
 # [*aptimizer__profile*]
 # A table of Aptimizer profiles and the application scopes that apply to them.
@@ -892,7 +899,7 @@ define brocadevtm::virtual_servers (
   vtmrest { "virtual_servers/${name}":
     ensure   => $ensure,
     before   => Class[Brocadevtm::Purge],
-    endpoint => "https://${ip}:${port}/api/tm/3.6/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/3.7/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/virtual_servers.erb'),

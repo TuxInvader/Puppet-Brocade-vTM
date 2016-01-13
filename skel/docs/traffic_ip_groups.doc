@@ -13,6 +13,10 @@
 # Whether or not the source port should be taken into account when deciding
 # which traffic manager should handle a request.
 #
+# [*basic__ip_assignment_mode*]
+# Configure how traffic IPs are assigned to traffic managers in Single-Hosted
+# mode
+#
 # [*basic__ip_mapping*]
 # A table assigning traffic IP addresses to machines that should host them.
 # Traffic IP addresses not specified in this table will automatically be

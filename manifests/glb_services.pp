@@ -153,7 +153,7 @@ define brocadevtm::glb_services (
   vtmrest { "glb_services/${name}":
     ensure   => $ensure,
     before   => Class[Brocadevtm::Purge],
-    endpoint => "https://${ip}:${port}/api/tm/3.6/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/3.7/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/glb_services.erb'),

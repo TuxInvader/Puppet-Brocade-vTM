@@ -17,7 +17,7 @@ class brocadevtm::event_types_license_key_problem (
   $glb__event_tags              = '[]',
   $glb__objects                 = '[]',
   $java__event_tags             = '[]',
-  $licensekeys__event_tags      = '["expiresoon","licenseclustertoobig","expired","licensecorrupt","unlicensed","tpslimited","ssltpslimited","bwlimited","license-rejected-unauthorized","license-rejected-authorized","license-graceperiodexpired","license-timedout-unauthorized","license-timedout-authorized","license-unauthorized"]',
+  $licensekeys__event_tags      = '["expiresoon","expiresoon15","expiresoon30","expiresoon60","expiresoon90","expired","licenseclustertoobig","licensecorrupt","unlicensed","tpslimited","ssltpslimited","bwlimited","license-rejected-unauthorized","license-rejected-authorized","license-graceperiodexpired","license-timedout-unauthorized","license-timedout-authorized","license-unauthorized"]',
   $licensekeys__objects         = '["*"]',
   $locations__event_tags        = '[]',
   $locations__objects           = '[]',
@@ -51,7 +51,7 @@ class brocadevtm::event_types_license_key_problem (
   vtmrest { 'event_types/License%20Key%20Problem':
     ensure   => $ensure,
     before   => Class[Brocadevtm::Purge],
-    endpoint => "https://${ip}:${port}/api/tm/3.6/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/3.7/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/event_types.erb'),

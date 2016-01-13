@@ -40,7 +40,7 @@ class brocadevtm::application_firewall (
   vtmrest { 'application_firewall':
     ensure   => $ensure,
     before   => Class[Brocadevtm::Purge],
-    endpoint => "https://${ip}:${port}/api/tm/3.6/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/3.7/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/application_firewall.erb'),

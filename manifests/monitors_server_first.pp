@@ -47,7 +47,7 @@ class brocadevtm::monitors_server_first (
   vtmrest { 'monitors/Server%20First':
     ensure   => $ensure,
     before   => Class[Brocadevtm::Purge],
-    endpoint => "https://${ip}:${port}/api/tm/3.6/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/3.7/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/monitors.erb'),

@@ -19,6 +19,16 @@
 # [*basic__adminSlaveXMLIP*]
 # The Application Firewall slave XML IP.
 #
+# [*basic__appliance_card*]
+# The table of network cards of a hardware appliance
+# Type:array
+# Properties:{"name"=>{"description"=>"Network card PCI ID",
+# "type"=>"string"}, "interfaces"=>{"description"=>"The order of the
+# interfaces of a network card", "type"=>"array", "uniqueItems"=>false,
+# "items"=>{"type"=>"string"}}, "label"=>{"description"=>"The labels of the
+# installed network cards", "type"=>"string",
+# "pattern"=>"^[\\w\\.:@\\-]{1,64}$"}}
+#
 # [*basic__appliance_sysctl*]
 # Custom kernel parameters applied by the user with sysctl interface
 # Type:array
@@ -50,8 +60,9 @@
 # Replace Traffic Manager name with an IP address.
 #
 # [*basic__num_aptimizer_threads*]
-# How many worker threads the Aptimizer process should create to optimise
-# content. By default, one thread will be created for each CPU on the system.
+# How many worker threads the Web Accelerator process should create to
+# optimise content. By default, one thread will be created for each CPU on the
+# system.
 #
 # [*basic__num_children*]
 # The number of worker processes the software will run.  By default, one child
@@ -124,6 +135,21 @@
 # interface is externally facing.", "type"=>"boolean"},
 # "mask"=>{"description"=>"The IP mask (netmask) for the interface.",
 # "type"=>"string"}}
+#
+# [*appliance__ipmi_lan_access*]
+# Whether IPMI LAN access should be enabled or not.
+#
+# [*appliance__ipmi_lan_addr*]
+# The IP address of the appliance IPMI LAN channel.
+#
+# [*appliance__ipmi_lan_gateway*]
+# The default gateway of the IPMI LAN channel.
+#
+# [*appliance__ipmi_lan_ipsrc*]
+# The addressing mode the IPMI LAN channel operates.
+#
+# [*appliance__ipmi_lan_mask*]
+# Set the IP netmask for the IPMI LAN channel.
 #
 # [*appliance__ipv4_forwarding*]
 # Whether or not IPv4 forwarding is enabled.
@@ -423,6 +449,7 @@ define brocadevtm::traffic_managers (
   $ensure,
   $basic__adminMasterXMLIP                = '0.0.0.0',
   $basic__adminSlaveXMLIP                 = '0.0.0.0',
+  $basic__appliance_card                  = '[]',
   $basic__appliance_sysctl                = '[]',
   $basic__authenticationServerIP          = '0.0.0.0',
   $basic__cloud_platform                  = undef,
@@ -440,6 +467,11 @@ define brocadevtm::traffic_managers (
   $appliance__hosts                       = '[]',
   $appliance__if                          = '[]',
   $appliance__ip                          = '[]',
+  $appliance__ipmi_lan_access             = false,
+  $appliance__ipmi_lan_addr               = undef,
+  $appliance__ipmi_lan_gateway            = undef,
+  $appliance__ipmi_lan_ipsrc              = 'static',
+  $appliance__ipmi_lan_mask               = undef,
   $appliance__ipv4_forwarding             = false,
   $appliance__ipv6_forwarding             = false,
   $appliance__licence_agreed              = false,
@@ -505,7 +537,7 @@ define brocadevtm::traffic_managers (
   vtmrest { "traffic_managers/${name}":
     ensure   => $ensure,
     before   => Class[Brocadevtm::Purge],
-    endpoint => "https://${ip}:${port}/api/tm/3.6/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/3.7/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/traffic_managers.erb'),

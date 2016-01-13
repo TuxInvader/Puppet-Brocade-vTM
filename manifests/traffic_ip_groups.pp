@@ -14,6 +14,10 @@
 # Whether or not the source port should be taken into account when deciding
 # which traffic manager should handle a request.
 #
+# [*basic__ip_assignment_mode*]
+# Configure how traffic IPs are assigned to traffic managers in Single-Hosted
+# mode
+#
 # [*basic__ip_mapping*]
 # A table assigning traffic IP addresses to machines that should host them.
 # Traffic IP addresses not specified in this table will automatically be
@@ -106,6 +110,7 @@ define brocadevtm::traffic_ip_groups (
   $ensure,
   $basic__enabled                          = true,
   $basic__hash_source_port                 = false,
+  $basic__ip_assignment_mode               = 'balanced',
   $basic__ip_mapping                       = '[]',
   $basic__ipaddresses                      = '[]',
   $basic__keeptogether                     = false,
@@ -133,7 +138,7 @@ define brocadevtm::traffic_ip_groups (
   vtmrest { "traffic_ip_groups/${name}":
     ensure   => $ensure,
     before   => Class[Brocadevtm::Purge],
-    endpoint => "https://${ip}:${port}/api/tm/3.6/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/3.7/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/traffic_ip_groups.erb'),

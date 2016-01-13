@@ -209,62 +209,62 @@
 #
 # [*aptimizer__cache_entry_lifetime*]
 # The period of time (in seconds) that unaccessed cache entries will be
-# retained by aptimizer.
+# retained by Web Accelerator.
 #
 # [*aptimizer__cache_entry_limit*]
-# The maximum number of cache entries that will be retained by aptimizer
+# The maximum number of cache entries that will be retained by Web Accelerator
 # before removing old entries to make room for new ones.
 #
 # [*aptimizer__default_profile*]
-# The Profile to use by default if no mappings are configured (or if Aptimizer
-# is licensed in Express mode)
+# The Profile to use by default if no mappings are configured (or if Web
+# Accelerator is licensed in Express mode)
 #
 # [*aptimizer__default_scope*]
-# The Scope to use by default if no mappings are configured (or if Aptimizer
-# is licensed in Express mode)
+# The Scope to use by default if no mappings are configured (or if Web
+# Accelerator is licensed in Express mode)
 #
 # [*aptimizer__dependent_fetch_timeout*]
 # How long to wait for dependent resource fetches (default 30 seconds).
 #
 # [*aptimizer__enable_state_dump*]
-# Whether or not the Aptimizer state will be dumped if "/aptimizer-state-dump"
-# is appended to an Aptimized URL.
+# Whether or not the Web Accelerator state will be dumped if
+# "/aptimizer-state-dump" is appended to an optimized URL.
 #
 # [*aptimizer__ipc_timeout*]
-# The time after which connections between the traffic manager and Aptimizer
-# processes will be closed, should an optimization job take considerably
-# longer than expected.
+# The time after which connections between the traffic manager and Web
+# Accelerator processes will be closed, should an optimization job take
+# considerably longer than expected.
 #
 # [*aptimizer__max_concurrent_jobs*]
 # How many direct jobs can be in progress before optimization jobs start
-# getting rejected by aptimizer
+# getting rejected by Web Accelerator.
 #
 # [*aptimizer__max_dependent_fetch_size*]
-# The maximum size of a dependent resource that can undergo Aptimizer
+# The maximum size of a dependent resource that can undergo Web Accelerator
 # optimization. Any content larger than this size will not be optimized. Units
 # of KB and MB can be used, no postfix denotes bytes. A value of 0 disables
 # the limit.
 #
 # [*aptimizer__max_original_content_buffer_size*]
 # The maximum size of unoptimized content buffered in the traffic manager for
-# a single backend response that is undergoing Aptimizer optimization.
+# a single backend response that is undergoing Web Accelerator optimization.
 # Responses larger than this will not be optimized. Note that if the backend
 # response is compressed then this setting pertains to the compressed size,
-# before Aptimizer decompresses it. Units of KB and MB can be used, no postfix
-# denotes bytes. Value range is 1 - 128MB.
+# before Web Accelerator decompresses it. Units of KB and MB can be used, no
+# postfix denotes bytes. Value range is 1 - 128MB.
 #
 # [*aptimizer__queue_buffer_size*]
 # The size in bytes of the operating system buffer which is used to send
-# request URLs and data to Aptimizer and return optimized resources from
-# Aptimizer. A larger buffer will allow a greater number of simultaneous
+# request URLs and data to Web Accelerator and return optimized resources from
+# Web Accelerator. A larger buffer will allow a greater number of simultaneous
 # resources to be optimized, particularly if a large number of requests are
 # made at the same time, for example an HTML page containing hundreds of
 # images to optimize. If this is set to zero, the default operating system
 # buffer size will be used.
 #
 # [*aptimizer__resource_lifetime*]
-# The period of time (in seconds) that resource data is retained by aptimizer
-# after it is no longer actively in use.
+# The period of time (in seconds) that resource data is retained by Web
+# Accelerator after it is no longer actively in use.
 #
 # [*aptimizer__resource_memory_limit*]
 # The maximum amount of memory the cache is allowed to have pinned. Once it
@@ -275,8 +275,8 @@
 # longer count towards the watchdog limit.
 #
 # [*aptimizer__watchdog_limit*]
-# The maximum number of times the Aptimizer sub-process will be started or
-# restarted within the interval defined by the aptimizer!watchdog_interval
+# The maximum number of times the Web Accelerator sub-process will be started
+# or restarted within the interval defined by the aptimizer!watchdog_interval
 # setting. If the process fails this many times, it must be restarted manually
 # from the Diagnose page.  Zero means no limit.
 #
@@ -1333,7 +1333,7 @@ class brocadevtm::global_settings (
   vtmrest { 'global_settings':
     ensure   => $ensure,
     before   => Class[Brocadevtm::Purge],
-    endpoint => "https://${ip}:${port}/api/tm/3.6/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/3.7/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/global_settings.erb'),
