@@ -1,17 +1,17 @@
 # === Define: brocadevtm::aptimizer_profiles
 #
-# Aptimizer Profile
-# An Aptimizer profile can be applied to a HTTP virtual server to enable
+# Web Accelerator Profile
+# A Web Accelerator profile can be applied to an HTTP virtual server to enable
 # automatic web content optimization.
 #
 # === Parameters
 #
 # [*basic__background_after*]
-# If Aptimizer can finish optimizing the resource within this time limit then
-# serve the optimized content to the client, otherwise complete the
+# If Web Accelerator can finish optimizing the resource within this time limit
+# then serve the optimized content to the client, otherwise complete the
 # optimization in the background and return the original content to the
-# client. If set to 0, Aptimizer will always wait for the optimization to
-# complete before sending a response to the client.
+# client. If set to 0, Web Accelerator will always wait for the optimization
+# to complete before sending a response to the client.
 #
 # [*basic__background_on_additional_resources*]
 # If a web page contains resources that have not yet been optimized, fetch and
@@ -19,14 +19,14 @@
 # web page to clients until all resources on that page are ready.
 #
 # [*basic__config*]
-# Placeholder to be overwritten when we have Aptimizer support in RESTD
+# Placeholder to be overwritten when we have Web Accelerator support in RESTD
 #
 # [*basic__mode*]
-# Set the Aptimizer mode to turn acceleration on or off.
+# Set the Web Accelerator mode to turn acceleration on or off.
 #
 # [*basic__show_info_bar*]
-# Show the Aptimizer information bar on aptimized web pages. This requires
-# HTML optimization to be enabled in the Acceleration settings.
+# Show the Web Accelerator information bar on optimized web pages. This
+# requires HTML optimization to be enabled in the acceleration settings.
 #
 # === Examples
 #
@@ -62,7 +62,7 @@ define brocadevtm::aptimizer_profiles (
   vtmrest { "aptimizer/profiles/${name}":
     ensure   => $ensure,
     before   => Class[Brocadevtm::Purge],
-    endpoint => "https://${ip}:${port}/api/tm/3.3/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/3.8/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/aptimizer_profiles.erb'),

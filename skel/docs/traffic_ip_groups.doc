@@ -13,6 +13,10 @@
 # Whether or not the source port should be taken into account when deciding
 # which traffic manager should handle a request.
 #
+# [*basic__ip_assignment_mode*]
+# Configure how traffic IPs are assigned to traffic managers in Single-Hosted
+# mode
+#
 # [*basic__ip_mapping*]
 # A table assigning traffic IP addresses to machines that should host them.
 # Traffic IP addresses not specified in this table will automatically be
@@ -54,15 +58,30 @@
 # [*basic__note*]
 # A note, used to describe this Traffic IP Group
 #
+# [*basic__rhi_bgp_metric_base*]
+# The base BGP routing metric for this Traffic IP group. This is the
+# advertised routing cost for the active traffic manager in the cluster. It
+# can be used to set up inter-cluster failover.
+#
+# [*basic__rhi_bgp_passive_metric_offset*]
+# The BGP routing metric offset for this Traffic IP group. This is the
+# difference between the advertised routing cost for the active and passive
+# traffic manager in the cluster.
+#
 # [*basic__rhi_ospfv2_metric_base*]
-# The base routing metric for this Traffic IP group. This is the advertised
-# routing cost for the active traffic manager in the cluster. It can be used
-# to set up inter-cluster failover.
+# The base OSPFv2 routing metric for this Traffic IP group. This is the
+# advertised routing cost for the active traffic manager in the cluster. It
+# can be used to set up inter-cluster failover.
 #
 # [*basic__rhi_ospfv2_passive_metric_offset*]
-# The routing metric offset for this Traffic IP group. This is the difference
-# between the advertised routing cost for the active and passive traffic
-# manager in the cluster.
+# The OSPFv2 routing metric offset for this Traffic IP group. This is the
+# difference between the advertised routing cost for the active and passive
+# traffic manager in the cluster.
+#
+# [*basic__rhi_protocols*]
+# A list of protocols to be used for RHI. Currently must be 'ospf' or 'bgp' or
+# both. The default, if empty, is 'ospf', which means that it is not possible
+# to specify no protocol.
 #
 # [*basic__slaves*]
 # A list of traffic managers that are in 'passive' mode. This means that in a

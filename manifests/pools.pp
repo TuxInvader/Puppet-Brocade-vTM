@@ -15,6 +15,10 @@
 # If all of the nodes in this pool have failed, then requests can be diverted
 # to another pool.
 #
+# [*basic__lard_size*]
+# The size of the LARD cache. This is used when recording unique URLs to
+# provide request affinity, where the same request is sent to the same node.
+#
 # [*basic__max_connection_attempts*]
 # The maximum number of nodes to which the traffic manager will attempt to
 # send a request before returning an error to the client. Requests that are
@@ -45,6 +49,13 @@
 # The number of times the software will attempt to connect to the same
 # back-end node before marking it as failed.  This is only used when
 # "passive_monitoring" is enabled.
+#
+# [*basic__node_delete_behavior*]
+# Specify the deletion behavior for nodes in this pool.
+#
+# [*basic__node_drain_to_delete_timeout*]
+# The maximum time that a node will be allowed to remain in a draining state
+# after it has been deleted. A value of 0 means no maximum time.
 #
 # [*basic__nodes_table*]
 # A table of all nodes in this pool. A node should be specified as a
@@ -82,6 +93,12 @@
 # [*basic__transparent*]
 # Whether or not connections to the back-ends appear to originate from the
 # source client IP address.
+#
+# [*auto_scaling__addnode_delaytime*]
+# The time in seconds from the creation of the node which the traffic manager
+# should wait before adding the node to the autoscaled pool. Set this to allow
+# applications on the newly created node time to intialize before being sent
+# traffic.
 #
 # [*auto_scaling__cloud_credentials*]
 # The Cloud Credentials object containing authentication credentials to use in
@@ -256,16 +273,31 @@
 # Certificates catalog be used if the back-end server requests client
 # authentication.
 #
+# [*ssl__common_name_match*]
+# A list of names against which the 'common name' of the certificate is
+# matched; these names are used in addition to the node's hostname or IP
+# address as specified in the config file or added by the autoscaler process.
+# Type:array
+# Properties:
+#
+# [*ssl__elliptic_curves*]
+# The SSL elliptic curve preference list for SSL connections from this pool
+# using TLS version 1.0 or higher. Leaving this empty will make the pool use
+# the globally configured preference list. The named curves P256, P384 and
+# P521 may be configured.
+# Type:array
+# Properties:
+#
 # [*ssl__enable*]
 # Whether or not the pool should encrypt data before sending it to a back-end
 # node.
 #
 # [*ssl__enhance*]
 # SSL protocol enhancements allow your traffic manager to prefix each new SSL
-# connection with information about the client. This enables Riverbed Web
+# connection with information about the client. This enables Brocade Web
 # Servers to run multiple SSL sites, and to discover the client's IP address.
-# Only enable this if you are using nodes for this pool which are Riverbed Web
-# Servers or Stingray Traffic Managers, whose virtual servers have the
+# Only enable this if you are using nodes for this pool which are Brocade Web
+# Servers or Brocade Virtual Traffic Managers, whose virtual servers have the
 # "ssl_trust_magic" setting enabled.
 #
 # [*ssl__send_close_alerts*]
@@ -330,7 +362,8 @@
 # [*ssl__strict_verify*]
 # Whether or not strict certificate verification should be performed. This
 # will turn on checks to disallow server certificates that don't match the
-# server name, are self-signed, expired, revoked, or have an unknown CA.
+# server name or a name in the ssl_common_name_match list, are self-signed,
+# expired, revoked, or have an unknown CA.
 #
 # [*tcp__nagle*]
 # Whether or not Nagle's algorithm should be used for TCP connections to the
@@ -344,6 +377,12 @@
 #
 # [*udp__accept_from_mask*]
 # The CIDR mask that matches IPs we want to receive responses from.
+#
+# [*udp__response_timeout*]
+# The maximum length of time that a node is permitted to take after receiving
+# a UDP request packet before sending a reply packet. Zero indicates that
+# there is no maximum, preventing a node that does not send replies from being
+# presumed to have failed.
 #
 # === Examples
 #
@@ -370,11 +409,14 @@ define brocadevtm::pools (
   $basic__monitors                          = '[]',
   $basic__node_close_with_rst               = false,
   $basic__node_connection_attempts          = 3,
+  $basic__node_delete_behavior              = 'immediate',
+  $basic__node_drain_to_delete_timeout      = 0,
   $basic__nodes_table                       = '[]',
   $basic__note                              = undef,
   $basic__passive_monitoring                = true,
   $basic__persistence_class                 = undef,
   $basic__transparent                       = false,
+  $auto_scaling__addnode_delaytime          = 0,
   $auto_scaling__cloud_credentials          = undef,
   $auto_scaling__cluster                    = undef,
   $auto_scaling__data_center                = undef,
@@ -416,6 +458,8 @@ define brocadevtm::pools (
   $node__retry_fail_time                    = 60,
   $smtp__send_starttls                      = true,
   $ssl__client_auth                         = false,
+  $ssl__common_name_match                   = '[]',
+  $ssl__elliptic_curves                     = '[]',
   $ssl__enable                              = false,
   $ssl__enhance                             = false,
   $ssl__send_close_alerts                   = true,
@@ -431,6 +475,7 @@ define brocadevtm::pools (
   $tcp__nagle                               = true,
   $udp__accept_from                         = 'dest_only',
   $udp__accept_from_mask                    = undef,
+  $udp__response_timeout                    = 0,
 ){
   include brocadevtm
   $ip              = $brocadevtm::rest_ip
@@ -444,7 +489,7 @@ define brocadevtm::pools (
   vtmrest { "pools/${name}":
     ensure   => $ensure,
     before   => Class[Brocadevtm::Purge],
-    endpoint => "https://${ip}:${port}/api/tm/3.3/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/3.8/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/pools.erb'),
