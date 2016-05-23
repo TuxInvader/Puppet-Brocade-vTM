@@ -9,7 +9,6 @@ virtual_servers,Pools,basic__pool,String,discard,builtin_dns
 virtual_servers,Traffic_ip_groups,basic__listen_on_traffic_ips,Array
 virtual_servers,Rules,basic__completionrules,Array
 virtual_servers,Rules,basic__request_rules,Array
-virtual_servers,Rules,basic__response_rules,Array
 virtual_servers,Glb_services,basic__glb_services,Array
 virtual_servers,Aptimizer_profiles,aptimizer__profile,name:aptimize_profiles|urls:aptimizer_scopes
 virtual_servers,Dns_server_zones,dns__zones,Array
@@ -22,3 +21,4 @@ virtual_servers,Service_level_monitors,basic__slm_class,String
 kerberos_principals,Kerberos_keytabs,basic__keytab,String
 glb_services,Locations,basic__chained_location_order,Array
 dns_server_zones,Dns_server_zone_files,basic__zonefile,String
+cloud_api_credentials,Extra_files,basic__script,String,awstool,rackspace.pl,vsphere-client
