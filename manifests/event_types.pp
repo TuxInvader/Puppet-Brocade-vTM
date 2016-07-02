@@ -15,6 +15,10 @@
 # If set to "Yes" this indicates that this configuration is built-in (provided
 # as part of the software) and must not be deleted or edited.
 #
+# [*basic__log2mainlog*]
+# Whether or not the triggering of this event type will be logged to the main
+# event log.
+#
 # [*basic__note*]
 # A description of this event type.
 #
@@ -225,7 +229,7 @@ define brocadevtm::event_types (
   vtmrest { "event_types/${name}":
     ensure   => $ensure,
     before   => Class[Brocadevtm::Purge],
-    endpoint => "https://${ip}:${port}/api/tm/3.3/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/3.8/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/event_types.erb'),

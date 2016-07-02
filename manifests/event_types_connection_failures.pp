@@ -8,7 +8,7 @@ class brocadevtm::event_types_connection_failures (
   $ensure                       = present,
   $basic__actions               = '[]',
   $basic__built_in              = true,
-  $basic__note                  = 'All connection failures that might occur with the Stingray Traffic Manager or your services.',
+  $basic__note                  = 'All connection failures that might occur with the Virtual Traffic Manager or your services.',
   $cloudcredentials__event_tags = '[]',
   $cloudcredentials__objects    = '[]',
   $config__event_tags           = '[]',
@@ -51,7 +51,7 @@ class brocadevtm::event_types_connection_failures (
   vtmrest { 'event_types/Connection%20Failures':
     ensure   => $ensure,
     before   => Class[Brocadevtm::Purge],
-    endpoint => "https://${ip}:${port}/api/tm/3.3/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/3.8/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/event_types.erb'),

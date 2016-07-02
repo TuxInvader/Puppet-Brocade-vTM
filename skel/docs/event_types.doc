@@ -14,6 +14,10 @@
 # If set to "Yes" this indicates that this configuration is built-in (provided
 # as part of the software) and must not be deleted or edited.
 #
+# [*basic__log2mainlog*]
+# Whether or not the triggering of this event type will be logged to the main
+# event log.
+#
 # [*basic__note*]
 # A description of this event type.
 #

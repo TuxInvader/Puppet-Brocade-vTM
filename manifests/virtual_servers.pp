@@ -23,8 +23,21 @@
 # to the request that contains the original protocol used by the client to
 # connect to the traffic manager.
 #
+# [*basic__auto_upgrade_protocols*]
+# A case-insensitive list of HTTP "Upgrade" header values that will trigger
+# the HTTP connection upgrade auto-detection.
+# Type:array
+# Properties:
+#
+# [*basic__autodetect_upgrade_headers*]
+# Whether the traffic manager should check for HTTP responses that confirm an
+# HTTP connection is transitioning to the WebSockets protocol.  If that such a
+# response is detected, the traffic manager will cease any protocol-specific
+# processing on the connection and just pass incoming data to the
+# client/server as appropriate.
+#
 # [*basic__bandwidth_class*]
-# The bandwidth management class should this server should use, if any.
+# The bandwidth management class that this server should use, if any.
 #
 # [*basic__close_with_rst*]
 # Whether or not connections from clients should be closed with a RST packet,
@@ -65,6 +78,13 @@
 # Traffic IP Groups to listen on
 # Type:array
 # Properties:
+#
+# [*basic__mss*]
+# The maximum TCP segment size. This will place a maximum on the size of TCP
+# segments that are sent by this machine, and will advertise to the client
+# this value as the maximum size of TCP segment to send to this machine.
+# Setting this to zero causes the default maximum TCP segment size to be
+# advertised and used.
 #
 # [*basic__note*]
 # A description for the virtual server.
@@ -113,8 +133,11 @@
 # lback_scsv"> "ssl!honor_fallback_scsv"</a> from the Global Settings section
 # of the System tab will be enforced.
 #
+# [*basic__transparent*]
+# Whether or not bound sockets should be configured for transparent proxying.
+#
 # [*aptimizer__enabled*]
-# Whether the virtual server should aptimize web content.
+# Whether the virtual server should optimize web content.
 #
 # [*aptimizer__profile*]
 # A table of Aptimizer profiles and the application scopes that apply to them.
@@ -188,11 +211,17 @@
 # Whether or not the traffic manager should modify the "secure" tag of any
 # cookies set by a back-end web server.
 #
+# [*dns__edns_client_subnet*]
+# Enable/Disable use of EDNS client subnet option
+#
 # [*dns__edns_udpsize*]
 # EDNS UDP size advertised in responses.
 #
 # [*dns__max_udpsize*]
 # Maximum UDP answer size.
+#
+# [*dns__rrset_order*]
+# Response record ordering.
 #
 # [*dns__verbose*]
 # Whether or not the DNS Server should emit verbose logging. This is useful
@@ -232,6 +261,9 @@
 # [*gzip__enabled*]
 # Compress web pages sent back by the server.
 #
+# [*gzip__etag_rewrite*]
+# How the ETag header should be manipulated when compressing content.
+#
 # [*gzip__include_mime*]
 # MIME types to compress. Complete MIME types can be used, or a type can end
 # in a '*' to match multiple types.
@@ -248,10 +280,10 @@
 # Compress documents with no given size.
 #
 # [*http__chunk_overhead_forwarding*]
-# Handling of HTTP chunk overhead.  When Stingray receives data from a server
-# or client that consists purely of protocol overhead (contains no payload),
+# Handling of HTTP chunk overhead.  When vTM receives data from a server or
+# client that consists purely of protocol overhead (contains no payload),
 # forwarding of such segments is delayed until useful payload data arrives
-# (setting "lazy").  Changing this key to "eager" will make Stingray incur the
+# (setting "lazy").  Changing this key to "eager" will make vTM incur the
 # overhead of immediately passing such data on; it should only be used with
 # HTTP peers whose chunk handling requires it.
 #
@@ -275,6 +307,83 @@
 # [*http__mime_detect*]
 # Auto-detect MIME types if the server does not provide them.
 #
+# [*http2__connect_timeout*]
+# The time, in seconds, to wait for a request on a new HTTP/2 connection.  If
+# no request is received within this time, the connection will be closed. This
+# setting overrides the "connect_timeout" setting. If set to "0" (zero), the
+# value of "connect_timeout" will be used instead.
+#
+# [*http2__data_frame_size*]
+# This setting controls the preferred frame size used when sending body data
+# to the client. If the client specifies a smaller maximum size than this
+# setting, the client's maximum size will be used. Every data frame sent has
+# at least a 9-byte header, in addition to this frame size, prepended to it.
+#
+# [*http2__enabled*]
+# This setting allows the HTTP/2 protocol to be used by a HTTP virtual server.
+# Unless use of HTTP/2 is negotiated by the client, the virtual server will
+# fall back to HTTP 1.x automatically.
+#
+# [*http2__header_table_size*]
+# This setting controls the amount of memory allowed for header compression on
+# each HTTP/2 connection.
+#
+# [*http2__headers_index_blacklist*]
+# A list of header names that should never be compressed using indexing.
+# Type:array
+# Properties:
+#
+# [*http2__headers_index_default*]
+# The HTTP/2 HPACK compression scheme allows for HTTP headers to be compressed
+# using indexing. Sensitive headers can be marked as "never index", which
+# prevents them from being compressed using indexing. When this setting is
+# "Yes", only headers included in "http2!headers_index_blacklist" are marked
+# as "never index". When this setting is "No", all headers will be marked as
+# "never index" unless they are included in "http2!headers_index_whitelist".
+#
+# [*http2__headers_index_whitelist*]
+# A list of header names that can be compressed using indexing when the value
+# of "http2!headers_index_default" is set to "No".
+# Type:array
+# Properties:
+#
+# [*http2__idle_timeout_no_streams*]
+# The time, in seconds, to wait for a new HTTP/2 request on a previously used
+# HTTP/2 connection that has no open HTTP/2 streams. If an HTTP/2 request is
+# not received within this time, the connection will be closed. A value of "0"
+# (zero) will disable the timeout.
+#
+# [*http2__idle_timeout_open_streams*]
+# The time, in seconds, to wait for data on an idle HTTP/2 connection, which
+# has open streams, when no data has been sent recently (e.g. for long-polled
+# requests). If data is not sent within this time, all open streams and the
+# HTTP/2 connection will be closed. A value of "0" (zero) will disable the
+# timeout.
+#
+# [*http2__max_concurrent_streams*]
+# This setting controls the number of streams a client is permitted to open
+# concurrently on a single connection.
+#
+# [*http2__max_frame_size*]
+# This setting controls the maximum HTTP/2 frame size clients are permitted to
+# send to the traffic manager.
+#
+# [*http2__max_header_padding*]
+# The maximum size, in bytes, of the random-length padding to add to HTTP/2
+# header frames. The padding, a random number of zero bytes up to the maximum
+# specified.
+#
+# [*http2__merge_cookie_headers*]
+# Whether Cookie headers received from an HTTP/2 client should be merged into
+# a single Cookie header using RFC6265 rules before forwarding to an HTTP/1.1
+# server. Some web applications do not handle multiple Cookie headers
+# correctly.
+#
+# [*http2__stream_window_size*]
+# This setting controls the flow control window for each HTTP/2 stream. This
+# will limit the memory used for buffering when the client is sending body
+# data faster than the pool node is reading it.
+#
 # [*kerberos_protocol_transition__enabled*]
 # Whether or not the virtual server should use Kerberos Protocol Transition.
 #
@@ -285,6 +394,9 @@
 # [*kerberos_protocol_transition__target*]
 # The Kerberos principal name of the service this virtual server targets.
 #
+# [*log__always_flush*]
+# Write log data to disk immediately, rather than buffering data.
+#
 # [*log__client_connection_failures*]
 # Should the virtual server log failures occurring on connections to clients.
 #
@@ -293,9 +405,9 @@
 # file system.
 #
 # [*log__filename*]
-# The name of the file in which to store the request logs. Appliances will
-# ignore this. The filename can contain macros which will be expanded by the
-# traffic manager to generate the full filename.
+# The name of the file in which to store the request logs. The filename can
+# contain macros which will be expanded by the traffic manager to generate the
+# full filename.
 #
 # [*log__format*]
 # The log file format. This specifies the line of text that will be written to
@@ -406,6 +518,14 @@
 # Type:array
 # Properties:
 #
+# [*ssl__elliptic_curves*]
+# The SSL elliptic curve preference list for SSL connections to this virtual
+# server using TLS version 1.0 or higher. Leaving this empty will make the
+# virtual server use the globally configured curve preference list. The named
+# curves P256, P384 and P521 may be configured.
+# Type:array
+# Properties:
+#
 # [*ssl__issued_certs_never_expire*]
 # When the virtual server verifies certificates signed by these certificate
 # authorities, it doesn't check the 'not after' date, i.e., they are
@@ -467,6 +587,11 @@
 # Whether or not to send an SSL/TLS "close alert" when the traffic manager is
 # initiating an SSL socket disconnection.
 #
+# [*ssl__server_cert_alt_certificates*]
+# The SSL certificates and corresponding private keys.
+# Type:array
+# Properties:
+#
 # [*ssl__server_cert_default*]
 # The default SSL certificate to use for this virtual server.
 #
@@ -475,7 +600,10 @@
 # Type:array
 # Properties:{"host"=>{"description"=>"Host which this entry refers to.",
 # "type"=>"string"}, "certificate"=>{"description"=>"The SSL server
-# certificate for a particular destination site IP.", "type"=>"string"}}
+# certificate for a particular destination site IP.", "type"=>"string"},
+# "alt_certificates"=>{"description"=>"The SSL server certificates for a
+# particular destination site IP.", "type"=>"array", "uniqueItems"=>false,
+# "items"=>{"type"=>"string"}}}
 #
 # [*ssl__signature_algorithms*]
 # The SSL signature algorithms preference list for SSL connections to this
@@ -628,6 +756,7 @@ define brocadevtm::virtual_servers (
   $basic__add_cluster_ip                   = true,
   $basic__add_x_forwarded_for              = false,
   $basic__add_x_forwarded_proto            = false,
+  $basic__autodetect_upgrade_headers       = true,
   $basic__bandwidth_class                  = undef,
   $basic__close_with_rst                   = false,
   $basic__completionrules                  = '[]',
@@ -648,6 +777,7 @@ define brocadevtm::virtual_servers (
   $basic__ssl_client_cert_headers          = 'none',
   $basic__ssl_decrypt                      = false,
   $basic__ssl_honor_fallback_scsv          = 'use_default',
+  $basic__transparent                      = false,
   $aptimizer__enabled                      = false,
   $aptimizer__profile                      = '[]',
   $connection__keepalive                   = true,
@@ -663,8 +793,10 @@ define brocadevtm::virtual_servers (
   $cookie__path_regex                      = undef,
   $cookie__path_replace                    = undef,
   $cookie__secure                          = 'no_modify',
+  $dns__edns_client_subnet                 = true,
   $dns__edns_udpsize                       = 4096,
   $dns__max_udpsize                        = 4096,
+  $dns__rrset_order                        = 'fixed',
   $dns__verbose                            = false,
   $dns__zones                              = '[]',
   $ftp__data_source_port                   = 0,
@@ -674,6 +806,7 @@ define brocadevtm::virtual_servers (
   $ftp__ssl_data                           = true,
   $gzip__compress_level                    = 1,
   $gzip__enabled                           = false,
+  $gzip__etag_rewrite                      = 'wrap',
   $gzip__include_mime                      = '["text/html","text/plain"]',
   $gzip__max_size                          = 10000000,
   $gzip__min_size                          = 1000,
@@ -684,6 +817,20 @@ define brocadevtm::virtual_servers (
   $http__location_rewrite                  = 'if_host_matches',
   $http__mime_default                      = 'text/plain',
   $http__mime_detect                       = false,
+  $http2__connect_timeout                  = 0,
+  $http2__data_frame_size                  = 4096,
+  $http2__enabled                          = true,
+  $http2__header_table_size                = 4096,
+  $http2__headers_index_blacklist          = '[]',
+  $http2__headers_index_default            = true,
+  $http2__headers_index_whitelist          = '[]',
+  $http2__idle_timeout_no_streams          = 120,
+  $http2__idle_timeout_open_streams        = 600,
+  $http2__max_concurrent_streams           = 200,
+  $http2__max_frame_size                   = 16384,
+  $http2__max_header_padding               = 0,
+  $http2__merge_cookie_headers             = true,
+  $http2__stream_window_size               = 65535,
   $kerberos_protocol_transition__enabled   = false,
   $kerberos_protocol_transition__principal = undef,
   $kerberos_protocol_transition__target    = undef,
@@ -715,6 +862,7 @@ define brocadevtm::virtual_servers (
   $smtp__expect_starttls                   = true,
   $ssl__add_http_headers                   = false,
   $ssl__client_cert_cas                    = '[]',
+  $ssl__elliptic_curves                    = '[]',
   $ssl__issued_certs_never_expire          = '[]',
   $ssl__ocsp_enable                        = false,
   $ssl__ocsp_issuers                       = '[]',
@@ -725,6 +873,7 @@ define brocadevtm::virtual_servers (
   $ssl__prefer_sslv3                       = false,
   $ssl__request_client_cert                = 'dont_request',
   $ssl__send_close_alerts                  = true,
+  $ssl__server_cert_alt_certificates       = '[]',
   $ssl__server_cert_default                = undef,
   $ssl__server_cert_host_mapping           = '[]',
   $ssl__signature_algorithms               = undef,
@@ -762,7 +911,7 @@ define brocadevtm::virtual_servers (
   vtmrest { "virtual_servers/${name}":
     ensure   => $ensure,
     before   => Class[Brocadevtm::Purge],
-    endpoint => "https://${ip}:${port}/api/tm/3.3/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/3.8/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/virtual_servers.erb'),

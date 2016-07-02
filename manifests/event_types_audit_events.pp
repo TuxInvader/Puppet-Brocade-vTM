@@ -1,19 +1,19 @@
-# === Class: brocadevtm::event_types_ssl_certificate_expiry
+# === Class: brocadevtm::event_types_audit_events
 #
 # This class is a direct implementation of brocadvtm::event_types
 #
 # Please refer to the documentation in that module for more information
 #
-class brocadevtm::event_types_ssl_certificate_expiry (
+class brocadevtm::event_types_audit_events (
   $ensure                       = present,
   $basic__actions               = '[]',
   $basic__built_in              = true,
-  $basic__note                  = 'Warnings about SSL certificates that have expired or are about to.',
+  $basic__note                  = 'Audit log events.',
   $cloudcredentials__event_tags = '[]',
   $cloudcredentials__objects    = '[]',
   $config__event_tags           = '[]',
   $faulttolerance__event_tags   = '[]',
-  $general__event_tags          = '[]',
+  $general__event_tags          = '["audit"]',
   $glb__event_tags              = '[]',
   $glb__objects                 = '[]',
   $java__event_tags             = '[]',
@@ -34,8 +34,8 @@ class brocadevtm::event_types_ssl_certificate_expiry (
   $ssl__event_tags              = '[]',
   $sslhw__event_tags            = '[]',
   $trafficscript__event_tags    = '[]',
-  $vservers__event_tags         = '["vscacertexpired","vscacerttoexpire","vscrloutofdate","vssslcertexpired","vssslcerttoexpire"]',
-  $vservers__objects            = '["*"]',
+  $vservers__event_tags         = '[]',
+  $vservers__objects            = '[]',
   $zxtms__event_tags            = '[]',
   $zxtms__objects               = '[]',
 ){
@@ -47,8 +47,8 @@ class brocadevtm::event_types_ssl_certificate_expiry (
   $purge           = $brocadevtm::purge
   $purge_state_dir = $brocadevtm::purge_state_dir
 
-  info ("Configuring event_types_ssl_certificate_expiry ${name}")
-  vtmrest { 'event_types/SSL%20Certificate%20Expiry':
+  info ("Configuring event_types_audit_events ${name}")
+  vtmrest { 'event_types/Audit%20Events':
     ensure   => $ensure,
     before   => Class[Brocadevtm::Purge],
     endpoint => "https://${ip}:${port}/api/tm/3.8/config/active",
@@ -56,15 +56,15 @@ class brocadevtm::event_types_ssl_certificate_expiry (
     password => $pass,
     content  => template('brocadevtm/event_types.erb'),
     type     => 'application/json',
-    internal => 'event_types_ssl_certificate_expiry',
+    internal => 'event_types_audit_events',
     failfast => $brocadevtm::failfast,
     debug    => 0,
   }
 
   if ( $purge ) {
     ensure_resource('file', "${purge_state_dir}/event_types", {ensure => present})
-    file_line { 'event_types/SSL%20Certificate%20Expiry':
-      line => 'event_types/SSL%20Certificate%20Expiry',
+    file_line { 'event_types/Audit%20Events':
+      line => 'event_types/Audit%20Events',
       path => "${purge_state_dir}/event_types",
     }
   }

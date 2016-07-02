@@ -51,7 +51,7 @@ class brocadevtm::event_types_default_events (
   vtmrest { 'event_types/Default%20Events':
     ensure   => $ensure,
     before   => Class[Brocadevtm::Purge],
-    endpoint => "https://${ip}:${port}/api/tm/3.3/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/3.8/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/event_types.erb'),

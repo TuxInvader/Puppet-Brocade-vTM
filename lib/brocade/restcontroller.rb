@@ -600,7 +600,7 @@ module BrocadeREST
 							example = @probeName
 						end
 						print "[Default: #{example}]: "
-						new = gets.chomp()
+						new = $stdin.gets.chomp()
 						if ( new != "" )
 							example = new
 							example = Integer(example) if example.match(/^\d+$/) 

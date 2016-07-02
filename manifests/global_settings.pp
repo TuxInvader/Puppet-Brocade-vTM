@@ -47,9 +47,30 @@
 # defer the processing of new client-first connections until the client has
 # sent some data.
 #
+# [*basic__cluster_identifier*]
+# Cluster identifier. Generally supplied by Services Director.
+#
+# [*basic__cpu_starvation_check_interval*]
+# How frequently should child processes check for CPU starvation? A value of 0
+# disables the detection.
+#
+# [*basic__cpu_starvation_check_tolerance*]
+# How much delay in milliseconds between starvation checks do we allow before
+# we assume that the machine or its HyperVisor are overloaded.
+#
+# [*basic__http2_no_cipher_blacklist_check*]
+# Disable the cipher blacklist check in HTTP2 (mainly intended for testing
+# purposes)
+#
 # [*basic__internal_config_logging*]
 # Whether or not messages pertaining to internal configuration files should be
 # logged to the event log.
+#
+# [*basic__license_servers*]
+# A list of license servers for FLA licensing.  A license server should be
+# specified as a "<ip/host>:<port>" pair.
+# Type:array
+# Properties:
 #
 # [*basic__max_fds*]
 # The maximum number of file descriptors that your traffic manager will
@@ -115,6 +136,12 @@
 # the minimum time interval (in milliseconds) between handshakes on a single
 # SSL3/TLS connection that is permitted.  To disable the minimum interval for
 # handshakes the key should be set to the value "0".
+#
+# [*admin__ssl_elliptic_curves*]
+# The SSL elliptic curve preference list for admin and internal connections.
+# The named curves P256, P384 and P521 may be configured.
+# Type:array
+# Properties:
 #
 # [*admin__ssl_insert_extra_fragment*]
 # Whether or not SSL3 and TLS1 use one-byte fragments as a BEAST
@@ -182,62 +209,62 @@
 #
 # [*aptimizer__cache_entry_lifetime*]
 # The period of time (in seconds) that unaccessed cache entries will be
-# retained by aptimizer.
+# retained by Web Accelerator.
 #
 # [*aptimizer__cache_entry_limit*]
-# The maximum number of cache entries that will be retained by aptimizer
+# The maximum number of cache entries that will be retained by Web Accelerator
 # before removing old entries to make room for new ones.
 #
 # [*aptimizer__default_profile*]
-# The Profile to use by default if no mappings are configured (or if Aptimizer
-# is licensed in Express mode)
+# The Profile to use by default if no mappings are configured (or if Web
+# Accelerator is licensed in Express mode)
 #
 # [*aptimizer__default_scope*]
-# The Scope to use by default if no mappings are configured (or if Aptimizer
-# is licensed in Express mode)
+# The Scope to use by default if no mappings are configured (or if Web
+# Accelerator is licensed in Express mode)
 #
 # [*aptimizer__dependent_fetch_timeout*]
 # How long to wait for dependent resource fetches (default 30 seconds).
 #
 # [*aptimizer__enable_state_dump*]
-# Whether or not the Aptimizer state will be dumped if "/aptimizer-state-dump"
-# is appended to an Aptimized URL.
+# Whether or not the Web Accelerator state will be dumped if
+# "/aptimizer-state-dump" is appended to an optimized URL.
 #
 # [*aptimizer__ipc_timeout*]
-# The time after which connections between the traffic manager and Aptimizer
-# processes will be closed, should an optimization job take considerably
-# longer than expected.
+# The time after which connections between the traffic manager and Web
+# Accelerator processes will be closed, should an optimization job take
+# considerably longer than expected.
 #
 # [*aptimizer__max_concurrent_jobs*]
 # How many direct jobs can be in progress before optimization jobs start
-# getting rejected by aptimizer
+# getting rejected by Web Accelerator.
 #
 # [*aptimizer__max_dependent_fetch_size*]
-# The maximum size of a dependent resource that can undergo Aptimizer
+# The maximum size of a dependent resource that can undergo Web Accelerator
 # optimization. Any content larger than this size will not be optimized. Units
 # of KB and MB can be used, no postfix denotes bytes. A value of 0 disables
 # the limit.
 #
 # [*aptimizer__max_original_content_buffer_size*]
 # The maximum size of unoptimized content buffered in the traffic manager for
-# a single backend response that is undergoing Aptimizer optimization.
+# a single backend response that is undergoing Web Accelerator optimization.
 # Responses larger than this will not be optimized. Note that if the backend
 # response is compressed then this setting pertains to the compressed size,
-# before Aptimizer decompresses it. Units of KB and MB can be used, no postfix
-# denotes bytes. Value range is 1 - 128MB.
+# before Web Accelerator decompresses it. Units of KB and MB can be used, no
+# postfix denotes bytes. Value range is 1 - 128MB.
 #
 # [*aptimizer__queue_buffer_size*]
 # The size in bytes of the operating system buffer which is used to send
-# request URLs and data to Aptimizer and return optimized resources from
-# Aptimizer. A larger buffer will allow a greater number of simultaneous
+# request URLs and data to Web Accelerator and return optimized resources from
+# Web Accelerator. A larger buffer will allow a greater number of simultaneous
 # resources to be optimized, particularly if a large number of requests are
 # made at the same time, for example an HTML page containing hundreds of
 # images to optimize. If this is set to zero, the default operating system
 # buffer size will be used.
 #
 # [*aptimizer__resource_lifetime*]
-# The period of time (in seconds) that resource data is retained by aptimizer
-# after it is no longer actively in use.
+# The period of time (in seconds) that resource data is retained by Web
+# Accelerator after it is no longer actively in use.
 #
 # [*aptimizer__resource_memory_limit*]
 # The maximum amount of memory the cache is allowed to have pinned. Once it
@@ -248,10 +275,16 @@
 # longer count towards the watchdog limit.
 #
 # [*aptimizer__watchdog_limit*]
-# The maximum number of times the Aptimizer sub-process will be started or
-# restarted within the interval defined by the aptimizer!watchdog_interval
+# The maximum number of times the Web Accelerator sub-process will be started
+# or restarted within the interval defined by the aptimizer!watchdog_interval
 # setting. If the process fails this many times, it must be restarted manually
 # from the Diagnose page.  Zero means no limit.
+#
+# [*auditlog__via_eventd*]
+# Whether to mirror the audit log to EventD.
+#
+# [*auditlog__via_syslog*]
+# Whether to output audit log message to the syslog.
 #
 # [*autoscaler__slm_interval*]
 # The interval at which the parent sends new SLM status to the autoscaler.
@@ -272,6 +305,13 @@
 # consumers, when the license limit is reached the allowance will be evenly
 # distributed between the remaining consumers. Each consumer will, however be
 # permitted to write at least this much data.
+#
+# [*bgp__as_number*]
+# The number of the BGP AS in which the traffic manager will operate. Must be
+# entered in decimal.
+#
+# [*bgp__enabled*]
+# Whether BGP Route Health Injection is enabled
 #
 # [*cluster_comms__allow_update_default*]
 # The default value of "allow_update" for new cluster members.  If you have
@@ -324,14 +364,30 @@
 # under some very specific conditions. However, in general it is recommended
 # that this be set to 'false'.
 #
+# [*dns__checktime*]
+# How often to check the DNS configuration for changes.
+#
+# [*dns__hosts*]
+# The location of the "hosts" file.
+#
+# [*dns__hostsfirst*]
+# Whether or not to try reading the "dns!hosts" file before calling
+# gethostbyname(). This config key exists for testing purposes only.
+#
 # [*dns__max_ttl*]
 # Maximum Time To Live (expiry time) for entries in the DNS cache.
+#
+# [*dns__maxasynctries*]
+# How often to send DNS request packets before giving up.
 #
 # [*dns__min_ttl*]
 # Minimum Time To Live (expiry time) for entries in the DNS cache.
 #
 # [*dns__negative_expiry*]
 # Expiry time for failed lookups in the DNS cache.
+#
+# [*dns__resolv*]
+# The location of the "resolv.conf" file.
 #
 # [*dns__size*]
 # Maximum number of entries in the DNS cache.
@@ -379,9 +435,15 @@
 # Whether or not traffic IPs automatically move back to machines that have
 # recovered from a failure and have dropped their traffic IPs.
 #
+# [*fault_tolerance__child_timeout*]
+# How long the traffic manager should wait for status updates from any of the
+# traffic manager's child processes before assuming one of them is no longer
+# servicing traffic.
+#
 # [*fault_tolerance__frontend_check_ips*]
-# The IP addresses used to check front-end connectivity. Set this to an empty
-# string if the traffic manager is on an Intranet with no external
+# The IP addresses used to check front-end connectivity. The text "%gateway%"
+# will be replaced with the default gateway on each system. Set this to an
+# empty string if the traffic manager is on an Intranet with no external
 # connectivity.
 # Type:array
 # Properties:
@@ -453,6 +515,13 @@
 # [*historical_activity__keep_days*]
 # Number of days to store historical traffic information, if set to "0" the
 # data will be kept indefinitely.
+#
+# [*http__max_chunk_header_length*]
+# The maximum length the header line of an HTTP chunk can have in an upload
+# from the client.  Header lines exceeding this length will be considered
+# invalid.  The traffic manager buffers the header line before it can read any
+# payload data in the chunk; the limit exists to protect against malicious
+# clients that send very long lines but never any payload data.
 #
 # [*ip__appliance_returnpath*]
 # A table of MAC to IP address mappings for each router where return path
@@ -530,24 +599,24 @@
 # decimal or IPv4 address format.
 #
 # [*ospfv2__area_type*]
-# The type of the OSPF area in which the traffic manager will operate. This
-# must be the same for all routers in the area, as required by OSPF.
+# The type of OSPF area in which the traffic manager will operate. This must
+# be the same for all routers in the area, as required by OSPF.
 #
 # [*ospfv2__authentication_key_id_a*]
-# OSPFv2 authentication key ID. If set to 0, the key is disabled. If there are
-# no enabled keys, OSPFv2 authentication is not used.
+# OSPFv2 authentication key ID. If set to 0, which is the default value, the
+# key is disabled.
 #
 # [*ospfv2__authentication_key_id_b*]
-# OSPFv2 authentication key ID. If set to 0, the key is disabled. If there are
-# no enabled keys, OSPFv2 authentication is not used.
+# OSPFv2 authentication key ID. If set to 0, which is the default value, the
+# key is disabled.
 #
 # [*ospfv2__authentication_shared_secret_a*]
-# OSPFv2 authentication shared secret (MD5). If set to blank, the key is
-# disabled. If there are no enabled keys, OSPFv2 authentication is not used.
+# OSPFv2 authentication shared secret (MD5). If set to blank, which is the
+# default value, the key is disabled.
 #
 # [*ospfv2__authentication_shared_secret_b*]
-# OSPFv2 authentication shared secret (MD5). If set to blank, the key is
-# disabled. If there are no enabled keys, OSPFv2 authentication is not used.
+# OSPFv2 authentication shared secret (MD5). If set to blank, which is the
+# default value, the key is disabled.
 #
 # [*ospfv2__enabled*]
 # Whether OSPFv2 Route Health Injection is enabled
@@ -602,6 +671,16 @@
 # when viewing a snapshot on the Connections page. This value includes both
 # currently active connections and saved connections. If set to "0" all active
 # and saved connection will be displayed on the Connections page.
+#
+# [*remote_licensing__registration_server*]
+# A Services Director address for self-registration. A registration server
+# should be specified as a "<ip/host>:<port>" pair.
+#
+# [*remote_licensing__script_timeout*]
+# Time-out value for the self-register script.
+#
+# [*remote_licensing__server_certificate*]
+# The certificate of a Services Director instance, used for self-registration.
 #
 # [*rest_api__auth_timeout*]
 # The length of time after a successful request that the authentication of a
@@ -763,6 +842,13 @@
 # [*ssl__disable_stitched_cbc_hmac*]
 # Enable or disable use of "stitched" CBC/HMAC mode ciphers
 #
+# [*ssl__elliptic_curves*]
+# The SSL elliptic curve preference list for SSL connections using TLS version
+# 1.0 or higher, unless overridden by virtual server or pool settings. The
+# named curves P256, P384 and P521 may be configured.
+# Type:array
+# Properties:
+#
 # [*ssl__honor_fallback_scsv*]
 # Whether or not ssl-decrypting Virtual Servers honor the Fallback SCSV to
 # protect connections against downgrade attacks.
@@ -775,6 +861,17 @@
 # The maximum size (in bytes) of SSL handshake messages that SSL connections
 # will accept. To accept any size of handshake message the key should be set
 # to the value "0".
+#
+# [*ssl__obscure_alert_descriptions*]
+# Whether SSL/TLS alert descriptions should be obscured (where reasonable)
+# when sent to a remote peer. Alert descriptions are useful for diagnosing
+# SSL/TLS connection issues when connecting to a remote peer. However those
+# diagnostics may provide information that an attacker could use to compromise
+# the system (as a concrete example, see Moeller, B., "Security of CBC
+# Ciphersuites in SSL/TLS: Problems and Countermeasures"). If not enabled,
+# alert descriptions that are known to facilitate compromise will still be
+# obscured.  Otherwise, if enabled, alert descriptions that can be safely
+# mapped to a more general one, will be.
 #
 # [*ssl__ocsp_cache_size*]
 # The maximum number of cached client certificate OCSP results stored. This
@@ -835,6 +932,11 @@
 # The SSL ciphers to use. For information on supported ciphers see the online
 # help.
 #
+# [*ssl__ssl3_diffie_hellman_client_min_key_length*]
+# The minimum length in bits of the Diffie-Hellman key that the Traffic
+# Manager will accept when connecting using Diffie-Hellman key agreement as a
+# client.
+#
 # [*ssl__ssl3_diffie_hellman_key_length*]
 # The length in bits of the Diffie-Hellman key for ciphers that use
 # Diffie-Hellman key agreement.
@@ -867,6 +969,33 @@
 # manager only has a placeholder/identifier key). With this option enabled,
 # your traffic manager will instead try to use hardware for all SSL decrypts.
 #
+# [*ssl_hardware__azure_api_version*]
+# The version of the Azure Key Vault REST API.
+#
+# [*ssl_hardware__azure_client_id*]
+# The client identifier used when accessing the Microsoft Azure Key Vault.
+#
+# [*ssl_hardware__azure_client_secret*]
+# The client secret used when accessing the Microsoft Azure Key Vault.
+#
+# [*ssl_hardware__azure_connect_timeout*]
+# Timeout for establishing a connection to the Azure Key Vault REST API. Using
+# a value of 0 will use libcurl's built-in timeout.
+#
+# [*ssl_hardware__azure_idle_timeout*]
+# Idle timeout for a connection to the Azure Key Vault REST API. Using a value
+# of 0 will deactivate the timeout.
+#
+# [*ssl_hardware__azure_key_list_conns*]
+# The maximum number of concurrent HTTPS connections that will be used to
+# retrieve the list of keys stored in an Azure Key Vault.
+#
+# [*ssl_hardware__azure_vault_url*]
+# The URL for the REST API of the Microsoft Azure Key Vault.
+#
+# [*ssl_hardware__azure_verify_rest_api_cert*]
+# Whether or not the Azure Key Vault REST API certificate should be verified.
+#
 # [*ssl_hardware__driver_pkcs11_debug*]
 # Print verbose information about the PKCS11 hardware security module to the
 # event log.
@@ -895,6 +1024,13 @@
 # [*ssl_hardware__library*]
 # The type of SSL hardware to use. The drivers for the SSL hardware should be
 # installed and accessible to the traffic manager software.
+#
+# [*ssl_hardware__nworkers*]
+# The maximum number of concurrent requests the traffic manager will offload
+# to the accelerator device.
+#
+# [*ssl_hardware__queuelen*]
+# The maximum number of requests that will be queued to the accelerator device.
 #
 # [*trafficscript__array_elements*]
 # The amount of storage that will be allocated to array elements in
@@ -964,6 +1100,13 @@
 # This setting can be increased if your web site makes extensive use of long
 # URLs.
 #
+# [*web_cache__blocksize*]
+# The size of the blocks of shared memory that are allocated for the content
+# cache.  Every entry in the content cache will use at least this amount of
+# memory.  You can specify the number of bytes, kB, or MB.  Unless you know
+# that you are serving almost exclusively very small or very large files,
+# there is no reason to change this value.
+#
 # [*web_cache__disk*]
 # Whether or not to use a disk-backed (typically SSD) cache.  If set to "Yes"
 # cached web pages will be stored in a file on disk.  This enables the traffic
@@ -978,6 +1121,13 @@
 # "webcache.data" in this location. <br /> Note that the disk caching is
 # optimized for use with SSD storage.
 #
+# [*web_cache__max_byte_range_segments*]
+# Maximum number of range segments allowed in a range request.  Requests
+# containing more segments than this will get a 416 "Requested Range Not
+# Satisfiable" response, even if the page actually contains the requested
+# ranges.  This setting is useful to protect against byte-range-related DoS
+# attacks.
+#
 # [*web_cache__max_file_num*]
 # Maximum number of entries in the cache.  Approximately 0.9 KB will be
 # pre-allocated per entry for metadata, this is in addition to the memory
@@ -989,10 +1139,23 @@
 # either a percentage of the total cache size, "2%" for example, or an
 # absolute size such as "20MB".
 #
+# [*web_cache__max_handles*]
+# Maximum number of webcache handles to allow per process. This is a limit on
+# the maximum number of cached objects being simultaneously served, not a
+# limit on the maximum that can be in the cache. A value of 0 indicates that
+# we should use the system per-process limit on number of FDs.
+#
 # [*web_cache__max_path_length*]
 # The maximum length of the path (including query string) for the resource
 # being cached. If the path exceeds this length then it will not be added to
 # the cache.
+#
+# [*web_cache__min_size_accept_range*]
+# If a page is stored in the cache, the traffic manager will add the header
+# "Accept-Ranges: bytes" to responses that are not chunked, not compressed and
+# exceed a certain size (and do not have it yet). This expert tunable
+# specifies the minimum size a page has to have for the traffic manager to add
+# the Accept-Ranges header.
 #
 # [*web_cache__normalize_query*]
 # Enable normalization (lexical ordering of the parameter-assignments) of the
@@ -1002,6 +1165,16 @@
 # The maximum size of the HTTP web page cache.  This is specified as either a
 # percentage of system RAM, "20%" for example, or an absolute size such as
 # "200MB".
+#
+# [*web_cache__url_store_keep_free*]
+# Percentage of space to keep free in the URL store.
+#
+# [*web_cache__url_store_max_mallocs*]
+# How many times to attempt to malloc space for a cache URL before giving up.
+# 0 means never give up.
+#
+# [*web_cache__url_store_num_bins*]
+# The number of bins to use for the URL store. 0 means no binning.
 #
 # [*web_cache__verbose*]
 # Add an X-Cache-Info header to every HTTP response, showing whether the
@@ -1028,6 +1201,8 @@ class brocadevtm::global_settings (
   $basic__afm_enabled                          = false,
   $basic__chunk_size                           = 16384,
   $basic__client_first_opt                     = false,
+  $basic__cluster_identifier                   = undef,
+  $basic__license_servers                      = '[]',
   $basic__max_fds                              = 1048576,
   $basic__monitor_memory_size                  = 4096,
   $basic__rate_class_limit                     = 25000,
@@ -1039,9 +1214,10 @@ class brocadevtm::global_settings (
   $basic__tip_class_limit                      = 10000,
   $admin__honor_fallback_scsv                  = true,
   $admin__ssl3_allow_rehandshake               = 'rfc5746',
-  $admin__ssl3_ciphers                         = 'SSL_RSA_WITH_AES_128_GCM_SHA256,SSL_RSA_WITH_AES_128_CBC_SHA256,SSL_RSA_WITH_AES_128_CBC_SHA,SSL_RSA_WITH_AES_256_GCM_SHA384,SSL_RSA_WITH_AES_256_CBC_SHA256,SSL_RSA_WITH_AES_256_CBC_SHA,SSL_RSA_WITH_3DES_EDE_CBC_SHA',
+  $admin__ssl3_ciphers                         = 'SSL_RSA_WITH_AES_128_GCM_SHA256,SSL_RSA_WITH_AES_128_CBC_SHA256,SSL_RSA_WITH_AES_128_CBC_SHA,SSL_RSA_WITH_AES_256_GCM_SHA384,SSL_RSA_WITH_AES_256_CBC_SHA256,SSL_RSA_WITH_AES_256_CBC_SHA,SSL_RSA_WITH_3DES_EDE_CBC_SHA,SSL_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,SSL_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,SSL_ECDHE_ECDSA_WITH_AES_128_CBC_SHA,SSL_DHE_DSS_WITH_AES_128_CBC_SHA,SSL_DHE_DSS_WITH_AES_256_CBC_SHA,SSL_DHE_DSS_WITH_3DES_EDE_CBC_SHA',
   $admin__ssl3_diffie_hellman_key_length       = 'dh_2048',
   $admin__ssl3_min_rehandshake_interval        = 1000,
+  $admin__ssl_elliptic_curves                  = '[]',
   $admin__ssl_insert_extra_fragment            = false,
   $admin__ssl_max_handshake_message_size       = 10240,
   $admin__ssl_prevent_timing_side_channels     = false,
@@ -1062,7 +1238,11 @@ class brocadevtm::global_settings (
   $aptimizer__max_original_content_buffer_size = '2MB',
   $aptimizer__watchdog_interval                = 300,
   $aptimizer__watchdog_limit                   = 3,
+  $auditlog__via_eventd                        = false,
+  $auditlog__via_syslog                        = false,
   $autoscaler__verbose                         = false,
+  $bgp__as_number                              = 65534,
+  $bgp__enabled                                = false,
   $cluster_comms__allow_update_default         = true,
   $cluster_comms__allowed_update_hosts         = '["127.0.0.1"]',
   $cluster_comms__state_sync_interval          = 3,
@@ -1084,6 +1264,7 @@ class brocadevtm::global_settings (
   $eventing__max_attempts                      = 10,
   $fault_tolerance__arp_count                  = 10,
   $fault_tolerance__auto_failback              = true,
+  $fault_tolerance__child_timeout              = 5,
   $fault_tolerance__frontend_check_ips         = '["%gateway%"]',
   $fault_tolerance__heartbeat_method           = 'unicast',
   $fault_tolerance__igmp_interval              = 30,
@@ -1124,6 +1305,8 @@ class brocadevtm::global_settings (
   $recent_connections__max_per_process         = 500,
   $recent_connections__retain_time             = 60,
   $recent_connections__snapshot_size           = 500,
+  $remote_licensing__registration_server       = undef,
+  $remote_licensing__server_certificate        = undef,
   $rest_api__auth_timeout                      = 120,
   $rest_api__enabled                           = true,
   $rest_api__http_max_header_length            = 4096,
@@ -1132,7 +1315,7 @@ class brocadevtm::global_settings (
   $rest_api__replicate_timeout                 = 10,
   $security__login_banner                      = undef,
   $security__login_banner_accept               = false,
-  $security__login_delay                       = 0,
+  $security__login_delay                       = 4,
   $security__max_login_attempts                = 0,
   $security__max_login_external                = false,
   $security__max_login_suspension_time         = 15,
@@ -1158,6 +1341,7 @@ class brocadevtm::global_settings (
   $ssl__cache_per_virtualserver                = true,
   $ssl__cache_size                             = 6151,
   $ssl__crl_mem_size                           = '5MB',
+  $ssl__elliptic_curves                        = '[]',
   $ssl__honor_fallback_scsv                    = true,
   $ssl__insert_extra_fragment                  = false,
   $ssl__max_handshake_message_size             = 10240,
@@ -1171,7 +1355,7 @@ class brocadevtm::global_settings (
   $ssl__signature_algorithms                   = undef,
   $ssl__ssl3_allow_rehandshake                 = 'safe',
   $ssl__ssl3_ciphers                           = undef,
-  $ssl__ssl3_diffie_hellman_key_length         = 'dh_1024',
+  $ssl__ssl3_diffie_hellman_key_length         = 'dh_2048',
   $ssl__ssl3_min_rehandshake_interval          = 1000,
   $ssl__support_ssl2                           = false,
   $ssl__support_ssl3                           = false,
@@ -1179,6 +1363,10 @@ class brocadevtm::global_settings (
   $ssl__support_tls1_1                         = true,
   $ssl__support_tls1_2                         = true,
   $ssl_hardware__accel                         = false,
+  $ssl_hardware__azure_client_id               = undef,
+  $ssl_hardware__azure_client_secret           = undef,
+  $ssl_hardware__azure_vault_url               = undef,
+  $ssl_hardware__azure_verify_rest_api_cert    = true,
   $ssl_hardware__driver_pkcs11_debug           = false,
   $ssl_hardware__driver_pkcs11_lib             = undef,
   $ssl_hardware__driver_pkcs11_slot_desc       = undef,
@@ -1218,7 +1406,7 @@ class brocadevtm::global_settings (
   vtmrest { 'global_settings':
     ensure   => $ensure,
     before   => Class[Brocadevtm::Purge],
-    endpoint => "https://${ip}:${port}/api/tm/3.3/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/3.8/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/global_settings.erb'),

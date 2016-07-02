@@ -90,7 +90,7 @@ if ( ! options.jfdi )
 	puts("===============================================================")
 	print "Type \"YES\" -> "
 	$stdin.iflush
-	continue=gets.chomp
+	continue=$stdin.gets.chomp
 	if continue != "YES"
 		exit
 	end
@@ -120,19 +120,19 @@ puts("===============================================================")
 puts(" API Walked and Test objects created.")
 puts(" Press <RETURN> to dump Manifests and Templates")
 $stdin.iflush
-gets()
+$stdin.gets()
 vtmrc.dumpConfig(:manifests, "#{homedir}/manifests", "#{homedir}/templates", "#{homedir}/files")
 puts("")
 puts("===============================================================")
 puts(" Press <RETURN> to dump Objects...")
 $stdin.iflush
-gets()
+$stdin.gets()
 vtmrc.dumpConfig(:objects, "#{homedir}/manifests", "#{homedir}/templates", "#{homedir}/files")
 puts("")
 puts("===============================================================")
 puts("    Press <RETURN> to clean up.")
 $stdin.iflush
-gets()
+$stdin.gets()
 vtmrc.setType( WalkTypes::DELETE )
 vtmrc.walk( )
 
