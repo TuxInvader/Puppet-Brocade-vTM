@@ -1,4 +1,6 @@
-# Version 1.xx.0
+# Version 1.38.1
+
+Fix gets() "File Not Found" bug when generating configuration and manifests, by using $stdin.gets().
 
 No Changes 0.xx.3 released as version 1.
 
