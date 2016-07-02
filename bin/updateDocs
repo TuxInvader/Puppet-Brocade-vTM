@@ -69,7 +69,7 @@ if options.jfdi == false
 	puts("===============================================================")
 	print "Type \"YES\" -> "
 	$stdin.iflush
-	continue=gets.chomp
+	continue=$stdin.gets.chomp
 	if continue != "YES"
 		exit
 	end
