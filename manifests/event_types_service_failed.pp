@@ -51,7 +51,7 @@ class brocadevtm::event_types_service_failed (
   vtmrest { 'event_types/Service%20Failed':
     ensure   => $ensure,
     before   => Class[Brocadevtm::Purge],
-    endpoint => "https://${ip}:${port}/api/tm/3.8/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/3.9/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/event_types.erb'),

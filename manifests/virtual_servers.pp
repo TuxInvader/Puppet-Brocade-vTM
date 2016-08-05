@@ -39,6 +39,10 @@
 # [*basic__bandwidth_class*]
 # The bandwidth management class that this server should use, if any.
 #
+# [*basic__bypass_data_plane_acceleration*]
+# Whether this service should, where possible, bypass data plane acceleration
+# mechanisms.
+#
 # [*basic__close_with_rst*]
 # Whether or not connections from clients should be closed with a RST packet,
 # rather than a FIN packet. This avoids the TIME_WAIT state, which on rare
@@ -394,6 +398,34 @@
 # [*kerberos_protocol_transition__target*]
 # The Kerberos principal name of the service this virtual server targets.
 #
+# [*l4accel__rst_on_service_failure*]
+# Whether the virtual server should send a TCP RST packet or ICMP error
+# message if a service is unavailable, or if an established connection to a
+# node fails.
+#
+# [*l4accel__state_sync*]
+# Whether the state of active connections will be synchronized across the
+# cluster for L4Accel services, such that connections will persist in the
+# event of a failover. Note that the service must listen only on Traffic IP
+# groups for this setting to be enabled.
+#
+# [*l4accel__tcp_msl*]
+# The maximum segment lifetime, in seconds, of a TCP segment being handled by
+# the traffic manager. This setting determines for how long information about
+# a connection will be retained after receiving a two-way FIN or RST.
+#
+# [*l4accel__timeout*]
+# The number of seconds after which a connection will be closed if no further
+# packets have been received on it.
+#
+# [*l4accel__udp_count_requests*]
+# For services running on port 53, whether to close the connection when the
+# number of UDP response datagrams received from the server is equal to the
+# number of request datagrams that have been sent by the client. If set to
+# "No" the connection will be closed after the first response has been
+# received from the server. Connections to services running on any port will
+# be closed when they time out, as defined by the "l4accel!timeout" setting.
+#
 # [*log__always_flush*]
 # Write log data to disk immediately, rather than buffering data.
 #
@@ -534,6 +566,14 @@
 # Type:array
 # Properties:
 #
+# [*ssl__max_key_size*]
+# The maximum client RSA/DSA certificate key size that the virtual server
+# should accept.
+#
+# [*ssl__min_key_size*]
+# The minimum client RSA/DSA certificate key size that the virtual server
+# should accept.
+#
 # [*ssl__ocsp_enable*]
 # Whether or not the traffic manager should use OCSP to check the revocation
 # status of client certificates.
@@ -622,11 +662,8 @@
 # tab.  See there for how to specify SSL/TLS ciphers.
 #
 # [*ssl__ssl_support_ssl2*]
-# Whether or not SSLv2 is enabled for this virtual server.  Choosing the
-# global setting means the value of configuration key <a
-# href="?fold_open=SSL%20Configuration&section=Global%20Settings#a_ssl!support_s
-# sl2"> "ssl!support_ssl2"</a> from the Global Settings section of the System
-# tab will be enforced.
+# No longer supported. Formerly controlled whether SSLv2 could be used for SSL
+# connections to this virtual server.
 #
 # [*ssl__ssl_support_ssl3*]
 # Whether or not SSLv3 is enabled for this virtual server.  Choosing the
@@ -758,6 +795,7 @@ define brocadevtm::virtual_servers (
   $basic__add_x_forwarded_proto            = false,
   $basic__autodetect_upgrade_headers       = true,
   $basic__bandwidth_class                  = undef,
+  $basic__bypass_data_plane_acceleration   = false,
   $basic__close_with_rst                   = false,
   $basic__completionrules                  = '[]',
   $basic__connect_timeout                  = 10,
@@ -834,6 +872,11 @@ define brocadevtm::virtual_servers (
   $kerberos_protocol_transition__enabled   = false,
   $kerberos_protocol_transition__principal = undef,
   $kerberos_protocol_transition__target    = undef,
+  $l4accel__rst_on_service_failure         = false,
+  $l4accel__state_sync                     = false,
+  $l4accel__tcp_msl                        = 8,
+  $l4accel__timeout                        = 1800,
+  $l4accel__udp_count_requests             = false,
   $log__client_connection_failures         = false,
   $log__enabled                            = false,
   $log__filename                           = '%zeushome%/zxtm/log/%v.log',
@@ -911,7 +954,7 @@ define brocadevtm::virtual_servers (
   vtmrest { "virtual_servers/${name}":
     ensure   => $ensure,
     before   => Class[Brocadevtm::Purge],
-    endpoint => "https://${ip}:${port}/api/tm/3.8/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/3.9/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/virtual_servers.erb'),
