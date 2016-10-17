@@ -318,6 +318,9 @@ module BrocadeREST
 									requires += " Class[Brocadevtm::#{ro_}_#{item_}], "
 								else
 									escaped = item.gsub(' ', '%20')
+                  if reqObject == "Rules"
+                    escaped = escaped.gsub(/^\/{0,1}(.*?)\*{0,1}$/,"\\1")
+                  end
 									requires += " Brocadevtm::#{reqObject}['#{escaped}'], "
 								end
 							end
@@ -328,6 +331,9 @@ module BrocadeREST
 						end
 						if req.empty? or ( (!req.empty?) and (!req.include?(@params[reqVar])) )
 							escaped = @params[reqVar].gsub(' ', '%20')
+              if reqObject == "Rules"
+                escaped = escaped.gsub(/^\/{0,1}(.*?)\*{0,1}$/,"\\1")
+              end
 							requires += " Brocadevtm::#{reqObject}['#{escaped}'], "
 						end
 					end
