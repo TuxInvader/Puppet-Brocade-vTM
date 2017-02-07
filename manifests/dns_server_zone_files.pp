@@ -37,7 +37,7 @@ define brocadevtm::dns_server_zone_files (
   vtmrest { "dns_server/zone_files/${name}":
     ensure   => $ensure,
     before   => Class[Brocadevtm::Purge],
-    endpoint => "https://${ip}:${port}/api/tm/3.8/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/3.11/config/active",
     username => $user,
     password => $pass,
     content  => $content,

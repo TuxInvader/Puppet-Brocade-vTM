@@ -36,7 +36,7 @@ define brocadevtm::rules (
   vtmrest { "rules/${name}":
     ensure   => $ensure,
     before   => Class[Brocadevtm::Purge],
-    endpoint => "https://${ip}:${port}/api/tm/3.8/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/3.11/config/active",
     username => $user,
     password => $pass,
     content  => $content,

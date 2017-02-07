@@ -26,9 +26,15 @@
 # Type:array
 # Properties:
 #
+# [*basic__factory*]
+# Whether or not this monitor is provided as part of the software release.
+#
 # [*basic__failures*]
 # The number of times in a row that a node must fail execution of the monitor
 # before it is classed as unavailable.
+#
+# [*basic__health_only*]
+# Should this monitor only report health (ignore load)?
 #
 # [*basic__machine*]
 # The machine to monitor, where relevant this should be in the form
@@ -146,6 +152,7 @@ define brocadevtm::monitors (
   $basic__back_off       = true,
   $basic__delay          = 3,
   $basic__failures       = 3,
+  $basic__health_only    = false,
   $basic__machine        = undef,
   $basic__note           = undef,
   $basic__scope          = 'pernode',
@@ -184,7 +191,7 @@ define brocadevtm::monitors (
   vtmrest { "monitors/${name}":
     ensure   => $ensure,
     before   => Class[Brocadevtm::Purge],
-    endpoint => "https://${ip}:${port}/api/tm/3.8/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/3.11/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/monitors.erb'),
