@@ -18,7 +18,7 @@ module BrocadeREST
 
 		def initialize(user, pass, uri, restVersion, manifestClass, loggerLevel=0, root=nil, expandArrays=true)
 			@loggerLevel = Integer(loggerLevel)
-			@restVersion = Float(restVersion)
+			@restVersion = restVersion
 			@uri = URI.parse( uri.end_with?('/')? uri : uri<<'/' )
 			@user = user
 			@pass = pass
