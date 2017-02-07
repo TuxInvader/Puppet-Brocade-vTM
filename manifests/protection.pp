@@ -12,6 +12,10 @@
 # [*basic__enabled*]
 # Enable or disable this service protection class.
 #
+# [*basic__linger_time*]
+# After sending a HTTP error message to a client, wait up to this time before
+# closing the connection.
+#
 # [*basic__log_time*]
 # Log service protection messages at these intervals. If set to "0" no
 # messages will be logged and no alerts will be sent.
@@ -163,7 +167,7 @@ define brocadevtm::protection (
   vtmrest { "protection/${name}":
     ensure   => $ensure,
     before   => Class[Brocadevtm::Purge],
-    endpoint => "https://${ip}:${port}/api/tm/3.8/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/3.10/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/protection.erb'),

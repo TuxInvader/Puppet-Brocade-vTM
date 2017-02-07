@@ -9,6 +9,7 @@ class brocadevtm::monitors_connect (
   $basic__back_off       = true,
   $basic__delay          = 2,
   $basic__failures       = 3,
+  $basic__health_only    = false,
   $basic__machine        = undef,
   $basic__note           = undef,
   $basic__scope          = 'pernode',
@@ -47,7 +48,7 @@ class brocadevtm::monitors_connect (
   vtmrest { 'monitors/Connect':
     ensure   => $ensure,
     before   => Class[Brocadevtm::Purge],
-    endpoint => "https://${ip}:${port}/api/tm/3.8/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/3.10/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/monitors.erb'),
