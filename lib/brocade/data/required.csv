@@ -7,3 +7,7 @@ locations,basic__id,integer,1
 user_authenticators,basic__type,string,ldap
 virtual_servers,basic__pool,string,_TESTOBJECT_
 virtual_servers,basic__port,integer,80
+ssl_ticket_keys,basic__id,string,ABCDEFABCDEFABCDEFABCDEFABCDEFAB
+ssl_ticket_keys,basic__key,string,AAAAAABBBBBBCCCCCCDDDDDDEEEEEEFFFFF
+ssl_ticket_keys,basic__validity_start,integer,1499858334
+ssl_ticket_keys,basic__validity_end,integer,1499858334
