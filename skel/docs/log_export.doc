@@ -1,0 +1,63 @@
+#
+# Log Export
+# Definitions of log files which should be exported to the analytics engine
+#
+# === Parameters
+#
+# [*basic__appliance_only*]
+# Whether entries from the specified log files should be exported only from
+# appliances.
+#
+# [*basic__enabled*]
+# Export entries from the log files included in this category.
+#
+# [*basic__files*]
+# The set of files to export as part of this category, specified as a list of
+# glob patterns.
+# Type:array
+# Properties:
+#
+# [*basic__history*]
+# How much historic log activity should be exported.
+#
+# [*basic__history_period*]
+# The number of days of historic log entries that should be exported.
+#
+# [*basic__machines*]
+# The set of traffic managers on which this log should be exported. '*' will
+# select all traffic managers in the cluster.
+# Type:array
+# Properties:
+#
+# [*basic__metadata*]
+# This is table 'metadata'
+# Type:array
+# Properties:{"name"=>{"description"=>"The name of a metadata item which
+# should be sent to the analytics engine along with entries from these log
+# files.", "type"=>"string"}, "value"=>{"description"=>"Additional metadata to
+# include with the log entries when exporting them to the configured endpoint.
+# Metadata can be used by the system that is receiving the exported data to
+# categorise and parse the log entries.", "type"=>"string"}}
+#
+# [*basic__note*]
+# A description of this category of log files.
+#
+# [*basic__preprocess*]
+# The type of pre-processing that should be applied to log entries before they
+# are exported.
+#
+# === Examples
+#
+# <CLASS-OR-TYPE-DECLARATION>
+#     ensure => present,
+# }
+#
+#
+# === Authors
+#
+# Mark Boddington <mbodding@brocade>
+#
+# === Copyright
+#
+# Copyright 2015 Brocade
+#
