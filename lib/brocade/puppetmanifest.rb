@@ -382,7 +382,8 @@ module BrocadeREST
 				elsif value.start_with?('[ Class[')
 					value = value.inspect[1...-1] 
 				else
-					value = "'" + value.inspect[1...-1] + "'"
+					value = value.inspect[1...-1] 
+					value = "'" + value.gsub("'"){"\\'"} + "'"
 				end
 			end
 			return value
