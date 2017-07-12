@@ -532,11 +532,15 @@ module BrocadeREST
 
 		# function to probe the API by attempting to create a new object within the tree named @probeName
 		# We detect whether the API is expecting JSON or binary data, as well as any mandatory parameters
-		def probe(uri, json)
+		def probe(uri, json, attempt=0)
+			attempt = attempt + 1
+			if (attempt > 5)
+				abort("FAILED to Probe: #{uri}")
+			end
 			result = { }  
 			testObject = uri.clone()
 			testObject.path.end_with?("/")? testObject.path += @probeName : testObject.path += "/#{@probeName}"
-			logger(1,"Probe: #{testObject.path}")
+			logger(1,"Probe: #{testObject.path} - Attempt: #{attempt}")
 			body = JSON.generate(json)
 			response = do_put(testObject,body)
 			case response
@@ -572,7 +576,7 @@ module BrocadeREST
 					else
 						json[@root] = newJSON
 					end
-					return probe(uri, json)
+					return probe(uri, json, attempt)
 				else
 					logger(4, "Probe: Unhandled: #{response}" )
 					return nil
