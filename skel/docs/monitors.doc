@@ -25,9 +25,15 @@
 # Type:array
 # Properties:
 #
+# [*basic__factory*]
+# Whether or not this monitor is provided as part of the software release.
+#
 # [*basic__failures*]
 # The number of times in a row that a node must fail execution of the monitor
 # before it is classed as unavailable.
+#
+# [*basic__health_only*]
+# Should this monitor only report health (ignore load)?
 #
 # [*basic__machine*]
 # The machine to monitor, where relevant this should be in the form

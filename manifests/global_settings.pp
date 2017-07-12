@@ -58,6 +58,15 @@
 # How much delay in milliseconds between starvation checks do we allow before
 # we assume that the machine or its HyperVisor are overloaded.
 #
+# [*basic__data_plane_acceleration_cores*]
+# The number of CPU cores assigned to assist with data plane acceleration.
+# These cores are dedicated to reading and writing packets to the network
+# interface cards and distributing packets between the traffic manager
+# processes.
+#
+# [*basic__data_plane_acceleration_mode*]
+# Whether Data Plane Acceleration Mode is enabled.
+#
 # [*basic__http2_no_cipher_blacklist_check*]
 # Disable the cipher blacklist check in HTTP2 (mainly intended for testing
 # purposes)
@@ -77,8 +86,10 @@
 # allocate.
 #
 # [*basic__monitor_memory_size*]
-# The maximum number of nodes that can be monitored. This is used to size the
-# shared memory, that keeps track of the state.
+# The maximum number of each of nodes, pools or locations that can be
+# monitored. The memory used to store information about nodes, pools and
+# locations is allocated at start-up, so the traffic manager must be restarted
+# after changing this setting.
 #
 # [*basic__rate_class_limit*]
 # The maximum number of Rate classes that can be created. Approximately 100
@@ -162,8 +173,8 @@
 # algorithms see the online help.
 #
 # [*admin__support_ssl2*]
-# Whether or not SSL2 support is enabled for admin server and internal
-# connections.
+# No longer supported. Formerly controlled whether SSLv2 could be used for
+# connections to the Administration Server.
 #
 # [*admin__support_ssl3*]
 # Whether or not SSL3 support is enabled for admin server and internal
@@ -364,6 +375,18 @@
 # under some very specific conditions. However, in general it is recommended
 # that this be set to 'false'.
 #
+# [*data_plane_acceleration__tcp_delay_ack*]
+# The time, in milliseconds, to delay sending a TCP ACK response, providing an
+# opportunity for additional data to be incorporated into the response and
+# potentially improving network performance. The setting affects TCP
+# connections handled by layer 7 services running in Data Plane Acceleration
+# mode.
+#
+# [*data_plane_acceleration__tcp_win_scale*]
+# The TCP window scale option, which configures the size of the receive window
+# for TCP connections handled by layer 7 services when running in Data Plane
+# Acceleration mode.
+#
 # [*dns__checktime*]
 # How often to check the DNS configuration for changes.
 #
@@ -408,6 +431,14 @@
 # How long, in seconds, the traffic manager should wait while associating or
 # disassociating an Elastic IP to the instance.
 #
+# [*ec2__awstool_timeout*]
+# The maximum amount of time requests to the AWS Query API can take before
+# timing out.
+#
+# [*ec2__metadata_timeout*]
+# The maximum amount of time requests to the EC2 Metadata Server can take
+# before timing out.
+#
 # [*ec2__secret_access_key*]
 # Amazon EC2 Secret Access Key.
 #
@@ -435,6 +466,10 @@
 # Whether or not traffic IPs automatically move back to machines that have
 # recovered from a failure and have dropped their traffic IPs.
 #
+# [*fault_tolerance__autofailback_delay*]
+# Configure the delay of automatic failback after a previous failover event.
+# This setting has no effect if autofailback is disabled.
+#
 # [*fault_tolerance__child_timeout*]
 # How long the traffic manager should wait for status updates from any of the
 # traffic manager's child processes before assuming one of them is no longer
@@ -455,6 +490,15 @@
 # [*fault_tolerance__igmp_interval*]
 # The interval between unsolicited periodic IGMP Membership Report messages
 # for Multi-Hosted Traffic IP Groups.
+#
+# [*fault_tolerance__l4accel_child_timeout*]
+# When running in Data Plane Acceleration Mode, how long the traffic manager
+# should wait for a status update from child processes handling L4Accel
+# services before assuming it is no longer servicing traffic.
+#
+# [*fault_tolerance__l4accel_sync_port*]
+# The port on which cluster members will transfer state information for
+# L4Accel services when running in Data Plane Acceleration Mode.
 #
 # [*fault_tolerance__monitor_interval*]
 # The frequency, in milliseconds, that each traffic manager machine should
@@ -571,6 +615,12 @@
 # Whether or not a traffic manager should log all Kerberos related activity.
 # This is very verbose, and should only be used for diagnostic purposes.
 #
+# [*l4accel__max_concurrent_connections*]
+# The maximum number of concurrent connections, in millions, that can be
+# handled by each L4Accel child process. An appropriate amount of memory to
+# store this many connections will be allocated when the traffic manager
+# starts.
+#
 # [*log__error_level*]
 # The minimum severity of events/alerts that should be logged to disk. "INFO"
 # will log all events; a higher severity setting will log fewer events.  More
@@ -593,6 +643,68 @@
 #
 # [*log__time*]
 # The minimum time between log messages for log intensive features such as SLM.
+#
+# [*log_export__auth_hec_token*]
+# The HTTP Event Collector token to use for HTTP authentication with a Splunk
+# server.
+#
+# [*log_export__auth_http*]
+# The HTTP authentication method to use when exporting log entries.
+#
+# [*log_export__auth_password*]
+# The password to use for HTTP basic authentication.
+#
+# [*log_export__auth_username*]
+# The username to use for HTTP basic authentication.
+#
+# [*log_export__enabled*]
+# Monitor log files and export entries to the configured endpoint.
+#
+# [*log_export__endpoint*]
+# The URL to which log entries should be sent. Entries are sent using HTTP(S)
+# POST requests.
+#
+# [*log_export__max_event_message_size*]
+# The maximum size of any individual log entry to be exported. Log entries
+# that exceed this size will be truncated. The maximum individual entry size
+# must be at least "80" characters. A value of "0" means that no limit is
+# imposed on the length of message for any individual entry.
+#
+# [*log_export__max_request_bandwidth*]
+# The maximum bandwidth to be used for sending HTTP requests to the configured
+# endpoint, measured in kilobits per second. A value of zero means that no
+# bandwidth limit will be imposed.
+#
+# [*log_export__max_request_size*]
+# The maximum amount of log data to export in a single request. A value of "0"
+# means no limit.
+#
+# [*log_export__max_response_size*]
+# The maximum permitted size of HTTP responses from the configured endpoint.
+# Both headers and body data are included in the size calculation. A response
+# exceeding this size will be treated as an error response. A value of "0"
+# means that there is no limit to the size of response that will be considered
+# valid.
+#
+# [*log_export__maximum_error_raising_period*]
+# An upper limit to the interval for rate limiting all errors raised by the
+# log exporter.
+#
+# [*log_export__minimum_error_raising_period*]
+# A lower limit to the interval for rate limiting all errors raised by the log
+# exporter. The interval can only be shorter than this limit if the maximum
+# interval is set to be less than this minimum limit.
+#
+# [*log_export__request_timeout*]
+# The number of seconds after which HTTP requests sent to the configured
+# endpoint will be considered to have failed if no response is received. A
+# value of "0" means that HTTP requests will not time out.
+#
+# [*log_export__tls_verify*]
+# Whether the server certificate should be verified when connecting to the
+# endpoint. If enabled, server certificates that do not match the server name,
+# are self-signed, have expired, have been revoked, or that are signed by an
+# unknown CA will be rejected.
 #
 # [*ospfv2__area*]
 # The OSPF area in which the traffic manager will operate. May be entered in
@@ -672,6 +784,15 @@
 # currently active connections and saved connections. If set to "0" all active
 # and saved connection will be displayed on the Connections page.
 #
+# [*remote_licensing__owner*]
+# The Owner of a Services Director instance, used for self-registration.
+#
+# [*remote_licensing__owner_secret*]
+# The secret associated with the Owner.
+#
+# [*remote_licensing__policy_id*]
+# The auto-accept Policy ID that this instance should attempt to use.
+#
 # [*remote_licensing__registration_server*]
 # A Services Director address for self-registration. A registration server
 # should be specified as a "<ip/host>:<port>" pair.
@@ -688,11 +809,34 @@
 # disables the cache forcing every REST request to be authenticated which will
 # adversely affect performance.
 #
+# [*rest_api__block_for_future_max*]
+# Maximum amount of time in seconds to block the event queue waiting for
+# unparallisable events like loading from disk.
+#
 # [*rest_api__enabled*]
 # Whether or not the REST service is enabled.
 #
+# [*rest_api__http_compress_min*]
+# Minimum size in bytes a response body needs to be for compression (e.g.
+# gzip) to be used. Set to 0 to always use compression when available.
+#
+# [*rest_api__http_keep_alive_timeout*]
+# The length of time in seconds an idle connection will be kept open before
+# the REST API closes the connection.
+#
 # [*rest_api__http_max_header_length*]
 # The maximum allowed length in bytes of a HTTP request's headers.
+#
+# [*rest_api__http_max_resource_body_length*]
+# Maximum size in bytes the body of an HTTP PUT request can be for a key-value
+# resource (i.e. a JSON request)
+#
+# [*rest_api__http_max_write_buffer*]
+# Maximum size in bytes the per-connection output buffer can grow to before
+# being paused.
+#
+# [*rest_api__http_session_timeout*]
+# Maximum time in seconds to keep an idle session open for.
 #
 # [*rest_api__proxy_map*]
 # A set of symlinks that the REST API maps to actual directories. Used to add
@@ -819,6 +963,25 @@
 # The number of minutes that the SOAP server should remain idle before
 # exiting.  The SOAP server has a short startup delay the first time a SOAP
 # request is made, subsequent SOAP requests don't have this delay.
+#
+# [*source_nat__clist_locks*]
+# The maximum locks used for SNAT clists
+#
+# [*source_nat__ip_limit*]
+# The maximum number of Source NAT IP addresses that can be used across all
+# Traffic IP Groups.
+#
+# [*source_nat__ip_local_port_range_high*]
+# The upper boundary of the port range reserved for use by the kernel. Ports
+# above this range will be used by the traffic manager for establishing
+# outgoing connections.
+#
+# [*source_nat__portmaphashtable_locks*]
+# The maximum locks used for SNAT portmap hash tables
+#
+# [*source_nat__shared_pool_size*]
+# The size of the Source NAT shared memory pool used for shared storage across
+# child processes. This value is specified as an absolute size such as "10MB".
 #
 # [*ssl__cache_expiry*]
 # How long the SSL session IDs for SSL decryption should be stored for.
@@ -948,7 +1111,8 @@
 # handshakes the key should be set to the value "0".
 #
 # [*ssl__support_ssl2*]
-# Whether or not SSL2 support is enabled.
+# No longer supported. Formerly controlled whether SSL2 could be used by
+# default.
 #
 # [*ssl__support_ssl3*]
 # Whether or not SSL3 support is enabled.
@@ -1093,6 +1257,48 @@
 # 5. Monitors will run for all pools (with this option disabled monitors will
 # only run for Pools that are used).
 #
+# [*transaction_export__auto_brief*]
+# The maximum buffering of transaction metadata before events are switched to
+# brief mode automatically. Each child process is permitted to buffer this
+# amount of verbose event data, if this buffer size is exceeded, then events
+# are recorded in brief until space becomes available. A value of 0 disables
+# this feature.
+#
+# [*transaction_export__enabled*]
+# Export metadata about transactions processed by the traffic manager to an
+# external location.
+#
+# [*transaction_export__endpoint*]
+# The endpoint to which transaction metadata should be exported. The endpoint
+# is specified as a hostname or IP address with a port.
+#
+# [*transaction_export__failure_interval*]
+# The interval at which reconnection failures will be reported in the event
+# log.
+#
+# [*transaction_export__memory*]
+# The maximum amount of transaction metadata pending export to buffer. If the
+# buffer size is exceeded, metadata pertaining to new transactions will be
+# dropped until more buffer space becomes available.
+#
+# [*transaction_export__reconnect_interval*]
+# The interval at which reconnection will be attempted to the analytics engine
+# following a disconnection or connection failure.
+#
+# [*transaction_export__tls*]
+# Whether the connection to the specified endpoint should be encrypted.
+#
+# [*transaction_export__tls_timeout*]
+# The maximum time allowed to complete a TLS handshake after completing a TCP
+# connection. If the TLS handshake does not complete in time, the connection
+# is considered to have failed.
+#
+# [*transaction_export__tls_verify*]
+# Whether the server certificate presented by the endpoint should be verified,
+# preventing a connection from being established if the certificate does not
+# match the server name, is self-signed, is expired, is revoked, or has an
+# unknown CA.
+#
 # [*web_cache__avg_path_length*]
 # The estimated average length of the path (including query string) for
 # resources being cached. An amount of memory equal to this figure multiplied
@@ -1202,6 +1408,8 @@ class brocadevtm::global_settings (
   $basic__chunk_size                           = 16384,
   $basic__client_first_opt                     = false,
   $basic__cluster_identifier                   = undef,
+  $basic__data_plane_acceleration_cores        = 'one',
+  $basic__data_plane_acceleration_mode         = false,
   $basic__license_servers                      = '[]',
   $basic__max_fds                              = 1048576,
   $basic__monitor_memory_size                  = 4096,
@@ -1252,22 +1460,28 @@ class brocadevtm::global_settings (
   $connection__listen_queue_size               = 0,
   $connection__max_accepting                   = 0,
   $connection__multiple_accept                 = false,
+  $data_plane_acceleration__tcp_delay_ack      = 200,
+  $data_plane_acceleration__tcp_win_scale      = 7,
   $dns__max_ttl                                = 86400,
   $dns__min_ttl                                = 86400,
   $dns__negative_expiry                        = 60,
   $dns__size                                   = 10867,
   $dns__timeout                                = 12,
   $ec2__access_key_id                          = undef,
+  $ec2__awstool_timeout                        = 10,
   $ec2__secret_access_key                      = undef,
   $ec2__verify_query_server_cert               = false,
   $eventing__mail_interval                     = 30,
   $eventing__max_attempts                      = 10,
   $fault_tolerance__arp_count                  = 10,
   $fault_tolerance__auto_failback              = true,
+  $fault_tolerance__autofailback_delay         = 10,
   $fault_tolerance__child_timeout              = 5,
   $fault_tolerance__frontend_check_ips         = '["%gateway%"]',
   $fault_tolerance__heartbeat_method           = 'unicast',
   $fault_tolerance__igmp_interval              = 30,
+  $fault_tolerance__l4accel_child_timeout      = 2,
+  $fault_tolerance__l4accel_sync_port          = 10240,
   $fault_tolerance__monitor_interval           = 500,
   $fault_tolerance__monitor_timeout            = 5,
   $fault_tolerance__multicast_address          = '239.100.1.1:9090',
@@ -1286,12 +1500,21 @@ class brocadevtm::global_settings (
   $java__max_connections                       = 256,
   $java__session_age                           = 86400,
   $kerberos__verbose                           = false,
+  $l4accel__max_concurrent_connections         = 1,
   $log__error_level                            = 'info',
   $log__flush_time                             = 5,
   $log__log_file                               = '%zeushome%/zxtm/log/errors',
   $log__rate                                   = 50,
   $log__reopen                                 = 30,
   $log__time                                   = 60,
+  $log_export__auth_hec_token                  = undef,
+  $log_export__auth_http                       = 'none',
+  $log_export__auth_password                   = undef,
+  $log_export__auth_username                   = undef,
+  $log_export__enabled                         = false,
+  $log_export__endpoint                        = undef,
+  $log_export__request_timeout                 = 30,
+  $log_export__tls_verify                      = true,
   $ospfv2__area                                = '0.0.0.1',
   $ospfv2__area_type                           = 'normal',
   $ospfv2__authentication_key_id_a             = 0,
@@ -1305,6 +1528,9 @@ class brocadevtm::global_settings (
   $recent_connections__max_per_process         = 500,
   $recent_connections__retain_time             = 60,
   $recent_connections__snapshot_size           = 500,
+  $remote_licensing__owner                     = undef,
+  $remote_licensing__owner_secret              = undef,
+  $remote_licensing__policy_id                 = undef,
   $remote_licensing__registration_server       = undef,
   $remote_licensing__server_certificate        = undef,
   $rest_api__auth_timeout                      = 120,
@@ -1337,6 +1563,9 @@ class brocadevtm::global_settings (
   $session__universal_cache_size               = 32768,
   $snmp__user_counters                         = 10,
   $soap__idle_minutes                          = 10,
+  $source_nat__ip_limit                        = 16,
+  $source_nat__ip_local_port_range_high        = 10240,
+  $source_nat__shared_pool_size                = 10,
   $ssl__cache_expiry                           = 1800,
   $ssl__cache_per_virtualserver                = true,
   $ssl__cache_size                             = 6151,
@@ -1384,6 +1613,10 @@ class brocadevtm::global_settings (
   $trafficscript__regex_match_limit            = 10000000,
   $trafficscript__regex_match_warn_percentage  = 5,
   $trafficscript__variable_pool_use            = false,
+  $transaction_export__enabled                 = false,
+  $transaction_export__endpoint                = undef,
+  $transaction_export__tls                     = true,
+  $transaction_export__tls_verify              = true,
   $web_cache__avg_path_length                  = 512,
   $web_cache__disk                             = false,
   $web_cache__disk_dir                         = '%zeushome%/zxtm/internal',
@@ -1406,7 +1639,7 @@ class brocadevtm::global_settings (
   vtmrest { 'global_settings':
     ensure   => $ensure,
     before   => Class[Brocadevtm::Purge],
-    endpoint => "https://${ip}:${port}/api/tm/3.8/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/4.0/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/global_settings.erb'),

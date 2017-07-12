@@ -39,6 +39,10 @@
 # [*basic__bandwidth_class*]
 # The bandwidth management class that this server should use, if any.
 #
+# [*basic__bypass_data_plane_acceleration*]
+# Whether this service should, where possible, bypass data plane acceleration
+# mechanisms.
+#
 # [*basic__close_with_rst*]
 # Whether or not connections from clients should be closed with a RST packet,
 # rather than a FIN packet. This avoids the TIME_WAIT state, which on rare
@@ -79,6 +83,14 @@
 # Type:array
 # Properties:
 #
+# [*basic__max_concurrent_connections*]
+# The maximum number of concurrent TCP connections that will be handled by
+# this virtual server. If set to a non-zero value, the traffic manager will
+# limit the number of concurrent TCP connections that this virtual server will
+# accept to the value specified. When the limit is reached, new connections to
+# this virtual server will not be accepted. If set to "0" the number of
+# concurrent TCP connections will not be limited.
+#
 # [*basic__mss*]
 # The maximum TCP segment size. This will place a maximum on the size of TCP
 # segments that are sent by this machine, and will advertise to the client
@@ -102,6 +114,12 @@
 # [*basic__protocol*]
 # The protocol that the virtual server is using.
 #
+# [*basic__proxy_protocol*]
+# Expect connections to the traffic manager to be prefixed with a PROXY
+# protocol header. If enabled, the information contained in the PROXY header
+# will be available in TrafficScript. Connections that are not prefixed with a
+# valid PROXY protocol header will be discarded.
+#
 # [*basic__request_rules*]
 # Rules to be applied to incoming requests, in order, comma separated.
 # Type:array
@@ -111,6 +129,11 @@
 # Rules to be applied to responses, in order, comma separated.
 # Type:array
 # Properties:
+#
+# [*basic__rules_on_connect*]
+# Only applicable for Client First Generic Protocol. Allows Virtual Traffic
+# Manager to execute rules on a client connects without waiting for data from
+# the client.
 #
 # [*basic__slm_class*]
 # The service level monitoring class that this server should use, if any.
@@ -133,8 +156,15 @@
 # lback_scsv"> "ssl!honor_fallback_scsv"</a> from the Global Settings section
 # of the System tab will be enforced.
 #
+# [*basic__strip_x_forwarded_proto*]
+# Whether or not the virtual server should strip the 'X-Forwarded-Proto'
+# header from incoming requests.
+#
 # [*basic__transparent*]
 # Whether or not bound sockets should be configured for transparent proxying.
+#
+# [*basic__udp_end_transaction*]
+# When the traffic manager should consider a UDP transaction to have ended.
 #
 # [*aptimizer__enabled*]
 # Whether the virtual server should optimize web content.
@@ -179,9 +209,10 @@
 #
 # [*connection__server_first_banner*]
 # If specified, the traffic manager will use the value as the banner to send
-# for server-first protocols such as POP, SMTP and IMAP. This allows rules to
-# use the first part of the client data (such as the username) to select a
-# pool.
+# for server-first protocols such as FTP, POP, SMTP and IMAP. This allows
+# rules to use the first part of the client data (such as the username) to
+# select a pool. The banner should be in the correct format for the protocol,
+# e.g. for FTP it should start with "220 "
 #
 # [*connection__timeout*]
 # A connection should be closed if no additional data has been received for
@@ -254,6 +285,11 @@
 # [*ftp__ssl_data*]
 # Use SSL on the data connection as well as the control connection (if not
 # enabled it is left to the client and server to negotiate this).
+#
+# [*gzip__chunk*]
+# Use HTTP chunking to deliver data to the client. If this is turned off, we
+# won't use chunking when gzipping server data. This would mean that the
+# response couldn't be kept-alive.
 #
 # [*gzip__compress_level*]
 # Compression level (1-9, 1=low, 9=high).
@@ -347,6 +383,13 @@
 # Type:array
 # Properties:
 #
+# [*http2__headers_size_limit*]
+# The maximum size, in bytes, of decompressed headers for an HTTP/2 request.
+# If the limit is exceeded, the connection on which the request was sent will
+# be dropped. A value of 0 disables the limit check. If a service protection
+# class with "http!max_header_length" configured is associated with this
+# service then that setting will take precedence.
+#
 # [*http2__idle_timeout_no_streams*]
 # The time, in seconds, to wait for a new HTTP/2 request on a previously used
 # HTTP/2 connection that has no open HTTP/2 streams. If an HTTP/2 request is
@@ -393,6 +436,46 @@
 #
 # [*kerberos_protocol_transition__target*]
 # The Kerberos principal name of the service this virtual server targets.
+#
+# [*l4accel__rst_on_service_failure*]
+# Whether the virtual server should send a TCP RST packet or ICMP error
+# message if a service is unavailable, or if an established connection to a
+# node fails.
+#
+# [*l4accel__service_ip_snat*]
+# Whether or not backend connections should be configured to use the ingress
+# service IP as the source IP for the back-end connection when Source NAT is
+# enabled for the pool used by the service. Requires l4accel!state_sync to be
+# enabled.
+#
+# [*l4accel__state_sync*]
+# Whether the state of active connections will be synchronized across the
+# cluster for L4Accel services, such that connections will persist in the
+# event of a failover. Note that the service must listen only on Traffic IP
+# groups for this setting to be enabled.
+#
+# [*l4accel__tcp_msl*]
+# The maximum segment lifetime, in seconds, of a TCP segment being handled by
+# the traffic manager. This setting determines for how long information about
+# a connection will be retained after receiving a two-way FIN or RST.
+#
+# [*l4accel__timeout*]
+# The number of seconds after which a connection will be closed if no further
+# packets have been received on it.
+#
+# [*l4accel__udp_count_requests*]
+# Whether a connection should be closed when the number of UDP response
+# datagrams received from the server is equal to the number of request
+# datagrams that have been sent by the client. If set to "No" the connection
+# will be closed after the first response has been received from the server.
+# This setting takes precedence over "l4accel!optimized_aging" setting.
+#
+# [*l4stateless__initial_ring_size*]
+# The initial ring size to use in the L4 stateless consistent hash table.
+#
+# [*l4stateless__num_replicas*]
+# The number of replicas per node to use in the L4 stateless consistent hash
+# table.
 #
 # [*log__always_flush*]
 # Write log data to disk immediately, rather than buffering data.
@@ -534,6 +617,24 @@
 # Type:array
 # Properties:
 #
+# [*ssl__issued_certs_never_expire_depth*]
+# This setting gives the number of certificates in a certificate chain beyond
+# those listed as issued_certs_never_expire whose certificate expiry will not
+# be checked. For example "0" will result in the expiry checks being made for
+# certificates issued by issued_certs_never_expire certificates, "1" will
+# result in no expiry checks being performed for the certificates directly
+# issued by issued_certs_never_expire certificates, "2" will avoid checking
+# expiry for certificates issued by certificates issued by the
+# issued_certs_never_expire certificates as well, and so on.
+#
+# [*ssl__max_key_size*]
+# The maximum client RSA/DSA certificate key size that the virtual server
+# should accept.
+#
+# [*ssl__min_key_size*]
+# The minimum client RSA/DSA certificate key size that the virtual server
+# should accept.
+#
 # [*ssl__ocsp_enable*]
 # Whether or not the traffic manager should use OCSP to check the revocation
 # status of client certificates.
@@ -622,11 +723,8 @@
 # tab.  See there for how to specify SSL/TLS ciphers.
 #
 # [*ssl__ssl_support_ssl2*]
-# Whether or not SSLv2 is enabled for this virtual server.  Choosing the
-# global setting means the value of configuration key <a
-# href="?fold_open=SSL%20Configuration&section=Global%20Settings#a_ssl!support_s
-# sl2"> "ssl!support_ssl2"</a> from the Global Settings section of the System
-# tab will be enforced.
+# No longer supported. Formerly controlled whether SSLv2 could be used for SSL
+# connections to this virtual server.
 #
 # [*ssl__ssl_support_ssl3*]
 # Whether or not SSLv3 is enabled for this virtual server.  Choosing the
@@ -688,12 +786,33 @@
 # traffic manager to continue writing the response even after it has received
 # a FIN from the client.
 #
+# [*transaction_export__brief*]
+# Whether to export a restricted set of metadata about transactions processed
+# by this virtual server. If enabled, more verbose information such as client
+# and server headers and request tracing events will be omitted from the
+# exported data.
+#
+# [*transaction_export__enabled*]
+# Export metadata about transactions handled by this service to the globally
+# configured endpoint. Data will be exported only if the global
+# "transaction_export!enabled" setting is enabled.
+#
+# [*transaction_export__hi_res*]
+# Whether the transaction processing timeline included in the metadata export
+# is recorded with a high, microsecond, resolution. If set to "No", timestamps
+# will be recorded with a resolution of milliseconds.
+#
+# [*transaction_export__http_header_blacklist*]
+# The set of HTTP header names for which corresponding values should be
+# redacted from the metadata exported by this virtual server.
+# Type:array
+# Properties:
+#
 # [*udp__end_point_persistence*]
-# Whether or not UDP datagrams from the same IP and port are sent to the same
-# node in the pool if there's an existing UDP transaction. Although it's not
-# always guaranteed as while making a decision to reuse the same node, traffic
-# manager can also apply other protocol specific filtering e.g CallID matching
-# for SIP packets in addition to IP and port matching.
+# Whether UDP datagrams received from the same IP address and port are sent to
+# the same pool node if they match an existing UDP session. Sessions are
+# defined by the protocol being handled, for example SIP datagrams are grouped
+# based on the value of the Call-ID header.
 #
 # [*udp__port_smp*]
 # Whether or not UDP datagrams should be distributed across all traffic
@@ -753,151 +872,168 @@ define brocadevtm::virtual_servers (
   $ensure,
   $basic__pool,
   $basic__port,
-  $basic__add_cluster_ip                   = true,
-  $basic__add_x_forwarded_for              = false,
-  $basic__add_x_forwarded_proto            = false,
-  $basic__autodetect_upgrade_headers       = true,
-  $basic__bandwidth_class                  = undef,
-  $basic__close_with_rst                   = false,
-  $basic__completionrules                  = '[]',
-  $basic__connect_timeout                  = 10,
-  $basic__enabled                          = false,
-  $basic__ftp_force_server_secure          = true,
-  $basic__glb_services                     = '[]',
-  $basic__listen_on_any                    = true,
-  $basic__listen_on_hosts                  = '[]',
-  $basic__listen_on_traffic_ips            = '[]',
-  $basic__note                             = undef,
-  $basic__protection_class                 = undef,
-  $basic__protocol                         = 'http',
-  $basic__request_rules                    = '[]',
-  $basic__response_rules                   = '[]',
-  $basic__slm_class                        = undef,
-  $basic__so_nagle                         = false,
-  $basic__ssl_client_cert_headers          = 'none',
-  $basic__ssl_decrypt                      = false,
-  $basic__ssl_honor_fallback_scsv          = 'use_default',
-  $basic__transparent                      = false,
-  $aptimizer__enabled                      = false,
-  $aptimizer__profile                      = '[]',
-  $connection__keepalive                   = true,
-  $connection__keepalive_timeout           = 10,
-  $connection__max_client_buffer           = 65536,
-  $connection__max_server_buffer           = 65536,
-  $connection__max_transaction_duration    = 0,
-  $connection__server_first_banner         = undef,
-  $connection__timeout                     = 300,
-  $connection_errors__error_file           = 'Default',
-  $cookie__domain                          = 'no_rewrite',
-  $cookie__new_domain                      = undef,
-  $cookie__path_regex                      = undef,
-  $cookie__path_replace                    = undef,
-  $cookie__secure                          = 'no_modify',
-  $dns__edns_client_subnet                 = true,
-  $dns__edns_udpsize                       = 4096,
-  $dns__max_udpsize                        = 4096,
-  $dns__rrset_order                        = 'fixed',
-  $dns__verbose                            = false,
-  $dns__zones                              = '[]',
-  $ftp__data_source_port                   = 0,
-  $ftp__force_client_secure                = true,
-  $ftp__port_range_high                    = 0,
-  $ftp__port_range_low                     = 0,
-  $ftp__ssl_data                           = true,
-  $gzip__compress_level                    = 1,
-  $gzip__enabled                           = false,
-  $gzip__etag_rewrite                      = 'wrap',
-  $gzip__include_mime                      = '["text/html","text/plain"]',
-  $gzip__max_size                          = 10000000,
-  $gzip__min_size                          = 1000,
-  $gzip__no_size                           = true,
-  $http__chunk_overhead_forwarding         = 'lazy',
-  $http__location_regex                    = undef,
-  $http__location_replace                  = undef,
-  $http__location_rewrite                  = 'if_host_matches',
-  $http__mime_default                      = 'text/plain',
-  $http__mime_detect                       = false,
-  $http2__connect_timeout                  = 0,
-  $http2__data_frame_size                  = 4096,
-  $http2__enabled                          = true,
-  $http2__header_table_size                = 4096,
-  $http2__headers_index_blacklist          = '[]',
-  $http2__headers_index_default            = true,
-  $http2__headers_index_whitelist          = '[]',
-  $http2__idle_timeout_no_streams          = 120,
-  $http2__idle_timeout_open_streams        = 600,
-  $http2__max_concurrent_streams           = 200,
-  $http2__max_frame_size                   = 16384,
-  $http2__max_header_padding               = 0,
-  $http2__merge_cookie_headers             = true,
-  $http2__stream_window_size               = 65535,
-  $kerberos_protocol_transition__enabled   = false,
-  $kerberos_protocol_transition__principal = undef,
-  $kerberos_protocol_transition__target    = undef,
-  $log__client_connection_failures         = false,
-  $log__enabled                            = false,
-  $log__filename                           = '%zeushome%/zxtm/log/%v.log',
-  $log__format                             = '%h %l %u %t \"%r\" %s %b \"%{Referer}i\" \"%{User-agent}i\"',
-  $log__save_all                           = true,
-  $log__server_connection_failures         = false,
-  $log__session_persistence_verbose        = false,
-  $log__ssl_failures                       = false,
-  $recent_connections__enabled             = true,
-  $recent_connections__save_all            = false,
-  $request_tracing__enabled                = false,
-  $request_tracing__trace_io               = false,
-  $rtsp__streaming_port_range_high         = 0,
-  $rtsp__streaming_port_range_low          = 0,
-  $rtsp__streaming_timeout                 = 30,
-  $sip__dangerous_requests                 = 'node',
-  $sip__follow_route                       = true,
-  $sip__max_connection_mem                 = 65536,
-  $sip__mode                               = 'sip_gateway',
-  $sip__rewrite_uri                        = false,
-  $sip__streaming_port_range_high          = 0,
-  $sip__streaming_port_range_low           = 0,
-  $sip__streaming_timeout                  = 60,
-  $sip__timeout_messages                   = true,
-  $sip__transaction_timeout                = 30,
-  $smtp__expect_starttls                   = true,
-  $ssl__add_http_headers                   = false,
-  $ssl__client_cert_cas                    = '[]',
-  $ssl__elliptic_curves                    = '[]',
-  $ssl__issued_certs_never_expire          = '[]',
-  $ssl__ocsp_enable                        = false,
-  $ssl__ocsp_issuers                       = '[]',
-  $ssl__ocsp_max_response_age              = 0,
-  $ssl__ocsp_stapling                      = false,
-  $ssl__ocsp_time_tolerance                = 30,
-  $ssl__ocsp_timeout                       = 10,
-  $ssl__prefer_sslv3                       = false,
-  $ssl__request_client_cert                = 'dont_request',
-  $ssl__send_close_alerts                  = true,
-  $ssl__server_cert_alt_certificates       = '[]',
-  $ssl__server_cert_default                = undef,
-  $ssl__server_cert_host_mapping           = '[]',
-  $ssl__signature_algorithms               = undef,
-  $ssl__ssl_ciphers                        = undef,
-  $ssl__ssl_support_ssl2                   = 'use_default',
-  $ssl__ssl_support_ssl3                   = 'use_default',
-  $ssl__ssl_support_tls1                   = 'use_default',
-  $ssl__ssl_support_tls1_1                 = 'use_default',
-  $ssl__ssl_support_tls1_2                 = 'use_default',
-  $ssl__trust_magic                        = false,
-  $syslog__enabled                         = false,
-  $syslog__format                          = '%h %l %u %t \"%r\" %s %b \"%{Referer}i\" \"%{User-agent}i\"',
-  $syslog__ip_end_point                    = undef,
-  $syslog__msg_len_limit                   = 1024,
-  $tcp__proxy_close                        = false,
-  $udp__end_point_persistence              = true,
-  $udp__port_smp                           = false,
-  $udp__response_datagrams_expected        = 1,
-  $udp__timeout                            = 7,
-  $web_cache__control_out                  = undef,
-  $web_cache__enabled                      = false,
-  $web_cache__error_page_time              = 30,
-  $web_cache__max_time                     = 600,
-  $web_cache__refresh_time                 = 2,
+  $basic__add_cluster_ip                     = true,
+  $basic__add_x_forwarded_for                = false,
+  $basic__add_x_forwarded_proto              = false,
+  $basic__autodetect_upgrade_headers         = true,
+  $basic__bandwidth_class                    = undef,
+  $basic__bypass_data_plane_acceleration     = false,
+  $basic__close_with_rst                     = false,
+  $basic__completionrules                    = '[]',
+  $basic__connect_timeout                    = 10,
+  $basic__enabled                            = false,
+  $basic__ftp_force_server_secure            = true,
+  $basic__glb_services                       = '[]',
+  $basic__listen_on_any                      = true,
+  $basic__listen_on_hosts                    = '[]',
+  $basic__listen_on_traffic_ips              = '[]',
+  $basic__max_concurrent_connections         = 0,
+  $basic__note                               = undef,
+  $basic__protection_class                   = undef,
+  $basic__protocol                           = 'http',
+  $basic__proxy_protocol                     = false,
+  $basic__request_rules                      = '[]',
+  $basic__response_rules                     = '[]',
+  $basic__slm_class                          = undef,
+  $basic__so_nagle                           = false,
+  $basic__ssl_client_cert_headers            = 'none',
+  $basic__ssl_decrypt                        = false,
+  $basic__ssl_honor_fallback_scsv            = 'use_default',
+  $basic__strip_x_forwarded_proto            = true,
+  $basic__transparent                        = false,
+  $basic__udp_end_transaction                = 'one_response',
+  $aptimizer__enabled                        = false,
+  $aptimizer__profile                        = '[]',
+  $connection__keepalive                     = true,
+  $connection__keepalive_timeout             = 10,
+  $connection__max_client_buffer             = 65536,
+  $connection__max_server_buffer             = 65536,
+  $connection__max_transaction_duration      = 0,
+  $connection__server_first_banner           = undef,
+  $connection__timeout                       = 300,
+  $connection_errors__error_file             = 'Default',
+  $cookie__domain                            = 'no_rewrite',
+  $cookie__new_domain                        = undef,
+  $cookie__path_regex                        = undef,
+  $cookie__path_replace                      = undef,
+  $cookie__secure                            = 'no_modify',
+  $dns__edns_client_subnet                   = true,
+  $dns__edns_udpsize                         = 4096,
+  $dns__max_udpsize                          = 4096,
+  $dns__rrset_order                          = 'fixed',
+  $dns__verbose                              = false,
+  $dns__zones                                = '[]',
+  $ftp__data_source_port                     = 0,
+  $ftp__force_client_secure                  = true,
+  $ftp__port_range_high                      = 0,
+  $ftp__port_range_low                       = 0,
+  $ftp__ssl_data                             = true,
+  $gzip__compress_level                      = 1,
+  $gzip__enabled                             = false,
+  $gzip__etag_rewrite                        = 'wrap',
+  $gzip__include_mime                        = '["text/html","text/plain"]',
+  $gzip__max_size                            = 10000000,
+  $gzip__min_size                            = 1000,
+  $gzip__no_size                             = true,
+  $http__chunk_overhead_forwarding           = 'lazy',
+  $http__location_regex                      = undef,
+  $http__location_replace                    = undef,
+  $http__location_rewrite                    = 'if_host_matches',
+  $http__mime_default                        = 'text/plain',
+  $http__mime_detect                         = false,
+  $http2__connect_timeout                    = 0,
+  $http2__data_frame_size                    = 4096,
+  $http2__enabled                            = true,
+  $http2__header_table_size                  = 4096,
+  $http2__headers_index_blacklist            = '[]',
+  $http2__headers_index_default              = true,
+  $http2__headers_index_whitelist            = '[]',
+  $http2__headers_size_limit                 = 262144,
+  $http2__idle_timeout_no_streams            = 120,
+  $http2__idle_timeout_open_streams          = 600,
+  $http2__max_concurrent_streams             = 200,
+  $http2__max_frame_size                     = 16384,
+  $http2__max_header_padding                 = 0,
+  $http2__merge_cookie_headers               = true,
+  $http2__stream_window_size                 = 65535,
+  $kerberos_protocol_transition__enabled     = false,
+  $kerberos_protocol_transition__principal   = undef,
+  $kerberos_protocol_transition__target      = undef,
+  $l4accel__rst_on_service_failure           = false,
+  $l4accel__service_ip_snat                  = false,
+  $l4accel__state_sync                       = false,
+  $l4accel__tcp_msl                          = 8,
+  $l4accel__timeout                          = 1800,
+  $l4accel__udp_count_requests               = false,
+  $log__client_connection_failures           = false,
+  $log__enabled                              = false,
+  $log__filename                             = '%zeushome%/zxtm/log/%v.log',
+  $log__format                               = '%h %l %u %t \"%r\" %s %b \"%{Referer}i\" \"%{User-agent}i\"',
+  $log__save_all                             = true,
+  $log__server_connection_failures           = false,
+  $log__session_persistence_verbose          = false,
+  $log__ssl_failures                         = false,
+  $recent_connections__enabled               = true,
+  $recent_connections__save_all              = false,
+  $request_tracing__enabled                  = false,
+  $request_tracing__trace_io                 = false,
+  $rtsp__streaming_port_range_high           = 0,
+  $rtsp__streaming_port_range_low            = 0,
+  $rtsp__streaming_timeout                   = 30,
+  $sip__dangerous_requests                   = 'node',
+  $sip__follow_route                         = true,
+  $sip__max_connection_mem                   = 65536,
+  $sip__mode                                 = 'sip_gateway',
+  $sip__rewrite_uri                          = false,
+  $sip__streaming_port_range_high            = 0,
+  $sip__streaming_port_range_low             = 0,
+  $sip__streaming_timeout                    = 60,
+  $sip__timeout_messages                     = true,
+  $sip__transaction_timeout                  = 30,
+  $smtp__expect_starttls                     = true,
+  $ssl__add_http_headers                     = false,
+  $ssl__client_cert_cas                      = '[]',
+  $ssl__elliptic_curves                      = '[]',
+  $ssl__issued_certs_never_expire            = '[]',
+  $ssl__issued_certs_never_expire_depth      = 1,
+  $ssl__ocsp_enable                          = false,
+  $ssl__ocsp_issuers                         = '[]',
+  $ssl__ocsp_max_response_age                = 0,
+  $ssl__ocsp_stapling                        = false,
+  $ssl__ocsp_time_tolerance                  = 30,
+  $ssl__ocsp_timeout                         = 10,
+  $ssl__prefer_sslv3                         = false,
+  $ssl__request_client_cert                  = 'dont_request',
+  $ssl__send_close_alerts                    = true,
+  $ssl__server_cert_alt_certificates         = '[]',
+  $ssl__server_cert_default                  = undef,
+  $ssl__server_cert_host_mapping             = '[]',
+  $ssl__signature_algorithms                 = undef,
+  $ssl__ssl_ciphers                          = undef,
+  $ssl__ssl_support_ssl2                     = 'use_default',
+  $ssl__ssl_support_ssl3                     = 'use_default',
+  $ssl__ssl_support_tls1                     = 'use_default',
+  $ssl__ssl_support_tls1_1                   = 'use_default',
+  $ssl__ssl_support_tls1_2                   = 'use_default',
+  $ssl__trust_magic                          = false,
+  $syslog__enabled                           = false,
+  $syslog__format                            = '%h %l %u %t \"%r\" %s %b \"%{Referer}i\" \"%{User-agent}i\"',
+  $syslog__ip_end_point                      = undef,
+  $syslog__msg_len_limit                     = 1024,
+  $tcp__proxy_close                          = false,
+  $transaction_export__brief                 = false,
+  $transaction_export__enabled               = true,
+  $transaction_export__hi_res                = false,
+  $transaction_export__http_header_blacklist = '["Authorization"]',
+  $udp__end_point_persistence                = true,
+  $udp__port_smp                             = false,
+  $udp__response_datagrams_expected          = 1,
+  $udp__timeout                              = 7,
+  $web_cache__control_out                    = undef,
+  $web_cache__enabled                        = false,
+  $web_cache__error_page_time                = 30,
+  $web_cache__max_time                       = 600,
+  $web_cache__refresh_time                   = 2,
 ){
   include brocadevtm
   $ip              = $brocadevtm::rest_ip
@@ -911,7 +1047,7 @@ define brocadevtm::virtual_servers (
   vtmrest { "virtual_servers/${name}":
     ensure   => $ensure,
     before   => Class[Brocadevtm::Purge],
-    endpoint => "https://${ip}:${port}/api/tm/3.8/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/4.0/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/virtual_servers.erb'),

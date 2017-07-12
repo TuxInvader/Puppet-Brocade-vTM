@@ -21,6 +21,16 @@
 # [*basic__note*]
 # A description of the session persistence class.
 #
+# [*basic__subnet_prefix_length_v4*]
+# When using IP-based session persistence, ensure all requests from this IPv4
+# subnet, specified as a prefix length, are sent to the same node. If set to
+# 0, requests from different IPv4 addresses will be load-balanced individually.
+#
+# [*basic__subnet_prefix_length_v6*]
+# When using IP-based session persistence, ensure all requests from this IPv6
+# subnet, specified as a prefix length, are sent to the same node. If set to
+# 0, requests from different IPv6 addresses will be load-balanced individually.
+#
 # [*basic__type*]
 # The type of session persistence to use.
 #
@@ -45,12 +55,14 @@
 #
 define brocadevtm::persistence (
   $ensure,
-  $basic__cookie       = undef,
-  $basic__delete       = true,
-  $basic__failure_mode = 'new_node',
-  $basic__note         = undef,
-  $basic__type         = 'ip',
-  $basic__url          = undef,
+  $basic__cookie                  = undef,
+  $basic__delete                  = true,
+  $basic__failure_mode            = 'new_node',
+  $basic__note                    = undef,
+  $basic__subnet_prefix_length_v4 = 0,
+  $basic__subnet_prefix_length_v6 = 0,
+  $basic__type                    = 'ip',
+  $basic__url                     = undef,
 ){
   include brocadevtm
   $ip              = $brocadevtm::rest_ip
@@ -64,7 +76,7 @@ define brocadevtm::persistence (
   vtmrest { "persistence/${name}":
     ensure   => $ensure,
     before   => Class[Brocadevtm::Purge],
-    endpoint => "https://${ip}:${port}/api/tm/3.8/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/4.0/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/persistence.erb'),

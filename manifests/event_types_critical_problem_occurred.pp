@@ -51,7 +51,7 @@ class brocadevtm::event_types_critical_problem_occurred (
   vtmrest { 'event_types/Critical%20Problem%20Occurred':
     ensure   => $ensure,
     before   => Class[Brocadevtm::Purge],
-    endpoint => "https://${ip}:${port}/api/tm/3.8/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/4.0/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/event_types.erb'),

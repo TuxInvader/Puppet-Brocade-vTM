@@ -11,6 +11,10 @@
 # [*basic__enabled*]
 # Enable or disable this service protection class.
 #
+# [*basic__linger_time*]
+# After sending a HTTP error message to a client, wait up to this time before
+# closing the connection.
+#
 # [*basic__log_time*]
 # Log service protection messages at these intervals. If set to "0" no
 # messages will be logged and no alerts will be sent.

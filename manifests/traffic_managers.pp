@@ -44,6 +44,10 @@
 # [*basic__cloud_platform*]
 # Cloud platform where the traffic manager is running.
 #
+# [*basic__developer_mode_accepted*]
+# Whether user has accepted the Developer mode and will not be prompted for
+# uploading license key
+#
 # [*basic__disk_serious*]
 # The percentage level of disk usage that triggers a SERIOUS event log entry
 #
@@ -69,6 +73,12 @@
 # process will be created for each CPU on the system.  You may wish to reduce
 # this to effectively "reserve" CPU(s) for other processes running on the host
 # system.
+#
+# [*basic__num_l4_children*]
+# How many L4 worker processes should be created
+#
+# [*basic__num_l7_children*]
+# How many L7 worker processes should be created
 #
 # [*basic__numberOfCPUs*]
 # The number of Application Firewall decider process to run.
@@ -96,6 +106,9 @@
 # [*basic__use_mx*]
 # Which polling method to use.  The default for your platform is almost always
 # the optimal choice.
+#
+# [*appliance__force_hardware*]
+# Whether this machine should be recognised as a Bare-Metal Appliance.
 #
 # [*appliance__gateway_ipv4*]
 # The default gateway.
@@ -125,10 +138,13 @@
 # "balance_alb"]}, "bond"=>{"description"=>"The trunk of which the interface
 # should be a member.", "type"=>"string", "pattern"=>"^(bond\\d+)?$"},
 # "duplex"=>{"description"=>"Whether full-duplex should be enabled for the
-# interface.", "type"=>"boolean"}, "mtu"=>{"description"=>"The maximum
-# transmission unit (MTU) of the interface.", "type"=>"integer",
-# "minimum"=>68, "maximum"=>9216}, "speed"=>{"description"=>"The speed of the
-# interface.", "type"=>"string", "enum"=>["10", "100", "1000"]}}
+# interface.", "type"=>"boolean"}, "mode"=>{"description"=>"Set the
+# configuriation mode of an interface, the interface name is used in place of
+# the \"*\" (asterisk).", "type"=>"string", "enum"=>["dhcp", "static"]},
+# "mtu"=>{"description"=>"The maximum transmission unit (MTU) of the
+# interface.", "type"=>"integer", "minimum"=>68, "maximum"=>9216},
+# "speed"=>{"description"=>"The speed of the interface.", "type"=>"string",
+# "enum"=>["10", "100", "1000"]}}
 #
 # [*appliance__ip*]
 # A table of network interfaces and their network settings.
@@ -167,6 +183,10 @@
 #
 # [*appliance__manageazureroutes*]
 # Whether or not the software manages the Azure policy routing.
+#
+# [*appliance__managedpa*]
+# Whether or not the software manages system configuration based on Data Plane
+# Acceleration mode
 #
 # [*appliance__manageec2conf*]
 # Whether or not the software manages the EC2 config.
@@ -323,6 +343,12 @@
 # Specifying 0.0.0.0 will stop the traffic manager routing software from
 # running the BGP protocol.
 #
+# [*fault_tolerance__lss_dedicated_ips*]
+# IP addresses associated with the links dedicated by the user for receiving
+# L4 state sync messages from other peers in a cluster.
+# Type:array
+# Properties:
+#
 # [*fault_tolerance__ospfv2_ip*]
 # The traffic manager's permanent IPv4 address which the routing software will
 # use for peering and transit traffic, and as its OSPF router ID.
@@ -347,6 +373,34 @@
 # The routing software log level. Values are: 0 - emergency 1 - alert 2 -
 # critical 3 - error 4 - warning 5 - notification 6 - informational 7 - debug
 # Messages with priority less or equal to the set level will be logged.
+#
+# [*iop__enable_lb*]
+# Configure Loopback modes for performance testing at different levels. Refer
+# to enum io_eal_loopback_config to understand loopback configuration
+#
+# [*iop__is_standalone*]
+# Should IOP be treated as a standalone binary
+#
+# [*iop__l4_event_driven_mode*]
+# IOP Disable L4 Event Driven Mode
+#
+# [*iop__l7_event_driven_mode*]
+# IOP Disable L7 Event Driven Mode
+#
+# [*iop__linux_interface*]
+# Should one interface be reserved as IOP MGMT interface
+#
+# [*iop__num_hugepages*]
+# Number of Kernel's hugepages
+#
+# [*iop__num_mbufs_per_mpool*]
+# IOP Number of MBUFS per MPOOL
+#
+# [*iop__send_to_linux*]
+# Traffic sent to Linux if set
+#
+# [*iop__size_hugepage*]
+# Size of each Kernel's hugepage.
 #
 # [*iptables__config_enabled*]
 # Whether the Traffic Manager should configure the iptables built-in chains to
@@ -486,6 +540,7 @@ define brocadevtm::traffic_managers (
   $appliance__ipv6_forwarding             = false,
   $appliance__licence_agreed              = false,
   $appliance__manageazureroutes           = true,
+  $appliance__managedpa                   = true,
   $appliance__manageec2conf               = true,
   $appliance__manageiptrans               = true,
   $appliance__managereturnpath            = true,
@@ -515,6 +570,7 @@ define brocadevtm::traffic_managers (
   $cluster_comms__port                    = 9080,
   $ec2__trafficips_public_enis            = '[]',
   $fault_tolerance__bgp_router_id         = undef,
+  $fault_tolerance__lss_dedicated_ips     = '[]',
   $fault_tolerance__ospfv2_ip             = undef,
   $fault_tolerance__ospfv2_neighbor_addrs = '["%gateway%"]',
   $iptables__config_enabled               = true,
@@ -549,7 +605,7 @@ define brocadevtm::traffic_managers (
   vtmrest { "traffic_managers/${name}":
     ensure   => $ensure,
     before   => Class[Brocadevtm::Purge],
-    endpoint => "https://${ip}:${port}/api/tm/3.8/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/4.0/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/traffic_managers.erb'),

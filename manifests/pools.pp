@@ -247,6 +247,11 @@
 # [*kerberos_protocol_transition__target*]
 # The Kerberos principal name of the service this pool targets.
 #
+# [*l4accel__snat*]
+# Whether connections to the back-end nodes should appear to originate from an
+# IP address raised on the traffic manager, rather than the IP address from
+# which they were received by the traffic manager.
+#
 # [*load_balancing__algorithm*]
 # The load balancing algorithm that this pool uses to distribute load across
 # its nodes.
@@ -294,10 +299,10 @@
 #
 # [*ssl__enhance*]
 # SSL protocol enhancements allow your traffic manager to prefix each new SSL
-# connection with information about the client. This enables Brocade Web
-# Servers to run multiple SSL sites, and to discover the client's IP address.
-# Only enable this if you are using nodes for this pool which are Brocade Web
-# Servers or Brocade Virtual Traffic Managers, whose virtual servers have the
+# connection with information about the client. This enables Brocade vTM
+# virtual servers referenced by this pool to discover the original client's IP
+# address. Only enable this if you are using nodes for this pool which are
+# Brocade Virtual Traffic Managers, whose virtual servers have the
 # "ssl_trust_magic" setting enabled.
 #
 # [*ssl__send_close_alerts*]
@@ -325,11 +330,8 @@
 # tab.  See there for how to specify SSL/TLS ciphers.
 #
 # [*ssl__ssl_support_ssl2*]
-# Whether or not SSLv2 is enabled for this pool. Choosing the global setting
-# means the value of the configuration key <a
-# href="?fold_open=SSL%20Configuration&section=Global%20Settings#a_ssl!support_s
-# sl2"> "ssl!support_ssl2"</a> from the Global Settings section of the System
-# tab will be enforced.
+# No longer supported. Formerly controlled whether SSLv2 could be used for SSL
+# connections to pool nodes.
 #
 # [*ssl__ssl_support_ssl3*]
 # Whether or not SSLv3 is enabled for this pool. Choosing the global setting
@@ -349,14 +351,14 @@
 # Whether or not TLSv1.1 is enabled for this pool. Choosing the global setting
 # means the value of the configuration key <a
 # href="?fold_open=SSL%20Configuration&section=Global%20Settings#a_ssl!support_t
-# ls1_1"> "ssl!support_tls1_1"</a> from the Global Settings section of the
+# ls1.1"> "ssl!support_tls1.1"</a> from the Global Settings section of the
 # System tab will be enforced.
 #
 # [*ssl__ssl_support_tls1_2*]
 # Whether or not TLSv1.2 is enabled for this pool. Choosing the global setting
 # means the value of the configuration key <a
 # href="?fold_open=SSL%20Configuration&section=Global%20Settings#a_ssl!support_t
-# ls1_2"> "ssl!support_tls1_2"</a> from the Global Settings section of the
+# ls1.2"> "ssl!support_tls1.2"</a> from the Global Settings section of the
 # System tab will be enforced.
 #
 # [*ssl__strict_verify*]
@@ -451,6 +453,7 @@ define brocadevtm::pools (
   $http__keepalive_non_idempotent           = false,
   $kerberos_protocol_transition__principal  = undef,
   $kerberos_protocol_transition__target     = undef,
+  $l4accel__snat                            = false,
   $load_balancing__algorithm                = 'round_robin',
   $load_balancing__priority_enabled         = false,
   $load_balancing__priority_nodes           = 1,
@@ -489,7 +492,7 @@ define brocadevtm::pools (
   vtmrest { "pools/${name}":
     ensure   => $ensure,
     before   => Class[Brocadevtm::Purge],
-    endpoint => "https://${ip}:${port}/api/tm/3.8/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/4.0/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/pools.erb'),
