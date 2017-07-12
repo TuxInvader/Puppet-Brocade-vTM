@@ -41,7 +41,7 @@
 # specified.
 #
 # [*basic__note*]
-# A description of the montitor.
+# A description of the monitor.
 #
 # [*basic__scope*]
 # A monitor can either monitor each node in the pool separately and disable an

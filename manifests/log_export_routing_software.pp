@@ -7,7 +7,7 @@
 class brocadevtm::log_export_routing_software (
   $ensure                = present,
   $basic__appliance_only = true,
-  $basic__enabled        = true,
+  $basic__enabled        = false,
   $basic__files          = '["%ZEUSHOME%/zxtm/log/routing_sw*"]',
   $basic__history        = 'none',
   $basic__history_period = 10,
@@ -26,7 +26,7 @@ class brocadevtm::log_export_routing_software (
   vtmrest { 'log_export/Routing%20Software':
     ensure   => $ensure,
     before   => Class[Brocadevtm::Purge],
-    endpoint => "https://${ip}:${port}/api/tm/4.0/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/5.0/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/log_export.erb'),

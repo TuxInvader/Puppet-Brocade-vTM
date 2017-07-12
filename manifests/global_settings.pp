@@ -172,10 +172,6 @@
 # connections using TLS version 1.2 or higher. For information on supported
 # algorithms see the online help.
 #
-# [*admin__support_ssl2*]
-# No longer supported. Formerly controlled whether SSLv2 could be used for
-# connections to the Administration Server.
-#
 # [*admin__support_ssl3*]
 # Whether or not SSL3 support is enabled for admin server and internal
 # connections.
@@ -184,32 +180,17 @@
 # Whether or not TLS1.0 support is enabled for admin server and internal
 # connections.
 #
-# [*admin__support_tls11*]
+# [*admin__support_tls1_1*]
 # Whether or not TLS1.1 support is enabled for admin server and internal
 # connections.
 #
-# [*admin__support_tls12*]
+# [*admin__support_tls1_2*]
 # Whether or not TLS1.2 support is enabled for admin server and internal
 # connections.
 #
 # [*appliance__bootloader_password*]
 # The password used to protect the bootloader. An empty string means there
 # will be no protection.
-#
-# [*appliance__manage_ncipher*]
-# Whether or not we should manage the nCipher Support Software automatically.
-#
-# [*appliance__nethsm_esn*]
-# The ESN (electronic serial number) for the NetHSM.
-#
-# [*appliance__nethsm_hash*]
-# The key hash for the NetHSM.
-#
-# [*appliance__nethsm_ip*]
-# The IP address of the nCipher NetHSM to use.
-#
-# [*appliance__nethsm_ncipher_rfs*]
-# The IP address of the nCipher Remote File System to use.
 #
 # [*appliance__return_path_routing_enabled*]
 # Whether or not the traffic manager will attempt to route response packets
@@ -435,9 +416,16 @@
 # The maximum amount of time requests to the AWS Query API can take before
 # timing out.
 #
+# [*ec2__metadata_server*]
+# URL for the EC2 metadata server, "http://169.254.169.254/latest/meta-data"
+# for example.
+#
 # [*ec2__metadata_timeout*]
 # The maximum amount of time requests to the EC2 Metadata Server can take
 # before timing out.
+#
+# [*ec2__query_server*]
+# URL for the Amazon EC2 endpoint, "https://ec2.amazonaws.com/" for example.
 #
 # [*ec2__secret_access_key*]
 # Amazon EC2 Secret Access Key.
@@ -730,14 +718,14 @@
 # OSPFv2 authentication shared secret (MD5). If set to blank, which is the
 # default value, the key is disabled.
 #
+# [*ospfv2__dead_interval*]
+# The number of seconds before declaring a silent router down.
+#
 # [*ospfv2__enabled*]
 # Whether OSPFv2 Route Health Injection is enabled
 #
 # [*ospfv2__hello_interval*]
 # The interval at which OSPF "hello" packets are sent to the network.
-#
-# [*ospfv2__router_dead_interval*]
-# The number of seconds before declaring a silent router down.
 #
 # [*periodic_log__enabled*]
 # Enable periodic logging
@@ -983,6 +971,15 @@
 # The size of the Source NAT shared memory pool used for shared storage across
 # child processes. This value is specified as an absolute size such as "10MB".
 #
+# [*ssl__allow_rehandshake*]
+# Whether or not SSL/TLS re-handshakes should be supported. Enabling support
+# for re-handshakes can expose services to Man-in-the-Middle attacks. It is
+# recommended that only "safe" handshakes be permitted, or none at all.
+#
+# [*ssl__cache_enabled*]
+# Whether or not the SSL server session cache is enabled, unless overridden by
+# virtual server settings.
+#
 # [*ssl__cache_expiry*]
 # How long the SSL session IDs for SSL decryption should be stored for.
 #
@@ -993,8 +990,33 @@
 # [*ssl__cache_size*]
 # How many entries the SSL session ID cache should hold. This cache is used to
 # cache SSL sessions to help speed up SSL handshakes when performing SSL
-# decryption. To turn off SSL session resumption, set this key to the value
-# "0". Each entry will allocate approximately 1.5kB of metadata.
+# decryption. Each entry will allocate approximately 1.5kB of metadata.
+#
+# [*ssl__cipher_suites*]
+# The SSL/TLS cipher suites preference list for SSL/TLS connections, unless
+# overridden by virtual server or pool settings. For information on supported
+# cipher suites see the online help.
+#
+# [*ssl__client_cache_enabled*]
+# Whether or the SSL client cache will be used, unless overridden by pool
+# settings.
+#
+# [*ssl__client_cache_expiry*]
+# How long in seconds SSL sessions should be stored in the client cache for,
+# by default. Servers returning session tickets may also provide a lifetime
+# hint, which will be used if it is less than this value.
+#
+# [*ssl__client_cache_size*]
+# How many entries the SSL client session cache should hold, per child. This
+# cache is used to cache SSL sessions to help speed up SSL handshakes when
+# performing SSL encryption. Each entry will require approx 100 bytes of
+# memory plus space for either an SSL session id or an SSL session ticket,
+# which may be as small as 16 bytes or may be as large as a few kilobytes,
+# depending upon the server behavior.
+#
+# [*ssl__client_cache_tickets_enabled*]
+# Whether or not session tickets may be requested and stored in the SSL client
+# cache.
 #
 # [*ssl__crl_mem_size*]
 # How much shared memory to allocate for loading Certificate Revocation Lists.
@@ -1002,13 +1024,22 @@
 # specified as either a percentage of system RAM, "1%" for example, or an
 # absolute size such as "10MB".
 #
+# [*ssl__diffie_hellman_client_min_modulus_size*]
+# The minimum size in bits of the modulus in the domain parameters that the
+# traffic manager will accept when connecting using finite field
+# Diffie-Hellman key agreement as a client.
+#
+# [*ssl__diffie_hellman_modulus_size*]
+# The size in bits of the modulus for the domain parameters used for cipher
+# suites that use finite field Diffie-Hellman key agreement.
+#
 # [*ssl__disable_stitched_cbc_hmac*]
 # Enable or disable use of "stitched" CBC/HMAC mode ciphers
 #
 # [*ssl__elliptic_curves*]
-# The SSL elliptic curve preference list for SSL connections using TLS version
-# 1.0 or higher, unless overridden by virtual server or pool settings. The
-# named curves P256, P384 and P521 may be configured.
+# The SSL/TLS elliptic curve preference list for SSL/TLS connections using TLS
+# version 1.0 or higher, unless overridden by virtual server or pool settings.
+# For information on supported curves see the online help.
 # Type:array
 # Properties:
 #
@@ -1024,6 +1055,12 @@
 # The maximum size (in bytes) of SSL handshake messages that SSL connections
 # will accept. To accept any size of handshake message the key should be set
 # to the value "0".
+#
+# [*ssl__min_rehandshake_interval*]
+# If SSL3/TLS re-handshakes are supported, this defines the minimum time
+# interval (in milliseconds) between handshakes on a single SSL3/TLS
+# connection that is permitted.  To disable the minimum interval for
+# handshakes the key should be set to the value "0".
 #
 # [*ssl__obscure_alert_descriptions*]
 # Whether SSL/TLS alert descriptions should be obscured (where reasonable)
@@ -1082,37 +1119,9 @@
 # with SSL3 and TLS.
 #
 # [*ssl__signature_algorithms*]
-# The SSL signature algorithms preference list for SSL connections unless
-# overridden by virtual server or pool settings. For information on supported
-# algorithms see the online help.
-#
-# [*ssl__ssl3_allow_rehandshake*]
-# Whether or not SSL3/TLS re-handshakes should be supported. Enabling support
-# for re-handshakes can expose services to Man-in-the-Middle attacks. It is
-# recommended that only "safe" handshakes be permitted, or none at all.
-#
-# [*ssl__ssl3_ciphers*]
-# The SSL ciphers to use. For information on supported ciphers see the online
-# help.
-#
-# [*ssl__ssl3_diffie_hellman_client_min_key_length*]
-# The minimum length in bits of the Diffie-Hellman key that the Traffic
-# Manager will accept when connecting using Diffie-Hellman key agreement as a
-# client.
-#
-# [*ssl__ssl3_diffie_hellman_key_length*]
-# The length in bits of the Diffie-Hellman key for ciphers that use
-# Diffie-Hellman key agreement.
-#
-# [*ssl__ssl3_min_rehandshake_interval*]
-# If SSL3/TLS re-handshakes are supported, this defines the minimum time
-# interval (in milliseconds) between handshakes on a single SSL3/TLS
-# connection that is permitted.  To disable the minimum interval for
-# handshakes the key should be set to the value "0".
-#
-# [*ssl__support_ssl2*]
-# No longer supported. Formerly controlled whether SSL2 could be used by
-# default.
+# The SSL/TLS signature algorithms preference list for SSL/TLS connections
+# using TLS version 1.2 or higher, unless overridden by virtual server or pool
+# settings. For information on supported algorithms see the online help.
 #
 # [*ssl__support_ssl3*]
 # Whether or not SSL3 support is enabled.
@@ -1125,6 +1134,38 @@
 #
 # [*ssl__support_tls1_2*]
 # Whether or not TLS1.2 support is enabled.
+#
+# [*ssl__tickets_enabled*]
+# Whether or not session tickets will be issued to and accepted from clients
+# that support them, unless overridden by virtual server settings.
+#
+# [*ssl__tickets_reissue_policy*]
+# When an SSL session ticket will be reissued (ie when a new ticket will be
+# generated for the same SSL session).
+#
+# [*ssl__tickets_ticket_expiry*]
+# The length of time for which an SSL session ticket will be accepted by a
+# virtual server after the ticket is created. If a ticket is reissued (if
+# ssl!tickets!reissue_policy is set to 'always') this time starts at the time
+# when the ticket was reissued.
+#
+# [*ssl__tickets_ticket_key_expiry*]
+# The length of time for which an auto-generated SSL ticket key will be used
+# to decrypt old session ticket, before being deleted from memory. This
+# setting is ignored if there are any entries in the (REST-only) SSL ticket
+# keys catalog.
+#
+# [*ssl__tickets_ticket_key_rotation*]
+# The length of time for which an auto-generated SSL ticket key will be used
+# to encrypt new session tickets, before a new SSL ticket key is generated.
+# The ticket encryption key will be held in memory for
+# ssl!tickets!ticket_key_expiry, so that tickets encrypted using the key can
+# still be decrypted and used. This setting is ignored if there are any
+# entries in the (REST-only) SSL ticket keys catalog.
+#
+# [*ssl__tickets_time_tolerance*]
+# How many seconds to allow the current time to be outside the validity time
+# of an SSL ticket before considering it invalid.
 #
 # [*ssl_hardware__accel*]
 # Whether or not the SSL hardware is an "accelerator" (faster than software).
@@ -1195,11 +1236,6 @@
 #
 # [*ssl_hardware__queuelen*]
 # The maximum number of requests that will be queued to the accelerator device.
-#
-# [*trafficscript__array_elements*]
-# The amount of storage that will be allocated to array elements in
-# TrafficScript. If more elements are required then the necessary memory will
-# be allocated during the execution of the rule.
 #
 # [*trafficscript__data_local_size*]
 # The maximum amount of memory available to store TrafficScript
@@ -1430,17 +1466,11 @@ class brocadevtm::global_settings (
   $admin__ssl_max_handshake_message_size       = 10240,
   $admin__ssl_prevent_timing_side_channels     = false,
   $admin__ssl_signature_algorithms             = undef,
-  $admin__support_ssl2                         = false,
   $admin__support_ssl3                         = false,
   $admin__support_tls1                         = true,
-  $admin__support_tls11                        = true,
-  $admin__support_tls12                        = true,
+  $admin__support_tls1_1                       = true,
+  $admin__support_tls1_2                       = true,
   $appliance__bootloader_password              = undef,
-  $appliance__manage_ncipher                   = true,
-  $appliance__nethsm_esn                       = undef,
-  $appliance__nethsm_hash                      = undef,
-  $appliance__nethsm_ip                        = undef,
-  $appliance__nethsm_ncipher_rfs               = undef,
   $appliance__return_path_routing_enabled      = false,
   $aptimizer__max_dependent_fetch_size         = '2MB',
   $aptimizer__max_original_content_buffer_size = '2MB',
@@ -1469,6 +1499,8 @@ class brocadevtm::global_settings (
   $dns__timeout                                = 12,
   $ec2__access_key_id                          = undef,
   $ec2__awstool_timeout                        = 10,
+  $ec2__metadata_server                        = undef,
+  $ec2__query_server                           = undef,
   $ec2__secret_access_key                      = undef,
   $ec2__verify_query_server_cert               = false,
   $eventing__mail_interval                     = 30,
@@ -1521,9 +1553,9 @@ class brocadevtm::global_settings (
   $ospfv2__authentication_key_id_b             = 0,
   $ospfv2__authentication_shared_secret_a      = undef,
   $ospfv2__authentication_shared_secret_b      = undef,
+  $ospfv2__dead_interval                       = 40,
   $ospfv2__enabled                             = false,
   $ospfv2__hello_interval                      = 10,
-  $ospfv2__router_dead_interval                = 40,
   $protection__conncount_size                  = '20MB',
   $recent_connections__max_per_process         = 500,
   $recent_connections__retain_time             = 60,
@@ -1566,14 +1598,23 @@ class brocadevtm::global_settings (
   $source_nat__ip_limit                        = 16,
   $source_nat__ip_local_port_range_high        = 10240,
   $source_nat__shared_pool_size                = 10,
+  $ssl__allow_rehandshake                      = 'safe',
+  $ssl__cache_enabled                          = true,
   $ssl__cache_expiry                           = 1800,
   $ssl__cache_per_virtualserver                = true,
   $ssl__cache_size                             = 6151,
+  $ssl__cipher_suites                          = undef,
+  $ssl__client_cache_enabled                   = true,
+  $ssl__client_cache_expiry                    = 14400,
+  $ssl__client_cache_size                      = 1024,
+  $ssl__client_cache_tickets_enabled           = true,
   $ssl__crl_mem_size                           = '5MB',
+  $ssl__diffie_hellman_modulus_size            = 'dh_2048',
   $ssl__elliptic_curves                        = '[]',
   $ssl__honor_fallback_scsv                    = true,
   $ssl__insert_extra_fragment                  = false,
   $ssl__max_handshake_message_size             = 10240,
+  $ssl__min_rehandshake_interval               = 1000,
   $ssl__ocsp_cache_size                        = 2048,
   $ssl__ocsp_stapling_default_refresh_interval = 60,
   $ssl__ocsp_stapling_maximum_refresh_interval = 864000,
@@ -1582,15 +1623,16 @@ class brocadevtm::global_settings (
   $ssl__ocsp_stapling_verify_response          = false,
   $ssl__prevent_timing_side_channels           = false,
   $ssl__signature_algorithms                   = undef,
-  $ssl__ssl3_allow_rehandshake                 = 'safe',
-  $ssl__ssl3_ciphers                           = undef,
-  $ssl__ssl3_diffie_hellman_key_length         = 'dh_2048',
-  $ssl__ssl3_min_rehandshake_interval          = 1000,
-  $ssl__support_ssl2                           = false,
   $ssl__support_ssl3                           = false,
   $ssl__support_tls1                           = true,
   $ssl__support_tls1_1                         = true,
   $ssl__support_tls1_2                         = true,
+  $ssl__tickets_enabled                        = true,
+  $ssl__tickets_reissue_policy                 = 'never',
+  $ssl__tickets_ticket_expiry                  = 14400,
+  $ssl__tickets_ticket_key_expiry              = 86400,
+  $ssl__tickets_ticket_key_rotation            = 14400,
+  $ssl__tickets_time_tolerance                 = 30,
   $ssl_hardware__accel                         = false,
   $ssl_hardware__azure_client_id               = undef,
   $ssl_hardware__azure_client_secret           = undef,
@@ -1603,7 +1645,6 @@ class brocadevtm::global_settings (
   $ssl_hardware__driver_pkcs11_user_pin        = undef,
   $ssl_hardware__failure_count                 = 5,
   $ssl_hardware__library                       = 'none',
-  $trafficscript__array_elements               = 100000,
   $trafficscript__data_local_size              = '5%',
   $trafficscript__data_size                    = '5%',
   $trafficscript__execution_time_warning       = 500,
@@ -1639,7 +1680,7 @@ class brocadevtm::global_settings (
   vtmrest { 'global_settings':
     ensure   => $ensure,
     before   => Class[Brocadevtm::Purge],
-    endpoint => "https://${ip}:${port}/api/tm/4.0/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/5.0/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/global_settings.erb'),

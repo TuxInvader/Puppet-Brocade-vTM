@@ -42,7 +42,7 @@
 # specified.
 #
 # [*basic__note*]
-# A description of the montitor.
+# A description of the monitor.
 #
 # [*basic__scope*]
 # A monitor can either monitor each node in the pool separately and disable an
@@ -191,7 +191,7 @@ define brocadevtm::monitors (
   vtmrest { "monitors/${name}":
     ensure   => $ensure,
     before   => Class[Brocadevtm::Purge],
-    endpoint => "https://${ip}:${port}/api/tm/4.0/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/5.0/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/monitors.erb'),

@@ -273,6 +273,14 @@
 # If we are encrypting traffic for an SMTP connection, should we upgrade to
 # SSL using STARTTLS.
 #
+# [*ssl__cipher_suites*]
+# The SSL/TLS cipher suites to allow for connections to a back-end node.
+# Leaving this empty will make the pool use the globally configured cipher
+# suites, see configuration key <a
+# href="?fold_open=SSL%20Configuration&section=Global%20Settings#a_ssl!cipher_su
+# ites"> "ssl!cipher_suites"</a> in the Global Settings section of the System
+# tab.  See there for how to specify SSL/TLS cipher suites.
+#
 # [*ssl__client_auth*]
 # Whether or not a suitable certificate and private key from the SSL Client
 # Certificates catalog be used if the back-end server requests client
@@ -314,6 +322,13 @@
 # which may help the back-end node provide the correct certificate. Enabling
 # this setting will force the use of at least TLS 1.0.
 #
+# [*ssl__session_cache_enabled*]
+# Whether or not the SSL client cache will be used for this pool. Choosing the
+# global setting means the value of the configuration key <a
+# href="?fold_open=SSL%20Configuration&section=Global%20Settings#a_ssl!client_ca
+# che!enabled"> "ssl!client_cache!enabled"</a> from the Global Settings
+# section of the System tab will be enforced.
+#
 # [*ssl__signature_algorithms*]
 # The SSL signature algorithms preference list for SSL connections from this
 # pool using TLS version 1.2 or higher. Leaving this empty will make the pool
@@ -321,51 +336,39 @@
 # "ssl" section of the "global_settings" resource.  See there and in the
 # online help for how to specify SSL signature algorithms.
 #
-# [*ssl__ssl_ciphers*]
-# The SSL/TLS ciphers to allow for connections to a back-end node. Leaving
-# this empty will make the pool use the globally configured ciphers, see
-# configuration key <a
-# href="?fold_open=SSL%20Configuration&section=Global%20Settings#a_ssl!ssl3_ciph
-# ers"> "ssl!ssl3_ciphers"</a> in the Global Settings section of the System
-# tab.  See there for how to specify SSL/TLS ciphers.
+# [*ssl__strict_verify*]
+# Whether or not strict certificate verification should be performed. This
+# will turn on checks to disallow server certificates that don't match the
+# server name or a name in the ssl_common_name_match list, are self-signed,
+# expired, revoked, or have an unknown CA.
 #
-# [*ssl__ssl_support_ssl2*]
-# No longer supported. Formerly controlled whether SSLv2 could be used for SSL
-# connections to pool nodes.
-#
-# [*ssl__ssl_support_ssl3*]
+# [*ssl__support_ssl3*]
 # Whether or not SSLv3 is enabled for this pool. Choosing the global setting
 # means the value of the configuration key <a
 # href="?fold_open=SSL%20Configuration&section=Global%20Settings#a_ssl!support_s
 # sl3"> "ssl!support_ssl3"</a> from the Global Settings section of the System
 # tab will be enforced.
 #
-# [*ssl__ssl_support_tls1*]
+# [*ssl__support_tls1*]
 # Whether or not TLSv1.0 is enabled for this pool. Choosing the global setting
 # means the value of the configuration key <a
 # href="?fold_open=SSL%20Configuration&section=Global%20Settings#a_ssl!support_t
 # ls1"> "ssl!support_tls1"</a> from the Global Settings section of the System
 # tab will be enforced.
 #
-# [*ssl__ssl_support_tls1_1*]
+# [*ssl__support_tls1_1*]
 # Whether or not TLSv1.1 is enabled for this pool. Choosing the global setting
 # means the value of the configuration key <a
 # href="?fold_open=SSL%20Configuration&section=Global%20Settings#a_ssl!support_t
-# ls1.1"> "ssl!support_tls1.1"</a> from the Global Settings section of the
+# ls1_1"> "ssl!support_tls1_1"</a> from the Global Settings section of the
 # System tab will be enforced.
 #
-# [*ssl__ssl_support_tls1_2*]
+# [*ssl__support_tls1_2*]
 # Whether or not TLSv1.2 is enabled for this pool. Choosing the global setting
 # means the value of the configuration key <a
 # href="?fold_open=SSL%20Configuration&section=Global%20Settings#a_ssl!support_t
-# ls1.2"> "ssl!support_tls1.2"</a> from the Global Settings section of the
+# ls1_2"> "ssl!support_tls1_2"</a> from the Global Settings section of the
 # System tab will be enforced.
-#
-# [*ssl__strict_verify*]
-# Whether or not strict certificate verification should be performed. This
-# will turn on checks to disallow server certificates that don't match the
-# server name or a name in the ssl_common_name_match list, are self-signed,
-# expired, revoked, or have an unknown CA.
 #
 # [*tcp__nagle*]
 # Whether or not Nagle's algorithm should be used for TCP connections to the
@@ -460,6 +463,7 @@ define brocadevtm::pools (
   $node__close_on_death                     = false,
   $node__retry_fail_time                    = 60,
   $smtp__send_starttls                      = true,
+  $ssl__cipher_suites                       = undef,
   $ssl__client_auth                         = false,
   $ssl__common_name_match                   = '[]',
   $ssl__elliptic_curves                     = '[]',
@@ -467,14 +471,13 @@ define brocadevtm::pools (
   $ssl__enhance                             = false,
   $ssl__send_close_alerts                   = true,
   $ssl__server_name                         = false,
+  $ssl__session_cache_enabled               = 'use_default',
   $ssl__signature_algorithms                = undef,
-  $ssl__ssl_ciphers                         = undef,
-  $ssl__ssl_support_ssl2                    = 'use_default',
-  $ssl__ssl_support_ssl3                    = 'use_default',
-  $ssl__ssl_support_tls1                    = 'use_default',
-  $ssl__ssl_support_tls1_1                  = 'use_default',
-  $ssl__ssl_support_tls1_2                  = 'use_default',
   $ssl__strict_verify                       = false,
+  $ssl__support_ssl3                        = 'use_default',
+  $ssl__support_tls1                        = 'use_default',
+  $ssl__support_tls1_1                      = 'use_default',
+  $ssl__support_tls1_2                      = 'use_default',
   $tcp__nagle                               = true,
   $udp__accept_from                         = 'dest_only',
   $udp__accept_from_mask                    = undef,
@@ -492,7 +495,7 @@ define brocadevtm::pools (
   vtmrest { "pools/${name}":
     ensure   => $ensure,
     before   => Class[Brocadevtm::Purge],
-    endpoint => "https://${ip}:${port}/api/tm/4.0/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/5.0/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/pools.erb'),

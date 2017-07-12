@@ -106,8 +106,8 @@
 # Which polling method to use.  The default for your platform is almost always
 # the optimal choice.
 #
-# [*appliance__force_hardware*]
-# Whether this machine should be recognised as a Bare-Metal Appliance.
+# [*appliance__disable_cloud_init*]
+# Whether to disable the cloud-init service
 #
 # [*appliance__gateway_ipv4*]
 # The default gateway.
@@ -184,8 +184,8 @@
 # Whether or not the software manages the Azure policy routing.
 #
 # [*appliance__managedpa*]
-# Whether or not the software manages system configuration based on Data Plane
-# Acceleration mode
+# Whether or not the software manages the system configuration based on Data
+# Plane Acceleration mode
 #
 # [*appliance__manageec2conf*]
 # Whether or not the software manages the EC2 config.
@@ -193,9 +193,16 @@
 # [*appliance__manageiptrans*]
 # Whether or not the software manages the IP transparency
 #
+# [*appliance__managereservedports*]
+# Whether or not the software manages the system configuration for reserved
+# ports
+#
 # [*appliance__managereturnpath*]
 # Whether or not the software manages return path routing. If disabled, the
 # appliance won't modify iptables / rules / routes for this feature.
+#
+# [*appliance__manageservices*]
+# Whether or not the software manages the system services
 #
 # [*appliance__managesysctl*]
 # Whether or not the software manages user specified sysctl keys.
@@ -228,41 +235,6 @@
 # The search domains the appliance should use and place in "/etc/resolv.conf".
 # Type:array
 # Properties:
-#
-# [*appliance__shim_client_id*]
-# The client ID provided by the portal for this server.
-#
-# [*appliance__shim_client_key*]
-# The client key provided by the portal for this server.
-#
-# [*appliance__shim_enabled*]
-# Enable the Riverbed Cloud SteelHead discovery agent on this appliance.
-#
-# [*appliance__shim_ips*]
-# The IP addresses of the Riverbed Cloud SteelHeads to use, as a space or
-# comma separated list. If using priority load balancing this should be in
-# ascending order of priority (highest priority last).
-#
-# [*appliance__shim_load_balance*]
-# The load balancing method for selecting a Riverbed Cloud SteelHead appliance.
-#
-# [*appliance__shim_log_level*]
-# The minimum severity that the discovery agent will record to its log.
-#
-# [*appliance__shim_mode*]
-# The mode used to discover Riverbed Cloud SteelHeads in the local cloud or
-# data center.
-#
-# [*appliance__shim_portal_url*]
-# The hostname or IP address of the local portal to use.
-#
-# [*appliance__shim_proxy_host*]
-# The IP or hostname of the proxy server to use to connect to the portal.
-# Leave blank to not use a proxy server.
-#
-# [*appliance__shim_proxy_port*]
-# The port of the proxy server, must be set if a proxy server has been
-# configured.
 #
 # [*appliance__ssh_enabled*]
 # Whether or not the SSH server is enabled on the appliance.

@@ -48,7 +48,7 @@ class brocadevtm::monitors_ping (
   vtmrest { 'monitors/Ping':
     ensure   => $ensure,
     before   => Class[Brocadevtm::Purge],
-    endpoint => "https://${ip}:${port}/api/tm/4.0/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/5.0/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/monitors.erb'),

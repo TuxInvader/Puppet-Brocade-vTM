@@ -23,6 +23,9 @@
 # [*basic__verbose*]
 # Enable or disable verbose logging for this action.
 #
+# [*email__from*]
+# The e-mail address from which messages will appear to originate.
+#
 # [*email__server*]
 # The SMTP server to which messages should be sent. This must be a valid IPv4
 # address or resolvable hostname (with optional port).
@@ -35,9 +38,6 @@
 # [*log__file*]
 # The full path of the file to log to. The text "%zeushome%" will be replaced
 # with the location where the software is installed.
-#
-# [*log__from*]
-# The e-mail address from which messages will appear to originate.
 #
 # [*program__arguments*]
 # A table containing arguments and argument values to be passed to the event
@@ -119,10 +119,10 @@ define brocadevtm::actions (
   $basic__syslog_msg_len_limit = 1024,
   $basic__timeout              = 60,
   $basic__verbose              = false,
+  $email__from                 = 'vTM@%hostname%',
   $email__server               = undef,
   $email__to                   = '[]',
   $log__file                   = undef,
-  $log__from                   = 'vTM@%hostname%',
   $program__arguments          = '[]',
   $program__program            = undef,
   $soap__additional_data       = undef,
@@ -150,7 +150,7 @@ define brocadevtm::actions (
   vtmrest { "actions/${name}":
     ensure   => $ensure,
     before   => Class[Brocadevtm::Purge],
-    endpoint => "https://${ip}:${port}/api/tm/4.0/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/5.0/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/actions.erb'),
