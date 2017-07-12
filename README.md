@@ -19,9 +19,9 @@ However if you want access to all features of your current vTM, then use the lat
 | ------ | ------ | ------ |
 | 9.9 | 3.3 | 1.33.x |
 | 10.4 | 3.8 | 1.38.x |
-| 11.0 | 3.9 | 1.39.x |
-| 11.1 | 3.10 | 1.310.x |
 | 17.1 | 3.11 | 1.311.x |
+| 17.2 | 4.0 | 1.400.x |
+| 17.3 | 5.0 | 1.500.x |
 
 See notes on Module versioning below....
 
