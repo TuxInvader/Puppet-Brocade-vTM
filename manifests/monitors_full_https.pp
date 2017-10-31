@@ -1,4 +1,4 @@
-# === Class: brocadevtm::monitors_full_https
+# === class: brocadevtm::monitors_full_https
 #
 # This class is a direct implementation of brocadvtm::monitors
 #
@@ -47,7 +47,7 @@ class brocadevtm::monitors_full_https (
   info ("Configuring monitors_full_https ${name}")
   vtmrest { 'monitors/Full%20HTTPS':
     ensure   => $ensure,
-    before   => Class[Brocadevtm::Purge],
+    before   => Class[brocadevtm::purge],
     endpoint => "https://${ip}:${port}/api/tm/4.0/config/active",
     username => $user,
     password => $pass,

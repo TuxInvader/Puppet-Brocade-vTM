@@ -64,7 +64,7 @@ define brocadevtm::kerberos_principals (
   info ("Configuring kerberos_principals ${name}")
   vtmrest { "kerberos/principals/${name}":
     ensure   => $ensure,
-    before   => Class[Brocadevtm::Purge],
+    before   => Class[brocadevtm::purge],
     endpoint => "https://${ip}:${port}/api/tm/4.0/config/active",
     username => $user,
     password => $pass,

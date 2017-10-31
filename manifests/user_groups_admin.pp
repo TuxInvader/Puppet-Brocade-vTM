@@ -1,4 +1,4 @@
-# === Class: brocadevtm::user_groups_admin
+# === class: brocadevtm::user_groups_admin
 #
 # This class is a direct implementation of brocadvtm::user_groups
 #
@@ -22,7 +22,7 @@ class brocadevtm::user_groups_admin (
   info ("Configuring user_groups_admin ${name}")
   vtmrest { 'user_groups/admin':
     ensure   => $ensure,
-    before   => Class[Brocadevtm::Purge],
+    before   => Class[brocadevtm::purge],
     endpoint => "https://${ip}:${port}/api/tm/4.0/config/active",
     username => $user,
     password => $pass,

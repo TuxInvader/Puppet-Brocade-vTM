@@ -1,4 +1,4 @@
-# === Class: brocadevtm::log_export_admin_server_access
+# === class: brocadevtm::log_export_admin_server_access
 #
 # This class is a direct implementation of brocadvtm::log_export
 #
@@ -25,7 +25,7 @@ class brocadevtm::log_export_admin_server_access (
   info ("Configuring log_export_admin_server_access ${name}")
   vtmrest { 'log_export/Admin%20Server%20Access':
     ensure   => $ensure,
-    before   => Class[Brocadevtm::Purge],
+    before   => Class[brocadevtm::purge],
     endpoint => "https://${ip}:${port}/api/tm/4.0/config/active",
     username => $user,
     password => $pass,

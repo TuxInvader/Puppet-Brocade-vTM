@@ -1,4 +1,4 @@
-# === Class: brocadevtm::log_export_system___syslog
+# === class: brocadevtm::log_export_system___syslog
 #
 # This class is a direct implementation of brocadvtm::log_export
 #
@@ -25,7 +25,7 @@ class brocadevtm::log_export_system___syslog (
   info ("Configuring log_export_system___syslog ${name}")
   vtmrest { 'log_export/System%20-%20syslog':
     ensure   => $ensure,
-    before   => Class[Brocadevtm::Purge],
+    before   => Class[brocadevtm::purge],
     endpoint => "https://${ip}:${port}/api/tm/4.0/config/active",
     username => $user,
     password => $pass,

@@ -36,7 +36,7 @@ define brocadevtm::extra_files (
   info ("Configuring extra_files ${name}")
   vtmrest { "extra_files/${name}":
     ensure   => $ensure,
-    before   => Class[Brocadevtm::Purge],
+    before   => Class[brocadevtm::purge],
     endpoint => "https://${ip}:${port}/api/tm/4.0/config/active",
     username => $user,
     password => $pass,

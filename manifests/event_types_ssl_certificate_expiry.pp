@@ -1,4 +1,4 @@
-# === Class: brocadevtm::event_types_ssl_certificate_expiry
+# === class: brocadevtm::event_types_ssl_certificate_expiry
 #
 # This class is a direct implementation of brocadvtm::event_types
 #
@@ -50,7 +50,7 @@ class brocadevtm::event_types_ssl_certificate_expiry (
   info ("Configuring event_types_ssl_certificate_expiry ${name}")
   vtmrest { 'event_types/SSL%20Certificate%20Expiry':
     ensure   => $ensure,
-    before   => Class[Brocadevtm::Purge],
+    before   => Class[brocadevtm::purge],
     endpoint => "https://${ip}:${port}/api/tm/4.0/config/active",
     username => $user,
     password => $pass,

@@ -55,7 +55,7 @@ define brocadevtm::service_level_monitors (
   info ("Configuring service_level_monitors ${name}")
   vtmrest { "service_level_monitors/${name}":
     ensure   => $ensure,
-    before   => Class[Brocadevtm::Purge],
+    before   => Class[brocadevtm::purge],
     endpoint => "https://${ip}:${port}/api/tm/4.0/config/active",
     username => $user,
     password => $pass,

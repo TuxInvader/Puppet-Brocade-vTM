@@ -1,4 +1,4 @@
-# === Class: brocadevtm::monitor_scripts_dns_pl
+# === class: brocadevtm::monitor_scripts_dns_pl
 
 class brocadevtm::monitor_scripts_dns_pl (
   $ensure  = present,
@@ -15,7 +15,7 @@ class brocadevtm::monitor_scripts_dns_pl (
   info ("Configuring monitor_scripts_dns_pl ${name}")
   vtmrest { 'monitor_scripts/dns.pl':
     ensure   => $ensure,
-    before   => Class[Brocadevtm::Purge],
+    before   => Class[brocadevtm::purge],
     endpoint => "https://${ip}:${port}/api/tm/4.0/config/active",
     username => $user,
     password => $pass,

@@ -190,7 +190,7 @@ define brocadevtm::monitors (
   info ("Configuring monitors ${name}")
   vtmrest { "monitors/${name}":
     ensure   => $ensure,
-    before   => Class[Brocadevtm::Purge],
+    before   => Class[brocadevtm::purge],
     endpoint => "https://${ip}:${port}/api/tm/4.0/config/active",
     username => $user,
     password => $pass,

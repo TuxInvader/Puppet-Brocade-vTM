@@ -1,4 +1,4 @@
-# === Class: brocadevtm::appliance_nat
+# === class: brocadevtm::appliance_nat
 #
 # NAT Configuration
 # The NAT configuration file stores rules controlling NAT on an appliance.
@@ -80,7 +80,7 @@ class brocadevtm::appliance_nat (
   info ("Configuring appliance_nat ${name}")
   vtmrest { 'appliance/nat':
     ensure   => $ensure,
-    before   => Class[Brocadevtm::Purge],
+    before   => Class[brocadevtm::purge],
     endpoint => "https://${ip}:${port}/api/tm/4.0/config/active",
     username => $user,
     password => $pass,

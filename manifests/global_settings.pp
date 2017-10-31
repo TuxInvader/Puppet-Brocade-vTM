@@ -1,4 +1,4 @@
-# === Class: brocadevtm::global_settings
+# === class: brocadevtm::global_settings
 #
 # Global Settings
 # General settings that apply to every machine in the cluster.
@@ -1638,7 +1638,7 @@ class brocadevtm::global_settings (
   info ("Configuring global_settings ${name}")
   vtmrest { 'global_settings':
     ensure   => $ensure,
-    before   => Class[Brocadevtm::Purge],
+    before   => Class[brocadevtm::purge],
     endpoint => "https://${ip}:${port}/api/tm/4.0/config/active",
     username => $user,
     password => $pass,

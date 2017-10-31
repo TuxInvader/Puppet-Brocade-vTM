@@ -1,4 +1,4 @@
-# === Class: brocadevtm::event_types_glb_services
+# === class: brocadevtm::event_types_glb_services
 #
 # This class is a direct implementation of brocadvtm::event_types
 #
@@ -50,7 +50,7 @@ class brocadevtm::event_types_glb_services (
   info ("Configuring event_types_glb_services ${name}")
   vtmrest { 'event_types/GLB%20Services':
     ensure   => $ensure,
-    before   => Class[Brocadevtm::Purge],
+    before   => Class[brocadevtm::purge],
     endpoint => "https://${ip}:${port}/api/tm/4.0/config/active",
     username => $user,
     password => $pass,

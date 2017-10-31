@@ -1,4 +1,4 @@
-# === Class: brocadevtm::log_export_system___authentication_log
+# === class: brocadevtm::log_export_system___authentication_log
 #
 # This class is a direct implementation of brocadvtm::log_export
 #
@@ -25,7 +25,7 @@ class brocadevtm::log_export_system___authentication_log (
   info ("Configuring log_export_system___authentication_log ${name}")
   vtmrest { 'log_export/System%20-%20authentication%20log':
     ensure   => $ensure,
-    before   => Class[Brocadevtm::Purge],
+    before   => Class[brocadevtm::purge],
     endpoint => "https://${ip}:${port}/api/tm/4.0/config/active",
     username => $user,
     password => $pass,

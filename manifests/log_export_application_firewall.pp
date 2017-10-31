@@ -1,4 +1,4 @@
-# === Class: brocadevtm::log_export_application_firewall
+# === class: brocadevtm::log_export_application_firewall
 #
 # This class is a direct implementation of brocadvtm::log_export
 #
@@ -25,7 +25,7 @@ class brocadevtm::log_export_application_firewall (
   info ("Configuring log_export_application_firewall ${name}")
   vtmrest { 'log_export/Application%20Firewall':
     ensure   => $ensure,
-    before   => Class[Brocadevtm::Purge],
+    before   => Class[brocadevtm::purge],
     endpoint => "https://${ip}:${port}/api/tm/4.0/config/active",
     username => $user,
     password => $pass,

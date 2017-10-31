@@ -204,7 +204,7 @@ define brocadevtm::user_authenticators (
   info ("Configuring user_authenticators ${name}")
   vtmrest { "user_authenticators/${name}":
     ensure   => $ensure,
-    before   => Class[Brocadevtm::Purge],
+    before   => Class[brocadevtm::purge],
     endpoint => "https://${ip}:${port}/api/tm/4.0/config/active",
     username => $user,
     password => $pass,

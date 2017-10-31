@@ -1,4 +1,4 @@
-# === Class: brocadevtm::monitors_client_first
+# === class: brocadevtm::monitors_client_first
 #
 # This class is a direct implementation of brocadvtm::monitors
 #
@@ -47,7 +47,7 @@ class brocadevtm::monitors_client_first (
   info ("Configuring monitors_client_first ${name}")
   vtmrest { 'monitors/Client%20First':
     ensure   => $ensure,
-    before   => Class[Brocadevtm::Purge],
+    before   => Class[brocadevtm::purge],
     endpoint => "https://${ip}:${port}/api/tm/4.0/config/active",
     username => $user,
     password => $pass,

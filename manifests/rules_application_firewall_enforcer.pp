@@ -1,4 +1,4 @@
-# === Class: brocadevtm::rules_application_firewall_enforcer
+# === class: brocadevtm::rules_application_firewall_enforcer
 
 class brocadevtm::rules_application_firewall_enforcer (
   $ensure  = present,
@@ -15,7 +15,7 @@ class brocadevtm::rules_application_firewall_enforcer (
   info ("Configuring rules_application_firewall_enforcer ${name}")
   vtmrest { 'rules/Application%20Firewall%20Enforcer':
     ensure   => $ensure,
-    before   => Class[Brocadevtm::Purge],
+    before   => Class[brocadevtm::purge],
     endpoint => "https://${ip}:${port}/api/tm/4.0/config/active",
     username => $user,
     password => $pass,

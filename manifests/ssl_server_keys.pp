@@ -55,7 +55,7 @@ define brocadevtm::ssl_server_keys (
   info ("Configuring ssl_server_keys ${name}")
   vtmrest { "ssl/server_keys/${name}":
     ensure   => $ensure,
-    before   => Class[Brocadevtm::Purge],
+    before   => Class[brocadevtm::purge],
     endpoint => "https://${ip}:${port}/api/tm/4.0/config/active",
     username => $user,
     password => $pass,

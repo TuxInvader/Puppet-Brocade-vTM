@@ -1,4 +1,4 @@
-# === Class: brocadevtm::aptimizer_scopes_any_hostname_or_path
+# === class: brocadevtm::aptimizer_scopes_any_hostname_or_path
 #
 # This class is a direct implementation of brocadvtm::aptimizer_scopes
 #
@@ -21,7 +21,7 @@ class brocadevtm::aptimizer_scopes_any_hostname_or_path (
   info ("Configuring aptimizer_scopes_any_hostname_or_path ${name}")
   vtmrest { 'aptimizer/scopes/Any%20hostname%20or%20path':
     ensure   => $ensure,
-    before   => Class[Brocadevtm::Purge],
+    before   => Class[brocadevtm::purge],
     endpoint => "https://${ip}:${port}/api/tm/4.0/config/active",
     username => $user,
     password => $pass,

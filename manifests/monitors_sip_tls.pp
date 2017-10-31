@@ -1,4 +1,4 @@
-# === Class: brocadevtm::monitors_sip_tls
+# === class: brocadevtm::monitors_sip_tls
 #
 # This class is a direct implementation of brocadvtm::monitors
 #
@@ -47,7 +47,7 @@ class brocadevtm::monitors_sip_tls (
   info ("Configuring monitors_sip_tls ${name}")
   vtmrest { 'monitors/SIP%20TLS':
     ensure   => $ensure,
-    before   => Class[Brocadevtm::Purge],
+    before   => Class[brocadevtm::purge],
     endpoint => "https://${ip}:${port}/api/tm/4.0/config/active",
     username => $user,
     password => $pass,

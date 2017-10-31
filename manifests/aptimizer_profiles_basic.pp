@@ -1,4 +1,4 @@
-# === Class: brocadevtm::aptimizer_profiles_basic
+# === class: brocadevtm::aptimizer_profiles_basic
 #
 # This class is a direct implementation of brocadvtm::aptimizer_profiles
 #
@@ -22,7 +22,7 @@ class brocadevtm::aptimizer_profiles_basic (
   info ("Configuring aptimizer_profiles_basic ${name}")
   vtmrest { 'aptimizer/profiles/Basic':
     ensure   => $ensure,
-    before   => Class[Brocadevtm::Purge],
+    before   => Class[brocadevtm::purge],
     endpoint => "https://${ip}:${port}/api/tm/4.0/config/active",
     username => $user,
     password => $pass,

@@ -67,7 +67,7 @@ define brocadevtm::cloud_api_credentials (
   info ("Configuring cloud_api_credentials ${name}")
   vtmrest { "cloud_api_credentials/${name}":
     ensure   => $ensure,
-    before   => Class[Brocadevtm::Purge],
+    before   => Class[brocadevtm::purge],
     endpoint => "https://${ip}:${port}/api/tm/4.0/config/active",
     username => $user,
     password => $pass,

@@ -604,7 +604,7 @@ define brocadevtm::traffic_managers (
   info ("Configuring traffic_managers ${name}")
   vtmrest { "traffic_managers/${name}":
     ensure   => $ensure,
-    before   => Class[Brocadevtm::Purge],
+    before   => Class[brocadevtm::purge],
     endpoint => "https://${ip}:${port}/api/tm/4.0/config/active",
     username => $user,
     password => $pass,

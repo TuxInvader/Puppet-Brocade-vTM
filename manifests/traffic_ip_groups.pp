@@ -144,7 +144,7 @@ define brocadevtm::traffic_ip_groups (
   info ("Configuring traffic_ip_groups ${name}")
   vtmrest { "traffic_ip_groups/${name}":
     ensure   => $ensure,
-    before   => Class[Brocadevtm::Purge],
+    before   => Class[brocadevtm::purge],
     endpoint => "https://${ip}:${port}/api/tm/4.0/config/active",
     username => $user,
     password => $pass,

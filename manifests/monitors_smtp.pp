@@ -1,4 +1,4 @@
-# === Class: brocadevtm::monitors_smtp
+# === class: brocadevtm::monitors_smtp
 #
 # This class is a direct implementation of brocadvtm::monitors
 #
@@ -47,7 +47,7 @@ class brocadevtm::monitors_smtp (
   info ("Configuring monitors_smtp ${name}")
   vtmrest { 'monitors/SMTP':
     ensure   => $ensure,
-    before   => Class[Brocadevtm::Purge],
+    before   => Class[brocadevtm::purge],
     endpoint => "https://${ip}:${port}/api/tm/4.0/config/active",
     username => $user,
     password => $pass,

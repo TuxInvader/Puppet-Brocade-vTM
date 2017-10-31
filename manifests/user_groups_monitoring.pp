@@ -1,4 +1,4 @@
-# === Class: brocadevtm::user_groups_monitoring
+# === class: brocadevtm::user_groups_monitoring
 #
 # This class is a direct implementation of brocadvtm::user_groups
 #
@@ -22,7 +22,7 @@ class brocadevtm::user_groups_monitoring (
   info ("Configuring user_groups_monitoring ${name}")
   vtmrest { 'user_groups/Monitoring':
     ensure   => $ensure,
-    before   => Class[Brocadevtm::Purge],
+    before   => Class[brocadevtm::purge],
     endpoint => "https://${ip}:${port}/api/tm/4.0/config/active",
     username => $user,
     password => $pass,

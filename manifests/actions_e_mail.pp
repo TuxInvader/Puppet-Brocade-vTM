@@ -1,4 +1,4 @@
-# === Class: brocadevtm::actions_e_mail
+# === class: brocadevtm::actions_e_mail
 #
 # This class is a direct implementation of brocadvtm::actions
 #
@@ -41,7 +41,7 @@ class brocadevtm::actions_e_mail (
   info ("Configuring actions_e_mail ${name}")
   vtmrest { 'actions/E-Mail':
     ensure   => $ensure,
-    before   => Class[Brocadevtm::Purge],
+    before   => Class[brocadevtm::purge],
     endpoint => "https://${ip}:${port}/api/tm/4.0/config/active",
     username => $user,
     password => $pass,

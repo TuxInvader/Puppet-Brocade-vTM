@@ -1,4 +1,4 @@
-# === Class: brocadevtm::event_types_infrastructure_problem
+# === class: brocadevtm::event_types_infrastructure_problem
 #
 # This class is a direct implementation of brocadvtm::event_types
 #
@@ -50,7 +50,7 @@ class brocadevtm::event_types_infrastructure_problem (
   info ("Configuring event_types_infrastructure_problem ${name}")
   vtmrest { 'event_types/Infrastructure%20Problem':
     ensure   => $ensure,
-    before   => Class[Brocadevtm::Purge],
+    before   => Class[brocadevtm::purge],
     endpoint => "https://${ip}:${port}/api/tm/4.0/config/active",
     username => $user,
     password => $pass,

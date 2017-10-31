@@ -1,4 +1,4 @@
-# === Class: brocadevtm::security
+# === class: brocadevtm::security
 #
 # Security Settings
 # Security settings that restrict remote administration for the cluster.
@@ -80,7 +80,7 @@ class brocadevtm::security (
   info ("Configuring security ${name}")
   vtmrest { 'security':
     ensure   => $ensure,
-    before   => Class[Brocadevtm::Purge],
+    before   => Class[brocadevtm::purge],
     endpoint => "https://${ip}:${port}/api/tm/4.0/config/active",
     username => $user,
     password => $pass,

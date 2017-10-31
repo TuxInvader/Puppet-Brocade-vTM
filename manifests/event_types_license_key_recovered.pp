@@ -1,4 +1,4 @@
-# === Class: brocadevtm::event_types_license_key_recovered
+# === class: brocadevtm::event_types_license_key_recovered
 #
 # This class is a direct implementation of brocadvtm::event_types
 #
@@ -50,7 +50,7 @@ class brocadevtm::event_types_license_key_recovered (
   info ("Configuring event_types_license_key_recovered ${name}")
   vtmrest { 'event_types/License%20Key%20Recovered':
     ensure   => $ensure,
-    before   => Class[Brocadevtm::Purge],
+    before   => Class[brocadevtm::purge],
     endpoint => "https://${ip}:${port}/api/tm/4.0/config/active",
     username => $user,
     password => $pass,

@@ -36,7 +36,7 @@ define brocadevtm::kerberos_krb5confs (
   info ("Configuring kerberos_krb5confs ${name}")
   vtmrest { "kerberos/krb5confs/${name}":
     ensure   => $ensure,
-    before   => Class[Brocadevtm::Purge],
+    before   => Class[brocadevtm::purge],
     endpoint => "https://${ip}:${port}/api/tm/4.0/config/active",
     username => $user,
     password => $pass,

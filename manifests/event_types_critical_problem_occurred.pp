@@ -1,4 +1,4 @@
-# === Class: brocadevtm::event_types_critical_problem_occurred
+# === class: brocadevtm::event_types_critical_problem_occurred
 #
 # This class is a direct implementation of brocadvtm::event_types
 #
@@ -50,7 +50,7 @@ class brocadevtm::event_types_critical_problem_occurred (
   info ("Configuring event_types_critical_problem_occurred ${name}")
   vtmrest { 'event_types/Critical%20Problem%20Occurred':
     ensure   => $ensure,
-    before   => Class[Brocadevtm::Purge],
+    before   => Class[brocadevtm::purge],
     endpoint => "https://${ip}:${port}/api/tm/4.0/config/active",
     username => $user,
     password => $pass,

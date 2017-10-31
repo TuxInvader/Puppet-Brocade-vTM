@@ -1,4 +1,4 @@
-# === Class: brocadevtm::event_types_service_failed
+# === class: brocadevtm::event_types_service_failed
 #
 # This class is a direct implementation of brocadvtm::event_types
 #
@@ -50,7 +50,7 @@ class brocadevtm::event_types_service_failed (
   info ("Configuring event_types_service_failed ${name}")
   vtmrest { 'event_types/Service%20Failed':
     ensure   => $ensure,
-    before   => Class[Brocadevtm::Purge],
+    before   => Class[brocadevtm::purge],
     endpoint => "https://${ip}:${port}/api/tm/4.0/config/active",
     username => $user,
     password => $pass,

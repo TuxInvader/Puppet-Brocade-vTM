@@ -1,4 +1,4 @@
-# === Class: brocadevtm::aptimizer_profiles_sharepoint_2013
+# === class: brocadevtm::aptimizer_profiles_sharepoint_2013
 #
 # This class is a direct implementation of brocadvtm::aptimizer_profiles
 #
@@ -22,7 +22,7 @@ class brocadevtm::aptimizer_profiles_sharepoint_2013 (
   info ("Configuring aptimizer_profiles_sharepoint_2013 ${name}")
   vtmrest { 'aptimizer/profiles/SharePoint%202013':
     ensure   => $ensure,
-    before   => Class[Brocadevtm::Purge],
+    before   => Class[brocadevtm::purge],
     endpoint => "https://${ip}:${port}/api/tm/4.0/config/active",
     username => $user,
     password => $pass,

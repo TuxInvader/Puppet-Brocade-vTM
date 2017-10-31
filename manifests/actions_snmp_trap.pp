@@ -1,4 +1,4 @@
-# === Class: brocadevtm::actions_snmp_trap
+# === class: brocadevtm::actions_snmp_trap
 #
 # This class is a direct implementation of brocadvtm::actions
 #
@@ -41,7 +41,7 @@ class brocadevtm::actions_snmp_trap (
   info ("Configuring actions_snmp_trap ${name}")
   vtmrest { 'actions/SNMP%20Trap':
     ensure   => $ensure,
-    before   => Class[Brocadevtm::Purge],
+    before   => Class[brocadevtm::purge],
     endpoint => "https://${ip}:${port}/api/tm/4.0/config/active",
     username => $user,
     password => $pass,

@@ -1,4 +1,4 @@
-# === Class: brocadevtm::log_export_data_plane_acceleration
+# === class: brocadevtm::log_export_data_plane_acceleration
 #
 # This class is a direct implementation of brocadvtm::log_export
 #
@@ -25,7 +25,7 @@ class brocadevtm::log_export_data_plane_acceleration (
   info ("Configuring log_export_data_plane_acceleration ${name}")
   vtmrest { 'log_export/Data%20Plane%20Acceleration':
     ensure   => $ensure,
-    before   => Class[Brocadevtm::Purge],
+    before   => Class[brocadevtm::purge],
     endpoint => "https://${ip}:${port}/api/tm/4.0/config/active",
     username => $user,
     password => $pass,

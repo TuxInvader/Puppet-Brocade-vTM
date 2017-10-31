@@ -1,4 +1,4 @@
-# === Class: brocadevtm::actions_syslog
+# === class: brocadevtm::actions_syslog
 #
 # This class is a direct implementation of brocadvtm::actions
 #
@@ -41,7 +41,7 @@ class brocadevtm::actions_syslog (
   info ("Configuring actions_syslog ${name}")
   vtmrest { 'actions/Syslog':
     ensure   => $ensure,
-    before   => Class[Brocadevtm::Purge],
+    before   => Class[brocadevtm::purge],
     endpoint => "https://${ip}:${port}/api/tm/4.0/config/active",
     username => $user,
     password => $pass,

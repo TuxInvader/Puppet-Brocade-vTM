@@ -36,7 +36,7 @@ define brocadevtm::monitor_scripts (
   info ("Configuring monitor_scripts ${name}")
   vtmrest { "monitor_scripts/${name}":
     ensure   => $ensure,
-    before   => Class[Brocadevtm::Purge],
+    before   => Class[brocadevtm::purge],
     endpoint => "https://${ip}:${port}/api/tm/4.0/config/active",
     username => $user,
     password => $pass,

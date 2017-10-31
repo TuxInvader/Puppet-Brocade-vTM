@@ -491,7 +491,7 @@ define brocadevtm::pools (
   info ("Configuring pools ${name}")
   vtmrest { "pools/${name}":
     ensure   => $ensure,
-    before   => Class[Brocadevtm::Purge],
+    before   => Class[brocadevtm::purge],
     endpoint => "https://${ip}:${port}/api/tm/4.0/config/active",
     username => $user,
     password => $pass,

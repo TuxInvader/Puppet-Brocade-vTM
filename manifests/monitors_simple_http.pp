@@ -1,4 +1,4 @@
-# === Class: brocadevtm::monitors_simple_http
+# === class: brocadevtm::monitors_simple_http
 #
 # This class is a direct implementation of brocadvtm::monitors
 #
@@ -47,7 +47,7 @@ class brocadevtm::monitors_simple_http (
   info ("Configuring monitors_simple_http ${name}")
   vtmrest { 'monitors/Simple%20HTTP':
     ensure   => $ensure,
-    before   => Class[Brocadevtm::Purge],
+    before   => Class[brocadevtm::purge],
     endpoint => "https://${ip}:${port}/api/tm/4.0/config/active",
     username => $user,
     password => $pass,

@@ -152,7 +152,7 @@ define brocadevtm::glb_services (
   info ("Configuring glb_services ${name}")
   vtmrest { "glb_services/${name}":
     ensure   => $ensure,
-    before   => Class[Brocadevtm::Purge],
+    before   => Class[brocadevtm::purge],
     endpoint => "https://${ip}:${port}/api/tm/4.0/config/active",
     username => $user,
     password => $pass,

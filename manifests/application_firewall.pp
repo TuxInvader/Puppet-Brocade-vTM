@@ -1,4 +1,4 @@
-# === Class: brocadevtm::application_firewall
+# === class: brocadevtm::application_firewall
 #
 # Brocade Virtual Web Application Firewall
 # The "conf/zeusafm.conf" file contains configuration files for the
@@ -39,7 +39,7 @@ class brocadevtm::application_firewall (
   info ("Configuring application_firewall ${name}")
   vtmrest { 'application_firewall':
     ensure   => $ensure,
-    before   => Class[Brocadevtm::Purge],
+    before   => Class[brocadevtm::purge],
     endpoint => "https://${ip}:${port}/api/tm/4.0/config/active",
     username => $user,
     password => $pass,

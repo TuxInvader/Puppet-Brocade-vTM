@@ -1,4 +1,4 @@
-# === Class: brocadevtm::event_types_all_events
+# === class: brocadevtm::event_types_all_events
 #
 # This class is a direct implementation of brocadvtm::event_types
 #
@@ -50,7 +50,7 @@ class brocadevtm::event_types_all_events (
   info ("Configuring event_types_all_events ${name}")
   vtmrest { 'event_types/All%20Events':
     ensure   => $ensure,
-    before   => Class[Brocadevtm::Purge],
+    before   => Class[brocadevtm::purge],
     endpoint => "https://${ip}:${port}/api/tm/4.0/config/active",
     username => $user,
     password => $pass,

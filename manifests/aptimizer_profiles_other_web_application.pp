@@ -1,4 +1,4 @@
-# === Class: brocadevtm::aptimizer_profiles_other_web_application
+# === class: brocadevtm::aptimizer_profiles_other_web_application
 #
 # This class is a direct implementation of brocadvtm::aptimizer_profiles
 #
@@ -22,7 +22,7 @@ class brocadevtm::aptimizer_profiles_other_web_application (
   info ("Configuring aptimizer_profiles_other_web_application ${name}")
   vtmrest { 'aptimizer/profiles/Other%20web%20application':
     ensure   => $ensure,
-    before   => Class[Brocadevtm::Purge],
+    before   => Class[brocadevtm::purge],
     endpoint => "https://${ip}:${port}/api/tm/4.0/config/active",
     username => $user,
     password => $pass,

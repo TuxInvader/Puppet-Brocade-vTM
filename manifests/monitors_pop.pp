@@ -1,4 +1,4 @@
-# === Class: brocadevtm::monitors_pop
+# === class: brocadevtm::monitors_pop
 #
 # This class is a direct implementation of brocadvtm::monitors
 #
@@ -47,7 +47,7 @@ class brocadevtm::monitors_pop (
   info ("Configuring monitors_pop ${name}")
   vtmrest { 'monitors/POP':
     ensure   => $ensure,
-    before   => Class[Brocadevtm::Purge],
+    before   => Class[brocadevtm::purge],
     endpoint => "https://${ip}:${port}/api/tm/4.0/config/active",
     username => $user,
     password => $pass,
