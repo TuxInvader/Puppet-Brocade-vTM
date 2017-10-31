@@ -9,19 +9,35 @@ This is a puppet module for configuring the Brocade vTM - formerly:
 	Riverbed Stingray
 	Riverbed SteelApp
 
+#### IMPORTANT - Puppet Version Notice
+Puppet changed the way escapes were handled in single quoted strings from puppet version 4.
+
+ * See: [Puppet Document 586](tickets.puppetlabs.com/browse/DOCUMENT-586)
+
+Version 1.x of this module includes manifests which support puppet 3.x. 
+Version 2.x should be used if you are using puppet 4.x or above.
+
+##### Using genManifests and genNodeConfig
+
+If you generate your own manifests, then there is a flag @PUP4X in `lib/brocade/puppetmanifest`
+which controls the manifest format. The flag will be true in 2.x modules and false in 1.x modules.
+That is all you need to change to switch between 3.x and 4.x manifest generation.
+
+  * Note: You need to regenerate your manifests after you change the flag.
+
 #### REST Version Mapping
 
 If you want to manage vTMs running versions from 9.9 and up then you may use 1.33.x
 
 However if you want access to all features of your current vTM, then use the latest API version available
 
-| vTM Version | REST API | Puppet Module Version |
-| ------ | ------ | ------ |
-| 9.9 | 3.3 | 1.33.x |
-| 10.4 | 3.8 | 1.38.x |
-| 17.1 | 3.11 | 1.311.x |
-| 17.2 | 4.0 | 1.400.x |
-| 17.3 | 5.0 | 1.500.x |
+| vTM Version | REST API | Puppet 3.x Version | Puppet 4+ Version
+| ------ | ------ | ------ | ------ |
+| 9.9 | 3.3 | 1.33.x | - |
+| 10.4 | 3.8 | 1.38.x | - |
+| 17.1 | 3.11 | 1.311.x | - |
+| 17.2 | 4.0 | 1.400.x | 2.400.x |
+| 17.3 | 5.0 | 1.500.x | 2.500.x |
 
 See notes on Module versioning below....
 

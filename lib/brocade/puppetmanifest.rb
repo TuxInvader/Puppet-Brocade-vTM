@@ -12,6 +12,7 @@ module BrocadeREST
 
 		def initialize(type, uri, restVersion, object, root="properties", traverseArray=false)
 			super(type,uri,restVersion,object,root,traverseArray)
+			@PUP4X = false;
 		end
 
 		# Generate the manifest. 
@@ -385,6 +386,9 @@ module BrocadeREST
 				else
 					value = value.inspect[1...-1] 
 					value = "'" + value.gsub("'"){"\\'"} + "'"
+				end
+				if @PUP4X
+					value = value.gsub("\\\\"){"\\\\\\\\"}
 				end
 			end
 			return value
