@@ -1,6 +1,6 @@
-# Brocade vTM ( Virtual Traffic Manager ) module for Puppet
+# Pulse Secure vTM ( Virtual Traffic Manager ) module for Puppet
 
-This is a puppet module for configuring the Brocade vTM - formerly:
+This is a puppet module for configuring the Pulse Secure vTM - formerly:
 	
 	Zeus Load Balancer
 	Zeus eXtensible Traffic Manager (ZXTM)
@@ -9,15 +9,18 @@ This is a puppet module for configuring the Brocade vTM - formerly:
 	Riverbed Stingray
 	Riverbed SteelApp
 
+    Brocade vTM
+
 #### IMPORTANT - Puppet Version Notice
 Puppet changed the way escapes were handled in single quoted strings from puppet version 4.
 
  * See: [Puppet Document 586](tickets.puppetlabs.com/browse/DOCUMENT-586)
 
-Version 1.x of this module includes manifests which support puppet 3.x. 
+Version 1.x of this module includes manifests which support puppet 3.x.
+
 Version 2.x should be used if you are using puppet 4.x or above.
 
-##### Using genManifests and genNodeConfig
+**_Using genManifests and genNodeConfig_**
 
 If you generate your own manifests, then there is a flag @PUP4X in `lib/brocade/puppetmanifest`
 which controls the manifest format. The flag will be true in 2.x modules and false in 1.x modules.
@@ -34,10 +37,11 @@ However if you want access to all features of your current vTM, then use the lat
 | vTM Version | REST API | Puppet 3.x Version | Puppet 4+ Version
 | ------ | ------ | ------ | ------ |
 | 9.9 | 3.3 | 1.33.x | - |
-| 10.4 | 3.8 | 1.38.x | - |
+| 10.4 (LTS) | 3.8 | 1.38.x | - |
 | 17.1 | 3.11 | 1.311.x | - |
-| 17.2 | 4.0 | 1.400.x | 2.400.x |
+| 17.2 (LTS) | 4.0 | 1.400.x | 2.400.x |
 | 17.3 | 5.0 | 1.500.x | 2.500.x |
+| 17.4 | 5.1 | 1.501.x | 2.501.x |
 
 See notes on Module versioning below....
 
@@ -57,7 +61,7 @@ vTM depending where it is running... Including:
 Once you have your vTM stood up. This module can help you manage the
 configuration of that vTM instance.
 
-## Where can I get Brocade vTM?
+## Where can I get Pulse Secure vTM?
 
 You could try one of these locations:
 
