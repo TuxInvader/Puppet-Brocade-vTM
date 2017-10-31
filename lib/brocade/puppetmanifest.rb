@@ -42,7 +42,7 @@ module BrocadeREST
 			# Built in objects should be classes, while types should get defines.
 			# There is only one Ping monitor, but theyre are lots of monitors
 			if isClass
-				desc = "# === Class: brocadevtm::#{@type_}\n"
+				desc = "# === class: brocadevtm::#{@type_}\n"
 				code = "class brocadevtm::#{@type_} (\n"
 				@maxKeyLength >= 6 ? sp = " " * ( @maxKeyLength - 6 ) : sp = " "
 				code += "  \$ensure#{sp} = present,\n"
@@ -95,7 +95,7 @@ module BrocadeREST
 				code += "  vtmrest { \"#{@type}/\${name}\":\n"
 			end
 			code += "    ensure   => $ensure,\n"
-			code += "    before   => Class[Brocadevtm::Purge],\n"
+			code += "    before   => Class[brocadevtm::purge],\n"
 			code += "    endpoint => \"https://\${ip}:\${port}/api/tm/#{@restVersion}/config/active\",\n"
 			code += "    username => $user,\n"
 			code += "    password => $pass,\n"
@@ -315,12 +315,13 @@ module BrocadeREST
 											nodefile.close()
 										end  
 									end
-									requires += " Class[Brocadevtm::#{ro_}_#{item_}], "
+									ro_[0] = ro_[0].downcase
+									requires += " Class[brocadevtm::#{ro_}_#{item_}], "
 								else
 									escaped = item.gsub(' ', '%20')
-                  if reqObject == "Rules"
-                    escaped = escaped.gsub(/^\/{0,1}(.*?)\*{0,1}$/,"\\1")
-                  end
+									if reqObject == "Rules"
+										escaped = escaped.gsub(/^\/{0,1}(.*?)\*{0,1}$/,"\\1")
+									end
 									requires += " Brocadevtm::#{reqObject}['#{escaped}'], "
 								end
 							end
@@ -331,9 +332,9 @@ module BrocadeREST
 						end
 						if req.empty? or ( (!req.empty?) and (!req.include?(@params[reqVar])) )
 							escaped = @params[reqVar].gsub(' ', '%20')
-              if reqObject == "Rules"
-                escaped = escaped.gsub(/^\/{0,1}(.*?)\*{0,1}$/,"\\1")
-              end
+							if reqObject == "Rules"
+								escaped = escaped.gsub(/^\/{0,1}(.*?)\*{0,1}$/,"\\1")
+							end
 							requires += " Brocadevtm::#{reqObject}['#{escaped}'], "
 						end
 					end
