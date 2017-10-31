@@ -12,7 +12,7 @@ module BrocadeREST
 
 		def initialize(type, uri, restVersion, object, root="properties", traverseArray=false)
 			super(type,uri,restVersion,object,root,traverseArray)
-			@PUP4X = false;
+			@PUP4X = true;
 		end
 
 		# Generate the manifest. 

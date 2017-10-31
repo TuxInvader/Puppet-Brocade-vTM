@@ -30,9 +30,9 @@ class brocadevtm::monitors_smtp (
   $sip__body_regex       = undef,
   $sip__status_regex     = '^[234][0-9][0-9]$',
   $sip__transport        = 'udp',
-  $tcp__close_string     = 'QUIT\\r\\n',
+  $tcp__close_string     = 'QUIT\\\\r\\\\n',
   $tcp__max_response_len = 2048,
-  $tcp__response_regex   = '^220 [^\\n]+\\n',
+  $tcp__response_regex   = '^220 [^\\\\n]+\\\\n',
   $tcp__write_string     = undef,
   $udp__accept_all       = false,
 ){
