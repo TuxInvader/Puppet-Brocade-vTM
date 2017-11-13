@@ -28,7 +28,7 @@ class brocadevtm::purge {
       content  => $purge_state_dir,
       type     => 'purge',
       internal => 'none',
-      debug    => 0,
+      debug    => $brocadevtm::debug,
     }
 
   }

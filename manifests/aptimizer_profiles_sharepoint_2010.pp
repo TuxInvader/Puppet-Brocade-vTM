@@ -30,7 +30,7 @@ class brocadevtm::aptimizer_profiles_sharepoint_2010 (
     type     => 'application/json',
     internal => 'aptimizer_profiles_sharepoint_2010',
     failfast => $brocadevtm::failfast,
-    debug    => 0,
+    debug    => $brocadevtm::debug,
   }
 
   if ( $purge ) {

@@ -33,7 +33,7 @@ class brocadevtm::log_export_system___syslog (
     type     => 'application/json',
     internal => 'log_export_system___syslog',
     failfast => $brocadevtm::failfast,
-    debug    => 0,
+    debug    => $brocadevtm::debug,
   }
 
   if ( $purge ) {

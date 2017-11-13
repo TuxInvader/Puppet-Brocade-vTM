@@ -57,7 +57,7 @@ define brocadevtm::bandwidth (
     type     => 'application/json',
     internal => 'bandwidth',
     failfast => $brocadevtm::failfast,
-    debug    => 0,
+    debug    => $brocadevtm::debug,
   }
 
   if ( $purge ) {

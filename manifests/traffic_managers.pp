@@ -612,7 +612,7 @@ define brocadevtm::traffic_managers (
     type     => 'application/json',
     internal => 'traffic_managers',
     failfast => $brocadevtm::failfast,
-    debug    => 0,
+    debug    => $brocadevtm::debug,
   }
 
   if ( $purge ) {

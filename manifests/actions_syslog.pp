@@ -49,7 +49,7 @@ class brocadevtm::actions_syslog (
     type     => 'application/json',
     internal => 'actions_syslog',
     failfast => $brocadevtm::failfast,
-    debug    => 0,
+    debug    => $brocadevtm::debug,
   }
 
   if ( $purge ) {

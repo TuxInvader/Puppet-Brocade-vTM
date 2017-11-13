@@ -113,7 +113,7 @@ module BrocadeREST
 				code += "    internal => '#{@type_}',\n"
 				code += "    failfast => $brocadevtm::failfast,\n"
 			end
-			code += "    debug    => 0,\n"
+			code += "    debug    => $brocadevtm::debug,\n"
 			code += "  }\n\n"
 
 			# Now the purge section. figure out where this manifest should store it's name if purge

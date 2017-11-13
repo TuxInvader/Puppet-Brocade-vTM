@@ -52,7 +52,7 @@ define brocadevtm::dns_server_zones (
     type     => 'application/json',
     internal => 'dns_server_zones',
     failfast => $brocadevtm::failfast,
-    debug    => 0,
+    debug    => $brocadevtm::debug,
   }
 
   if ( $purge ) {

@@ -83,7 +83,7 @@ define brocadevtm::persistence (
     type     => 'application/json',
     internal => 'persistence',
     failfast => $brocadevtm::failfast,
-    debug    => 0,
+    debug    => $brocadevtm::debug,
   }
 
   if ( $purge ) {

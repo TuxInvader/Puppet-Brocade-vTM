@@ -58,7 +58,7 @@ class brocadevtm::event_types_service_failed (
     type     => 'application/json',
     internal => 'event_types_service_failed',
     failfast => $brocadevtm::failfast,
-    debug    => 0,
+    debug    => $brocadevtm::debug,
   }
 
   if ( $purge ) {

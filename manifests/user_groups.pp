@@ -79,7 +79,7 @@ define brocadevtm::user_groups (
     type     => 'application/json',
     internal => 'user_groups',
     failfast => $brocadevtm::failfast,
-    debug    => 0,
+    debug    => $brocadevtm::debug,
   }
 
   if ( $purge ) {

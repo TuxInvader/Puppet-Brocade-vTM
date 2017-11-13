@@ -55,7 +55,7 @@ class brocadevtm::monitors_simple_http (
     type     => 'application/json',
     internal => 'monitors_simple_http',
     failfast => $brocadevtm::failfast,
-    debug    => 0,
+    debug    => $brocadevtm::debug,
   }
 
   if ( $purge ) {

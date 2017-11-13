@@ -58,7 +58,7 @@ class brocadevtm::event_types_infrastructure_problem (
     type     => 'application/json',
     internal => 'event_types_infrastructure_problem',
     failfast => $brocadevtm::failfast,
-    debug    => 0,
+    debug    => $brocadevtm::debug,
   }
 
   if ( $purge ) {

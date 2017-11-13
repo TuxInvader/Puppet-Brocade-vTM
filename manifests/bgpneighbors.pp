@@ -81,7 +81,7 @@ define brocadevtm::bgpneighbors (
     type     => 'application/json',
     internal => 'bgpneighbors',
     failfast => $brocadevtm::failfast,
-    debug    => 0,
+    debug    => $brocadevtm::debug,
   }
 
   if ( $purge ) {

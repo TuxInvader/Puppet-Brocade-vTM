@@ -157,7 +157,7 @@ define brocadevtm::actions (
     type     => 'application/json',
     internal => 'actions',
     failfast => $brocadevtm::failfast,
-    debug    => 0,
+    debug    => $brocadevtm::debug,
   }
 
   if ( $purge ) {

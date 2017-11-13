@@ -55,7 +55,7 @@ class brocadevtm::monitors_ftp (
     type     => 'application/json',
     internal => 'monitors_ftp',
     failfast => $brocadevtm::failfast,
-    debug    => 0,
+    debug    => $brocadevtm::debug,
   }
 
   if ( $purge ) {

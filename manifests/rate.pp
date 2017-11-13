@@ -59,7 +59,7 @@ define brocadevtm::rate (
     type     => 'application/json',
     internal => 'rate',
     failfast => $brocadevtm::failfast,
-    debug    => 0,
+    debug    => $brocadevtm::debug,
   }
 
   if ( $purge ) {

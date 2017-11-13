@@ -30,7 +30,7 @@ class brocadevtm::aptimizer_profiles_sharepoint_2013_custom_website (
     type     => 'application/json',
     internal => 'aptimizer_profiles_sharepoint_2013_custom_website',
     failfast => $brocadevtm::failfast,
-    debug    => 0,
+    debug    => $brocadevtm::debug,
   }
 
   if ( $purge ) {

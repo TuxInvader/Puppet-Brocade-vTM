@@ -47,7 +47,7 @@ class brocadevtm::application_firewall (
     type     => 'application/json',
     internal => 'application_firewall',
     failfast => $brocadevtm::failfast,
-    debug    => 0,
+    debug    => $brocadevtm::debug,
   }
 
   if ( $purge ) {

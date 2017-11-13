@@ -58,7 +58,7 @@ class brocadevtm::event_types_glb_services (
     type     => 'application/json',
     internal => 'event_types_glb_services',
     failfast => $brocadevtm::failfast,
-    debug    => 0,
+    debug    => $brocadevtm::debug,
   }
 
   if ( $purge ) {

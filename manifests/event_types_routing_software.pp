@@ -58,7 +58,7 @@ class brocadevtm::event_types_routing_software (
     type     => 'application/json',
     internal => 'event_types_routing_software',
     failfast => $brocadevtm::failfast,
-    debug    => 0,
+    debug    => $brocadevtm::debug,
   }
 
   if ( $purge ) {

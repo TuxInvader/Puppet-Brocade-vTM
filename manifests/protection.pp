@@ -174,7 +174,7 @@ define brocadevtm::protection (
     type     => 'application/json',
     internal => 'protection',
     failfast => $brocadevtm::failfast,
-    debug    => 0,
+    debug    => $brocadevtm::debug,
   }
 
   if ( $purge ) {

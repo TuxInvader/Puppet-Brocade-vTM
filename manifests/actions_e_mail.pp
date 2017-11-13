@@ -49,7 +49,7 @@ class brocadevtm::actions_e_mail (
     type     => 'application/json',
     internal => 'actions_e_mail',
     failfast => $brocadevtm::failfast,
-    debug    => 0,
+    debug    => $brocadevtm::debug,
   }
 
   if ( $purge ) {

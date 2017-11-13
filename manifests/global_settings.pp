@@ -1646,7 +1646,7 @@ class brocadevtm::global_settings (
     type     => 'application/json',
     internal => 'global_settings',
     failfast => $brocadevtm::failfast,
-    debug    => 0,
+    debug    => $brocadevtm::debug,
   }
 
   if ( $purge ) {

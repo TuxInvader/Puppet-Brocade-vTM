@@ -33,7 +33,7 @@ class brocadevtm::log_export_event_log (
     type     => 'application/json',
     internal => 'log_export_event_log',
     failfast => $brocadevtm::failfast,
-    debug    => 0,
+    debug    => $brocadevtm::debug,
   }
 
   if ( $purge ) {

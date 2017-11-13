@@ -42,7 +42,7 @@ define brocadevtm::ssl_cas (
     password => $pass,
     content  => $content,
     type     => 'application/octet-stream',
-    debug    => 0,
+    debug    => $brocadevtm::debug,
   }
 
   if ( $purge ) {

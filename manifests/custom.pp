@@ -51,7 +51,7 @@ define brocadevtm::custom (
     type     => 'application/json',
     internal => 'custom',
     failfast => $brocadevtm::failfast,
-    debug    => 0,
+    debug    => $brocadevtm::debug,
   }
 
   if ( $purge ) {

@@ -55,7 +55,7 @@ class brocadevtm::monitors_full_https (
     type     => 'application/json',
     internal => 'monitors_full_https',
     failfast => $brocadevtm::failfast,
-    debug    => 0,
+    debug    => $brocadevtm::debug,
   }
 
   if ( $purge ) {

@@ -63,7 +63,7 @@ define brocadevtm::ssl_client_keys (
     type     => 'application/json',
     internal => 'ssl_client_keys',
     failfast => $brocadevtm::failfast,
-    debug    => 0,
+    debug    => $brocadevtm::debug,
   }
 
   if ( $purge ) {

@@ -30,7 +30,7 @@ class brocadevtm::aptimizer_profiles_advanced (
     type     => 'application/json',
     internal => 'aptimizer_profiles_advanced',
     failfast => $brocadevtm::failfast,
-    debug    => 0,
+    debug    => $brocadevtm::debug,
   }
 
   if ( $purge ) {

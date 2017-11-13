@@ -58,7 +58,7 @@ class brocadevtm::event_types_connection_failures (
     type     => 'application/json',
     internal => 'event_types_connection_failures',
     failfast => $brocadevtm::failfast,
-    debug    => 0,
+    debug    => $brocadevtm::debug,
   }
 
   if ( $purge ) {

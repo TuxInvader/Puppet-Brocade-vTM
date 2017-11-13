@@ -58,7 +58,7 @@ class brocadevtm::event_types_audit_events (
     type     => 'application/json',
     internal => 'event_types_audit_events',
     failfast => $brocadevtm::failfast,
-    debug    => 0,
+    debug    => $brocadevtm::debug,
   }
 
   if ( $purge ) {

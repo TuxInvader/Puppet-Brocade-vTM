@@ -55,7 +55,7 @@ class brocadevtm::monitors_connect (
     type     => 'application/json',
     internal => 'monitors_connect',
     failfast => $brocadevtm::failfast,
-    debug    => 0,
+    debug    => $brocadevtm::debug,
   }
 
   if ( $purge ) {

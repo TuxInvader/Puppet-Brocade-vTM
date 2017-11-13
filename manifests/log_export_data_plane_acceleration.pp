@@ -33,7 +33,7 @@ class brocadevtm::log_export_data_plane_acceleration (
     type     => 'application/json',
     internal => 'log_export_data_plane_acceleration',
     failfast => $brocadevtm::failfast,
-    debug    => 0,
+    debug    => $brocadevtm::debug,
   }
 
   if ( $purge ) {

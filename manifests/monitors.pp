@@ -198,7 +198,7 @@ define brocadevtm::monitors (
     type     => 'application/json',
     internal => 'monitors',
     failfast => $brocadevtm::failfast,
-    debug    => 0,
+    debug    => $brocadevtm::debug,
   }
 
   if ( $purge ) {

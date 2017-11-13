@@ -88,7 +88,7 @@ class brocadevtm::appliance_nat (
     type     => 'application/json',
     internal => 'appliance_nat',
     failfast => $brocadevtm::failfast,
-    debug    => 0,
+    debug    => $brocadevtm::debug,
   }
 
   if ( $purge ) {

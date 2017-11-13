@@ -75,7 +75,7 @@ define brocadevtm::cloud_api_credentials (
     type     => 'application/json',
     internal => 'cloud_api_credentials',
     failfast => $brocadevtm::failfast,
-    debug    => 0,
+    debug    => $brocadevtm::debug,
   }
 
   if ( $purge ) {

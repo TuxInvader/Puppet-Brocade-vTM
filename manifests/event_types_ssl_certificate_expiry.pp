@@ -58,7 +58,7 @@ class brocadevtm::event_types_ssl_certificate_expiry (
     type     => 'application/json',
     internal => 'event_types_ssl_certificate_expiry',
     failfast => $brocadevtm::failfast,
-    debug    => 0,
+    debug    => $brocadevtm::debug,
   }
 
   if ( $purge ) {

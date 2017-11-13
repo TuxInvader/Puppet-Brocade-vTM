@@ -30,7 +30,7 @@ class brocadevtm::user_groups_admin (
     type     => 'application/json',
     internal => 'user_groups_admin',
     failfast => $brocadevtm::failfast,
-    debug    => 0,
+    debug    => $brocadevtm::debug,
   }
 
   if ( $purge ) {

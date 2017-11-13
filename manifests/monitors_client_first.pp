@@ -55,7 +55,7 @@ class brocadevtm::monitors_client_first (
     type     => 'application/json',
     internal => 'monitors_client_first',
     failfast => $brocadevtm::failfast,
-    debug    => 0,
+    debug    => $brocadevtm::debug,
   }
 
   if ( $purge ) {

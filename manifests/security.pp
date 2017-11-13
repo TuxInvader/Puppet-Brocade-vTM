@@ -88,7 +88,7 @@ class brocadevtm::security (
     type     => 'application/json',
     internal => 'security',
     failfast => $brocadevtm::failfast,
-    debug    => 0,
+    debug    => $brocadevtm::debug,
   }
 
   if ( $purge ) {

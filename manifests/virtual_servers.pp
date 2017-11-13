@@ -1054,7 +1054,7 @@ define brocadevtm::virtual_servers (
     type     => 'application/json',
     internal => 'virtual_servers',
     failfast => $brocadevtm::failfast,
-    debug    => 0,
+    debug    => $brocadevtm::debug,
   }
 
   if ( $purge ) {

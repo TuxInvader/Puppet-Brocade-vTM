@@ -152,7 +152,7 @@ define brocadevtm::traffic_ip_groups (
     type     => 'application/json',
     internal => 'traffic_ip_groups',
     failfast => $brocadevtm::failfast,
-    debug    => 0,
+    debug    => $brocadevtm::debug,
   }
 
   if ( $purge ) {

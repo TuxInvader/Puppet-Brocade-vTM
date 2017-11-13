@@ -66,7 +66,7 @@ define brocadevtm::locations (
     type     => 'application/json',
     internal => 'locations',
     failfast => $brocadevtm::failfast,
-    debug    => 0,
+    debug    => $brocadevtm::debug,
   }
 
   if ( $purge ) {

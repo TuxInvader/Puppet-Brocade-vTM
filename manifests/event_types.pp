@@ -236,7 +236,7 @@ define brocadevtm::event_types (
     type     => 'application/json',
     internal => 'event_types',
     failfast => $brocadevtm::failfast,
-    debug    => 0,
+    debug    => $brocadevtm::debug,
   }
 
   if ( $purge ) {

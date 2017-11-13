@@ -212,7 +212,7 @@ define brocadevtm::user_authenticators (
     type     => 'application/json',
     internal => 'user_authenticators',
     failfast => $brocadevtm::failfast,
-    debug    => 0,
+    debug    => $brocadevtm::debug,
   }
 
   if ( $purge ) {

@@ -96,7 +96,7 @@ define brocadevtm::rule_authenticators (
     type     => 'application/json',
     internal => 'rule_authenticators',
     failfast => $brocadevtm::failfast,
-    debug    => 0,
+    debug    => $brocadevtm::debug,
   }
 
   if ( $purge ) {

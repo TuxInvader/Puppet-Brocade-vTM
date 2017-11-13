@@ -58,7 +58,7 @@ class brocadevtm::event_types_trafficscript_error (
     type     => 'application/json',
     internal => 'event_types_trafficscript_error',
     failfast => $brocadevtm::failfast,
-    debug    => 0,
+    debug    => $brocadevtm::debug,
   }
 
   if ( $purge ) {

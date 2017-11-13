@@ -55,7 +55,7 @@ class brocadevtm::monitors_sip_tls (
     type     => 'application/json',
     internal => 'monitors_sip_tls',
     failfast => $brocadevtm::failfast,
-    debug    => 0,
+    debug    => $brocadevtm::debug,
   }
 
   if ( $purge ) {

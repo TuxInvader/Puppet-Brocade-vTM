@@ -55,7 +55,7 @@ class brocadevtm::monitors_rtsp (
     type     => 'application/json',
     internal => 'monitors_rtsp',
     failfast => $brocadevtm::failfast,
-    debug    => 0,
+    debug    => $brocadevtm::debug,
   }
 
   if ( $purge ) {

@@ -42,7 +42,7 @@ define brocadevtm::extra_files (
     password => $pass,
     content  => $content,
     type     => 'application/octet-stream',
-    debug    => 0,
+    debug    => $brocadevtm::debug,
   }
 
   if ( $purge ) {

@@ -42,7 +42,7 @@ define brocadevtm::kerberos_krb5confs (
     password => $pass,
     content  => $content,
     type     => 'application/octet-stream',
-    debug    => 0,
+    debug    => $brocadevtm::debug,
   }
 
   if ( $purge ) {

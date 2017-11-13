@@ -69,7 +69,7 @@ define brocadevtm::aptimizer_profiles (
     type     => 'application/json',
     internal => 'aptimizer_profiles',
     failfast => $brocadevtm::failfast,
-    debug    => 0,
+    debug    => $brocadevtm::debug,
   }
 
   if ( $purge ) {

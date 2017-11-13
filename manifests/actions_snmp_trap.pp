@@ -49,7 +49,7 @@ class brocadevtm::actions_snmp_trap (
     type     => 'application/json',
     internal => 'actions_snmp_trap',
     failfast => $brocadevtm::failfast,
-    debug    => 0,
+    debug    => $brocadevtm::debug,
   }
 
   if ( $purge ) {

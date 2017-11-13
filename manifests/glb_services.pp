@@ -160,7 +160,7 @@ define brocadevtm::glb_services (
     type     => 'application/json',
     internal => 'glb_services',
     failfast => $brocadevtm::failfast,
-    debug    => 0,
+    debug    => $brocadevtm::debug,
   }
 
   if ( $purge ) {

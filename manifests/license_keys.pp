@@ -46,7 +46,7 @@ define brocadevtm::license_keys (
     password => $pass,
     content  => $content,
     type     => 'application/octet-stream',
-    debug    => 0,
+    debug    => $brocadevtm::debug,
   }
 
   if ( $purge ) {

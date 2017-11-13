@@ -91,7 +91,7 @@ define brocadevtm::log_export (
     type     => 'application/json',
     internal => 'log_export',
     failfast => $brocadevtm::failfast,
-    debug    => 0,
+    debug    => $brocadevtm::debug,
   }
 
   if ( $purge ) {

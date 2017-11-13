@@ -21,7 +21,7 @@ class brocadevtm::rules_application_firewall_enforcer (
     password => $pass,
     content  => $content,
     type     => 'application/octet-stream',
-    debug    => 0,
+    debug    => $brocadevtm::debug,
   }
 
   if ( $purge ) {

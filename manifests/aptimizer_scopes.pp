@@ -58,7 +58,7 @@ define brocadevtm::aptimizer_scopes (
     type     => 'application/json',
     internal => 'aptimizer_scopes',
     failfast => $brocadevtm::failfast,
-    debug    => 0,
+    debug    => $brocadevtm::debug,
   }
 
   if ( $purge ) {

@@ -499,7 +499,7 @@ define brocadevtm::pools (
     type     => 'application/json',
     internal => 'pools',
     failfast => $brocadevtm::failfast,
-    debug    => 0,
+    debug    => $brocadevtm::debug,
   }
 
   if ( $purge ) {

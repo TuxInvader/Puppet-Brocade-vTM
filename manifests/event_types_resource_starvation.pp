@@ -58,7 +58,7 @@ class brocadevtm::event_types_resource_starvation (
     type     => 'application/json',
     internal => 'event_types_resource_starvation',
     failfast => $brocadevtm::failfast,
-    debug    => 0,
+    debug    => $brocadevtm::debug,
   }
 
   if ( $purge ) {

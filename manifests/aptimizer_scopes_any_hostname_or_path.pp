@@ -29,7 +29,7 @@ class brocadevtm::aptimizer_scopes_any_hostname_or_path (
     type     => 'application/json',
     internal => 'aptimizer_scopes_any_hostname_or_path',
     failfast => $brocadevtm::failfast,
-    debug    => 0,
+    debug    => $brocadevtm::debug,
   }
 
   if ( $purge ) {

@@ -72,7 +72,7 @@ define brocadevtm::kerberos_principals (
     type     => 'application/json',
     internal => 'kerberos_principals',
     failfast => $brocadevtm::failfast,
-    debug    => 0,
+    debug    => $brocadevtm::debug,
   }
 
   if ( $purge ) {

@@ -55,7 +55,7 @@ class brocadevtm::monitors_sip_udp (
     type     => 'application/json',
     internal => 'monitors_sip_udp',
     failfast => $brocadevtm::failfast,
-    debug    => 0,
+    debug    => $brocadevtm::debug,
   }
 
   if ( $purge ) {

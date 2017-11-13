@@ -27,6 +27,9 @@
 # attributes before reporting the error? Defaults to true (fail fast).
 # Set this to false if you want to log all differences between the object and the manifest.
 #
+# [*debug*]
+# Debug level 0 to 5
+#
 # === Examples
 #
 #  class { 'brocadevtm':
@@ -45,6 +48,7 @@ class brocadevtm (
   $rest_port       = '9070',
   $purge           = false,
   $failfast        = true,
+  $debug           = 0,
 ) {
 
   if ( $rest_user == undef ) {

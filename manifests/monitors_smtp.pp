@@ -55,7 +55,7 @@ class brocadevtm::monitors_smtp (
     type     => 'application/json',
     internal => 'monitors_smtp',
     failfast => $brocadevtm::failfast,
-    debug    => 0,
+    debug    => $brocadevtm::debug,
   }
 
   if ( $purge ) {

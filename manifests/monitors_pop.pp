@@ -55,7 +55,7 @@ class brocadevtm::monitors_pop (
     type     => 'application/json',
     internal => 'monitors_pop',
     failfast => $brocadevtm::failfast,
-    debug    => 0,
+    debug    => $brocadevtm::debug,
   }
 
   if ( $purge ) {

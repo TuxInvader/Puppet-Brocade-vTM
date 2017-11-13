@@ -63,7 +63,7 @@ define brocadevtm::service_level_monitors (
     type     => 'application/json',
     internal => 'service_level_monitors',
     failfast => $brocadevtm::failfast,
-    debug    => 0,
+    debug    => $brocadevtm::debug,
   }
 
   if ( $purge ) {
