@@ -6,12 +6,6 @@
 #
 # === Parameters
 #
-# [*basic__backend_traffic_ips*]
-# IP addresses associated with the Traffic IP group that can be used for
-# communication with back-end servers.
-# Type:array
-# Properties:
-#
 # [*basic__enabled*]
 # If set to "No", the traffic IP group will be disabled and none of the
 # traffic IP addresses will be raised.
@@ -114,7 +108,6 @@
 #
 define brocadevtm::traffic_ip_groups (
   $ensure,
-  $basic__backend_traffic_ips              = '[]',
   $basic__enabled                          = true,
   $basic__hash_source_port                 = false,
   $basic__ip_assignment_mode               = 'balanced',
@@ -145,7 +138,7 @@ define brocadevtm::traffic_ip_groups (
   vtmrest { "traffic_ip_groups/${name}":
     ensure   => $ensure,
     before   => Class[brocadevtm::purge],
-    endpoint => "https://${ip}:${port}/api/tm/4.0/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/6.0/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/traffic_ip_groups.erb'),

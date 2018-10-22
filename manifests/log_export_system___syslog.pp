@@ -11,7 +11,7 @@ class brocadevtm::log_export_system___syslog (
   $basic__files          = '["/var/log/syslog*"]',
   $basic__history        = 'none',
   $basic__history_period = 10,
-  $basic__metadata       = '[{"name":"sourcetype","value":"syslog"},{"name":"source","value":"syslog"}]',
+  $basic__metadata       = '[{"name":"source","value":"syslog"},{"name":"sourcetype","value":"syslog"}]',
   $basic__note           = 'The operating system\'s syslog.',
 ){
   include brocadevtm
@@ -26,7 +26,7 @@ class brocadevtm::log_export_system___syslog (
   vtmrest { 'log_export/System%20-%20syslog':
     ensure   => $ensure,
     before   => Class[brocadevtm::purge],
-    endpoint => "https://${ip}:${port}/api/tm/4.0/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/6.0/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/log_export.erb'),

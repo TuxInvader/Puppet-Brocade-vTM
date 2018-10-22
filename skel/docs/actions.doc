@@ -22,6 +22,9 @@
 # [*basic__verbose*]
 # Enable or disable verbose logging for this action.
 #
+# [*email__from*]
+# The e-mail address from which messages will appear to originate.
+#
 # [*email__server*]
 # The SMTP server to which messages should be sent. This must be a valid IPv4
 # address or resolvable hostname (with optional port).
@@ -35,9 +38,6 @@
 # The full path of the file to log to. The text "%zeushome%" will be replaced
 # with the location where the software is installed.
 #
-# [*log__from*]
-# The e-mail address from which messages will appear to originate.
-#
 # [*program__arguments*]
 # A table containing arguments and argument values to be passed to the event
 # handling program.
@@ -47,7 +47,7 @@
 # "value"=>{"description"=>"The value of the argument to be passed to the
 # event handling program.", "type"=>"string"},
 # "description"=>{"description"=>"A description for the argument provided to
-# the program.", "type"=>"string"}}
+# the program.", "type"=>"string", "default"=>""}}
 #
 # [*program__program*]
 # The program to run.

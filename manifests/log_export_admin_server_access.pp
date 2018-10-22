@@ -11,7 +11,7 @@ class brocadevtm::log_export_admin_server_access (
   $basic__files          = '["%ZEUSHOME%/admin/log/access*"]',
   $basic__history        = 'none',
   $basic__history_period = 10,
-  $basic__metadata       = '[{"name":"sourcetype","value":"access_combined"},{"name":"source","value":"adminaccesslog"}]',
+  $basic__metadata       = '[{"name":"source","value":"adminaccesslog"},{"name":"sourcetype","value":"access_combined"}]',
   $basic__note           = 'The Administration Server access log.',
 ){
   include brocadevtm
@@ -26,7 +26,7 @@ class brocadevtm::log_export_admin_server_access (
   vtmrest { 'log_export/Admin%20Server%20Access':
     ensure   => $ensure,
     before   => Class[brocadevtm::purge],
-    endpoint => "https://${ip}:${port}/api/tm/4.0/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/6.0/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/log_export.erb'),

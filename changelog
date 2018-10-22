@@ -5,6 +5,71 @@ See: https://github.com/TuxInvader/Puppet-Brocade-vTM/issues/9
 
 You can still generate manifests for the old 3.x format by changing @PUP4X to false.
 
+# Versions 1.600.x and 2.600.x
+
+DPA mode has been removed from vTM release 18.2
+VTM-38377 Removed dns_port.pl monitor, which was not used by any built-in health monitors. The functionality it provided (monitor dns servers on non-standard ports) is now available in dns.pl.
+
+- Global Settings
+ - All parameters relating to Data Plane Acceleration removed
+- DPA Log export manifest removed
+- Pools
+ - DPA option (l4accel_snat) removed
+- Traffic IP Groups
+ - basic__backend_traffic_ips removed
+- Traffic Managers
+ - appliance__managedpa setting removed
+ - appliance__dnscache and appliance__dnssec options added
+- Virtual Servers
+ - DPA mode parameters removed
+ - udp__udp_end_transaction parameter removed
+
+# Versions 1.502.x and 2.502.x
+
+REST Schemas now include default values, and those properties now appear in the manifest files also.
+
+- Service Discovery support added with two builtin plugins (GCE and DNS)
+- Session Ticket REST configuration support
+- SAML Trusted IPs support
+- Firewall enforcer rule updated
+- actions log__from parameter renamed to email__from
+- global settings
+ - admin__support_tls11 renamed admin__support_tls1_1
+ - admin__support_tls12 renamed admin__support_tls1_2
+ - admin__support_ssl2 parameter removed
+ - ncipher management parameters removed
+ - SAML Auth keys added to manifest
+ - EC2 Metadata and Query server parameters added
+ - ospfv2__router_dead_interval renamed ospfv2__dead_interval
+ - SSL Session Tickets parameters added
+ - ssl__ssl3_* parameters renamed
+ - ssl__client_cache_* parameters added
+ - telemetry parameter added
+- Pools
+ - Service Discovery parameters added
+ - ssl__ssl_* parameters renamed
+ - Session Cache, and Session ticket parameters added
+- Protection class
+ - keys renamed
+ - per-core/process option added
+- Traffic Manager
+ - parameter to disable KPTI added
+ - Riverbed SteelHead parameters removed
+ - Appliance options to manage services and reserved ports added
+- User Permissions
+ - A number of new permissions added for Groups.
+- Virtual Servers
+ - Protocol specific functions moved out of basic section:
+  - X-Forward and X-Cluster params moved from basic_ to http_
+  - basic__ftp_* moved to ftp__
+  - TCP/UDP parameters moved to tcp__ / udp__
+ - basic__completiontrules renamed basic__completion_rules
+ - ssl__ssl_* options renamed
+ - Auth SAML and Session options added
+ - Session Tickets/Cache options added
+ - ssl__ssl_* options renamed
+
+
 # Version 1.38.2 and 1.39.1
 
 Fix support for disabled, and run-every rules in virtual servers

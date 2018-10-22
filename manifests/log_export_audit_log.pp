@@ -11,7 +11,7 @@ class brocadevtm::log_export_audit_log (
   $basic__files          = '["%ZEUSHOME%/zxtm/log/audit*"]',
   $basic__history        = 'none',
   $basic__history_period = 10,
-  $basic__metadata       = '[{"name":"sourcetype","value":"zxtm_audit_log"},{"name":"source","value":"auditlog"}]',
+  $basic__metadata       = '[{"name":"source","value":"auditlog"},{"name":"sourcetype","value":"zxtm_audit_log"}]',
   $basic__note           = 'The traffic manager audit log.',
 ){
   include brocadevtm
@@ -26,7 +26,7 @@ class brocadevtm::log_export_audit_log (
   vtmrest { 'log_export/Audit%20Log':
     ensure   => $ensure,
     before   => Class[brocadevtm::purge],
-    endpoint => "https://${ip}:${port}/api/tm/4.0/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/6.0/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/log_export.erb'),

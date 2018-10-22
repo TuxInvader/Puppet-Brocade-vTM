@@ -42,7 +42,7 @@
 # specified.
 #
 # [*basic__note*]
-# A description of the montitor.
+# A description of the monitor.
 #
 # [*basic__scope*]
 # A monitor can either monitor each node in the pool separately and disable an
@@ -99,7 +99,7 @@
 # to the monitor program.", "type"=>"string"}, "value"=>{"description"=>"The
 # value of the argument to be passed to the monitor program.",
 # "type"=>"string"}, "description"=>{"description"=>"A description for the
-# argument provided to the program.", "type"=>"string"}}
+# argument provided to the program.", "type"=>"string", "default"=>""}}
 #
 # [*script__program*]
 # The program to run.  This must be an executable file, either within the
@@ -191,7 +191,7 @@ define brocadevtm::monitors (
   vtmrest { "monitors/${name}":
     ensure   => $ensure,
     before   => Class[brocadevtm::purge],
-    endpoint => "https://${ip}:${port}/api/tm/4.0/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/6.0/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/monitors.erb'),

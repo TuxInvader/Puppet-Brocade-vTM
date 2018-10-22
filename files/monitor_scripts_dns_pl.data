@@ -15,24 +15,30 @@ BEGIN { unshift @INC, "$ENV{ZEUSHOME}/zxtm/lib/perl",
                       "$ENV{ZEUSHOME}/zxtmadmin/lib/perl"; }
 
 use Zeus::ZXTM::Monitor qw( ParseArguments MonitorWorked MonitorFailed Log );
-
+use strict;
 
 # Process the arguments
 my %args = ParseArguments();
-
-if( ($args{port}||0) != 53 ) {
-   MonitorFailed( "This monitor can only check dns servers ".
-                  "running on the standard port (53)" );
-}
 
 if( ! $args{request_host} ) {
    MonitorFailed( "No 'request_host' to lookup specified" );
 }
 
-my $cmd = "$ENV{ZEUSHOME}/zxtm/bin/dnslookup --all --server $args{ipaddr} $args{request_host}";
+my $type = 'A_AAAA';
+if( $args{response_addr} ) {
+   # if a specific address is required, only ask for that address type
+   if( $args{response_addr} =~ /:/ ) {
+      $type = 'AAAA';
+   } else {
+      $type = 'A';
+   }
+}
+
+my $cmd = "$ENV{ZEUSHOME}/zxtm/bin/dnslookup --all --server $args{ipaddr} " .
+          "--port $args{port} --type $type $args{request_host}";
 Log( "Running $cmd" );
 
-# Now run the nslookup program
+# Now run the dnslookup program
 open( PROG, "$cmd  2>&1 |" );
 my $response = '';
 while (<PROG>) {
@@ -40,7 +46,7 @@ while (<PROG>) {
 }
 
 if( ! close PROG ) {
-   MonitorFailed( "DNS Lookup failed" ) if $?;
+   MonitorFailed( "DNS Lookup failed $response" ) if $?;
    MonitorFailed( "$!" )      if $!;
    MonitorFailed( "Unknown error" );
 }

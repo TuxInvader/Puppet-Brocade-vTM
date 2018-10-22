@@ -1,15 +1,33 @@
 {
   "name": "tuxinvader-brocadevtm",
-  "version": "2.400.2",
-  "author": "mbodding @ brocade",
+  "version": "2.600.1",
+  "author": "mbodding @ Pulse Secure",
   "summary": "Configure and Manage Brocade vTM Application Delivery Controllers",
   "license": "MIT",
   "source": "https://github.com/TuxInvader/Puppet-Brocade-vTM",
   "project_page": "https://github.com/TuxInvader/Puppet-Brocade-vTM",
   "issues_url": "https://github.com/TuxInvader/Puppet-Brocade-vTM/issues",
-  "tags": ["vtm", "vadc", "steelapp", "stingray", "zxtm", "brocade", "zeus", "riverbed",
-           "adc", "loadbalancer", "load balancer"],
-    "operatingsystem_support": [
+  "dependencies": [
+    {
+      "name": "puppetlabs/stdlib",
+      "version_requirement": ">=3.2.0 <5.0.0"
+    }
+  ],
+  "data_provider": null,
+  "tags": [
+    "vtm",
+    "vadc",
+    "steelapp",
+    "stingray",
+    "zxtm",
+    "brocade",
+    "zeus",
+    "riverbed",
+    "adc",
+    "loadbalancer",
+    "load balancer"
+  ],
+  "operatingsystem_support": [
     {
       "operatingsystem": "RedHat",
       "operatingsystemrelease": [
@@ -95,9 +113,5 @@
         "7.1"
       ]
     }
-  ],
-  "dependencies": [
-    { "name": "puppetlabs/stdlib", "version_requirement": ">=3.2.0 <5.0.0" }
   ]
 }
-

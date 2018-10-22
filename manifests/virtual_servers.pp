@@ -9,61 +9,23 @@
 #
 # === Parameters
 #
-# [*basic__add_cluster_ip*]
-# Whether or not the virtual server should add an "X-Cluster-Client-Ip" header
-# to the request that contains the remote client's IP address.
-#
-# [*basic__add_x_forwarded_for*]
-# Whether or not the virtual server should append the remote client's IP
-# address to the X-Forwarded-For header. If the header does not exist, it will
-# be added.
-#
-# [*basic__add_x_forwarded_proto*]
-# Whether or not the virtual server should add an "X-Forwarded-Proto" header
-# to the request that contains the original protocol used by the client to
-# connect to the traffic manager.
-#
-# [*basic__auto_upgrade_protocols*]
-# A case-insensitive list of HTTP "Upgrade" header values that will trigger
-# the HTTP connection upgrade auto-detection.
-# Type:array
-# Properties:
-#
-# [*basic__autodetect_upgrade_headers*]
-# Whether the traffic manager should check for HTTP responses that confirm an
-# HTTP connection is transitioning to the WebSockets protocol.  If that such a
-# response is detected, the traffic manager will cease any protocol-specific
-# processing on the connection and just pass incoming data to the
-# client/server as appropriate.
-#
 # [*basic__bandwidth_class*]
 # The bandwidth management class that this server should use, if any.
 #
-# [*basic__bypass_data_plane_acceleration*]
-# Whether this service should, where possible, bypass data plane acceleration
-# mechanisms.
-#
-# [*basic__close_with_rst*]
-# Whether or not connections from clients should be closed with a RST packet,
-# rather than a FIN packet. This avoids the TIME_WAIT state, which on rare
-# occasions allows wandering duplicate packets to be safely ignored.
-#
-# [*basic__completionrules*]
+# [*basic__completion_rules*]
 # Rules that are run at the end of a transaction, in order, comma separated.
 # Type:array
 # Properties:
 #
 # [*basic__connect_timeout*]
-# The time, in seconds, to wait for data from a new connection.  If no data is
-# received within this time, the connection will be closed.  A value of "0"
-# (zero) will disable the timeout.
+# The time, in seconds, for which an established connection can remain idle
+# waiting for some initial data to be received from the client. The initial
+# data is defined as a complete set of request headers for HTTP, SIP and RTSP
+# services, or the first byte of data for all other services. A value of "0"
+# will disable the timeout.
 #
 # [*basic__enabled*]
 # Whether the virtual server is enabled.
-#
-# [*basic__ftp_force_server_secure*]
-# Whether or not the virtual server should require that incoming FTP data
-# connections from the nodes originate from the same IP address as the node.
 #
 # [*basic__glb_services*]
 # The associated GLB services for this DNS virtual server.
@@ -91,13 +53,6 @@
 # this virtual server will not be accepted. If set to "0" the number of
 # concurrent TCP connections will not be limited.
 #
-# [*basic__mss*]
-# The maximum TCP segment size. This will place a maximum on the size of TCP
-# segments that are sent by this machine, and will advertise to the client
-# this value as the maximum size of TCP segment to send to this machine.
-# Setting this to zero causes the default maximum TCP segment size to be
-# advertised and used.
-#
 # [*basic__note*]
 # A description for the virtual server.
 #
@@ -120,6 +75,10 @@
 # will be available in TrafficScript. Connections that are not prefixed with a
 # valid PROXY protocol header will be discarded.
 #
+# [*basic__proxy_protocol_optional*]
+# Connections which do not include a PROXY protocol header are not rejected,
+# but are treated as ordinary non-PROXY protocol connections.
+#
 # [*basic__request_rules*]
 # Rules to be applied to incoming requests, in order, comma separated.
 # Type:array
@@ -138,33 +97,11 @@
 # [*basic__slm_class*]
 # The service level monitoring class that this server should use, if any.
 #
-# [*basic__so_nagle*]
-# Whether or not Nagle's algorithm should be used for TCP connections.
-#
-# [*basic__ssl_client_cert_headers*]
-# What HTTP headers the virtual server should add to each request to show the
-# data in the client certificate.
-#
 # [*basic__ssl_decrypt*]
 # Whether or not the virtual server should decrypt incoming SSL traffic.
 #
-# [*basic__ssl_honor_fallback_scsv*]
-# Whether or not the Fallback SCSV sent by TLS clients is honored by this
-# virtual server. Choosing the global setting means the value of configuration
-# key <a
-# href="?fold_open=SSL%20Configuration&section=Global%20Settings#a_ssl!honor_fal
-# lback_scsv"> "ssl!honor_fallback_scsv"</a> from the Global Settings section
-# of the System tab will be enforced.
-#
-# [*basic__strip_x_forwarded_proto*]
-# Whether or not the virtual server should strip the 'X-Forwarded-Proto'
-# header from incoming requests.
-#
 # [*basic__transparent*]
 # Whether or not bound sockets should be configured for transparent proxying.
-#
-# [*basic__udp_end_transaction*]
-# When the traffic manager should consider a UDP transaction to have ended.
 #
 # [*aptimizer__enabled*]
 # Whether the virtual server should optimize web content.
@@ -176,6 +113,59 @@
 # profile.", "type"=>"string"}, "urls"=>{"description"=>"The application
 # scopes which apply to the acceleration profile.", "type"=>"array",
 # "uniqueItems"=>true, "items"=>{"type"=>"string"}}}
+#
+# [*auth__saml_idp*]
+# Name of the Trusted Identity Provider configuration to use. To create
+# Identity Providers, please visit section <a
+# href="?section=SAML%3aTrusted%20Identity%20Providers">Trusted Identity
+# Providers</a>
+#
+# [*auth__saml_nameid_format*]
+# The NameID format to request and expect from the identity provider.
+#
+# [*auth__saml_sp_acs_url*]
+# The 'Assertion Consumer Service' endpoint for the SAML service provider on
+# this virtual server, ie the endpoint to which the identity provider will
+# cause the user agent to send SAML assertions. This should be an HTTPS URL,
+# must be in the same cookie domain as all hostnames used by the end user to
+# access the virtual server (see cookie configuration) and the port must be
+# the port on which this virtual server is listening. It must match the URI
+# placed by the identity provider in the 'Recipient' attribute in the SAML
+# assertion, if present.
+#
+# [*auth__saml_sp_entity_id*]
+# The entity ID to be used by the SAML service provider function on this
+# virtual server. This should usually be a URL, or a URN, however it may be
+# any string. It must match the entity ID placed  by the identity provider in
+# the 'Audience' field in the SAML assertion.
+#
+# [*auth__saml_time_tolerance*]
+# Time tolerance on authentication checks. When checking time-stamps and
+# expiry dates against the current time on the system, allow a tolerance of
+# this many seconds. For example, if a SAML response contains a 'NotOnOrAfter'
+# that is 4 seconds in the past according to the local time, and the tolerance
+# is set to 5 seconds, it will still be accepted. This is to prevent a lack of
+# clock synchronization from resulting in rejection of SAML responses.
+#
+# [*auth__session_cookie_attributes*]
+# Attributes of cookie used for authentication session.
+#
+# [*auth__session_cookie_name*]
+# Name of cookie used for authentication session.
+#
+# [*auth__session_log_external_state*]
+# Whether or not to include state of authentication sessions stored encrypted
+# on the client as plaintext in the logs.
+#
+# [*auth__session_timeout*]
+# Timeout on authentication session.
+#
+# [*auth__type*]
+# Type of authentication to apply to requests to the virtual server.
+#
+# [*auth__verbose*]
+# Whether or not detailed messages about virtual server authentication should
+# be written to the error log.
 #
 # [*connection__keepalive*]
 # Whether or not the virtual server should use keepalive connections with the
@@ -274,6 +264,10 @@
 # connections from the client originate from the same IP address as the
 # corresponding client control connection.
 #
+# [*ftp__force_server_secure*]
+# Whether or not the virtual server should require that incoming FTP data
+# connections from the nodes originate from the same IP address as the node.
+#
 # [*ftp__port_range_high*]
 # If non-zero, then this controls the upper bound of the port range to use for
 # FTP data connections.
@@ -315,6 +309,33 @@
 # [*gzip__no_size*]
 # Compress documents with no given size.
 #
+# [*http__add_cluster_ip*]
+# Whether or not the virtual server should add an "X-Cluster-Client-Ip" header
+# to the request that contains the remote client's IP address.
+#
+# [*http__add_x_forwarded_for*]
+# Whether or not the virtual server should append the remote client's IP
+# address to the X-Forwarded-For header. If the header does not exist, it will
+# be added.
+#
+# [*http__add_x_forwarded_proto*]
+# Whether or not the virtual server should add an "X-Forwarded-Proto" header
+# to the request that contains the original protocol used by the client to
+# connect to the traffic manager.
+#
+# [*http__auto_upgrade_protocols*]
+# A case-insensitive list of HTTP "Upgrade" header values that will trigger
+# the HTTP connection upgrade auto-detection.
+# Type:array
+# Properties:
+#
+# [*http__autodetect_upgrade_headers*]
+# Whether the traffic manager should check for HTTP responses that confirm an
+# HTTP connection is transitioning to the WebSockets protocol.  If that such a
+# response is detected, the traffic manager will cease any protocol-specific
+# processing on the connection and just pass incoming data to the
+# client/server as appropriate.
+#
 # [*http__chunk_overhead_forwarding*]
 # Handling of HTTP chunk overhead.  When vTM receives data from a server or
 # client that consists purely of protocol overhead (contains no payload),
@@ -342,6 +363,10 @@
 #
 # [*http__mime_detect*]
 # Auto-detect MIME types if the server does not provide them.
+#
+# [*http__strip_x_forwarded_proto*]
+# Whether or not the virtual server should strip the 'X-Forwarded-Proto'
+# header from incoming requests.
 #
 # [*http2__connect_timeout*]
 # The time, in seconds, to wait for a request on a new HTTP/2 connection.  If
@@ -437,46 +462,6 @@
 # [*kerberos_protocol_transition__target*]
 # The Kerberos principal name of the service this virtual server targets.
 #
-# [*l4accel__rst_on_service_failure*]
-# Whether the virtual server should send a TCP RST packet or ICMP error
-# message if a service is unavailable, or if an established connection to a
-# node fails.
-#
-# [*l4accel__service_ip_snat*]
-# Whether or not backend connections should be configured to use the ingress
-# service IP as the source IP for the back-end connection when Source NAT is
-# enabled for the pool used by the service. Requires l4accel!state_sync to be
-# enabled.
-#
-# [*l4accel__state_sync*]
-# Whether the state of active connections will be synchronized across the
-# cluster for L4Accel services, such that connections will persist in the
-# event of a failover. Note that the service must listen only on Traffic IP
-# groups for this setting to be enabled.
-#
-# [*l4accel__tcp_msl*]
-# The maximum segment lifetime, in seconds, of a TCP segment being handled by
-# the traffic manager. This setting determines for how long information about
-# a connection will be retained after receiving a two-way FIN or RST.
-#
-# [*l4accel__timeout*]
-# The number of seconds after which a connection will be closed if no further
-# packets have been received on it.
-#
-# [*l4accel__udp_count_requests*]
-# Whether a connection should be closed when the number of UDP response
-# datagrams received from the server is equal to the number of request
-# datagrams that have been sent by the client. If set to "No" the connection
-# will be closed after the first response has been received from the server.
-# This setting takes precedence over "l4accel!optimized_aging" setting.
-#
-# [*l4stateless__initial_ring_size*]
-# The initial ring size to use in the L4 stateless consistent hash table.
-#
-# [*l4stateless__num_replicas*]
-# The number of replicas per node to use in the L4 stateless consistent hash
-# table.
-#
 # [*log__always_flush*]
 # Write log data to disk immediately, rather than buffering data.
 #
@@ -510,6 +495,12 @@
 #
 # [*log__ssl_failures*]
 # Should the virtual server log failures occurring on SSL secure negotiation.
+#
+# [*log__ssl_resumption_failures*]
+# Should the virtual server log messages when attempts to resume SSL sessions
+# (either from the session cache or a session ticket) fail. Note that failure
+# to resume an SSL session does not result in the SSL connection being closed,
+# but it does cause a full SSL handshake to take place.
 #
 # [*recent_connections__enabled*]
 # Whether or not connections handled by this virtual server should be shown on
@@ -593,6 +584,14 @@
 # Whether or not the virtual server should add HTTP headers to each request to
 # show the SSL connection parameters.
 #
+# [*ssl__cipher_suites*]
+# The SSL/TLS cipher suites to allow for connections to this virtual server.
+# Leaving this empty will make the virtual server use the globally configured
+# cipher suites, see configuration key <a
+# href="?fold_open=SSL%20Configuration&section=Global%20Settings#a_ssl!cipher_su
+# ites"> "ssl!cipher_suites"</a> in the Global Settings section of the System
+# tab.  See there for how to specify SSL/TLS cipher suites.
+#
 # [*ssl__client_cert_cas*]
 # The certificate authorities that this virtual server should trust to
 # validate client certificates. If no certificate authorities are selected,
@@ -601,6 +600,10 @@
 # Type:array
 # Properties:
 #
+# [*ssl__client_cert_headers*]
+# What HTTP headers the virtual server should add to each request to show the
+# data in the client certificate.
+#
 # [*ssl__elliptic_curves*]
 # The SSL elliptic curve preference list for SSL connections to this virtual
 # server using TLS version 1.0 or higher. Leaving this empty will make the
@@ -608,6 +611,14 @@
 # curves P256, P384 and P521 may be configured.
 # Type:array
 # Properties:
+#
+# [*ssl__honor_fallback_scsv*]
+# Whether or not the Fallback SCSV sent by TLS clients is honored by this
+# virtual server. Choosing the global setting means the value of configuration
+# key <a
+# href="?fold_open=SSL%20Configuration&section=Global%20Settings#a_ssl!honor_fal
+# lback_scsv"> "ssl!honor_fallback_scsv"</a> from the Global Settings section
+# of the System tab will be enforced.
 #
 # [*ssl__issued_certs_never_expire*]
 # When the virtual server verifies certificates signed by these certificate
@@ -646,17 +657,18 @@
 # default OCSP settings).", "type"=>"string"}, "aia"=>{"description"=>"Whether
 # the traffic manager should use AIA information contained in a client
 # certificate to determine which OCSP responder to contact.",
-# "type"=>"boolean"}, "nonce"=>{"description"=>"How to use the OCSP nonce
-# extension, which protects against OCSP replay attacks. Some OCSP servers do
-# not support nonces.", "type"=>"string", "enum"=>["off", "on", "strict"]},
-# "required"=>{"description"=>"Whether we should do an OCSP check for this
-# issuer, and whether it is required or optional.", "type"=>"string",
-# "enum"=>["none", "optional", "strict"]},
-# "responder_cert"=>{"description"=>"The expected responder certificate.",
-# "type"=>"string"}, "signer"=>{"description"=>"The certificate with which to
-# sign the request, if any.", "type"=>"string"}, "url"=>{"description"=>"Which
+# "type"=>"boolean", "default"=>true}, "nonce"=>{"description"=>"How to use
+# the OCSP nonce extension, which protects against OCSP replay attacks. Some
+# OCSP servers do not support nonces.", "type"=>"string", "default"=>"off",
+# "enum"=>["off", "on", "strict"]}, "required"=>{"description"=>"Whether we
+# should do an OCSP check for this issuer, and whether it is required or
+# optional.", "type"=>"string", "default"=>"optional", "enum"=>["none",
+# "optional", "strict"]}, "responder_cert"=>{"description"=>"The expected
+# responder certificate.", "type"=>"string", "default"=>""},
+# "signer"=>{"description"=>"The certificate with which to sign the request,
+# if any.", "type"=>"string", "default"=>""}, "url"=>{"description"=>"Which
 # OCSP responders this virtual server should use to verify client
-# certificates.", "type"=>"string"}}
+# certificates.", "type"=>"string", "default"=>""}}
 #
 # [*ssl__ocsp_max_response_age*]
 # The number of seconds for which an OCSP response is considered valid if it
@@ -676,9 +688,6 @@
 #
 # [*ssl__ocsp_timeout*]
 # The number of seconds after which OCSP requests will be timed out.
-#
-# [*ssl__prefer_sslv3*]
-# Deprecated. Formerly allowed a preference for SSLv3 for performance reasons.
 #
 # [*ssl__request_client_cert*]
 # Whether or not the virtual server should request an identifying SSL
@@ -703,8 +712,22 @@
 # "type"=>"string"}, "certificate"=>{"description"=>"The SSL server
 # certificate for a particular destination site IP.", "type"=>"string"},
 # "alt_certificates"=>{"description"=>"The SSL server certificates for a
-# particular destination site IP.", "type"=>"array", "uniqueItems"=>false,
-# "items"=>{"type"=>"string"}}}
+# particular destination site IP.", "type"=>"array", "default"=>[],
+# "uniqueItems"=>false, "items"=>{"type"=>"string"}}}
+#
+# [*ssl__session_cache_enabled*]
+# Whether or not use of the session cache is enabled for this virtual server.
+# Choosing the global setting means the value of configuration key <a
+# href="?fold_open=SSL%20Configuration&section=Global%20Settings#a_ssl!cache!ena
+# bled"> "ssl!session_cache_enabled"</a> from the Global Settings section of
+# the System tab will be enforced.
+#
+# [*ssl__session_tickets_enabled*]
+# Whether or not use of session tickets is enabled for this virtual server.
+# Choosing the global setting means the value of configuration key <a
+# href="?fold_open=SSL%20Configuration&section=Global%20Settings#a_ssl!tickets!e
+# nabled"> "ssl!tickets!enabled"</a> from the Global Settings section of the
+# System tab will be enforced.
 #
 # [*ssl__signature_algorithms*]
 # The SSL signature algorithms preference list for SSL connections to this
@@ -714,44 +737,32 @@
 # resource.  See there and in the online help for how to specify SSL signature
 # algorithms.
 #
-# [*ssl__ssl_ciphers*]
-# The SSL/TLS ciphers to allow for connections to this virtual server.
-# Leaving this empty will make the virtual server use the globally configured
-# ciphers, see configuration key <a
-# href="?fold_open=SSL%20Configuration&section=Global%20Settings#a_ssl!ssl3_ciph
-# ers"> "ssl!ssl3_ciphers"</a> in the Global Settings section of the System
-# tab.  See there for how to specify SSL/TLS ciphers.
-#
-# [*ssl__ssl_support_ssl2*]
-# No longer supported. Formerly controlled whether SSLv2 could be used for SSL
-# connections to this virtual server.
-#
-# [*ssl__ssl_support_ssl3*]
+# [*ssl__support_ssl3*]
 # Whether or not SSLv3 is enabled for this virtual server.  Choosing the
 # global setting means the value of configuration key <a
 # href="?fold_open=SSL%20Configuration&section=Global%20Settings#a_ssl!support_s
 # sl3"> "ssl!support_ssl3"</a> from the Global Settings section of the System
 # tab will be enforced.
 #
-# [*ssl__ssl_support_tls1*]
+# [*ssl__support_tls1*]
 # Whether or not TLSv1.0 is enabled for this virtual server. Choosing the
 # global setting means the value of configuration key <a
 # href="?fold_open=SSL%20Configuration&section=Global%20Settings#a_ssl!support_t
 # ls1"> "ssl!support_tls1"</a> from the Global Settings section of the System
 # tab will be enforced.
 #
-# [*ssl__ssl_support_tls1_1*]
+# [*ssl__support_tls1_1*]
 # Whether or not TLSv1.1 is enabled for this virtual server. Choosing the
 # global setting means the value of configuration key <a
 # href="?fold_open=SSL%20Configuration&section=Global%20Settings#a_ssl!support_t
-# ls1.1"> "ssl!support_tls1.1"</a> from the Global Settings section of the
+# ls1_1"> "ssl!support_tls1_1"</a> from the Global Settings section of the
 # System tab will be enforced.
 #
-# [*ssl__ssl_support_tls1_2*]
+# [*ssl__support_tls1_2*]
 # Whether or not TLSv1.2 is enabled for this virtual server. Choosing the
 # global setting means the value of configuration key <a
 # href="?fold_open=SSL%20Configuration&section=Global%20Settings#a_ssl!support_t
-# ls1.2"> "ssl!support_tls1.2"</a> from the Global Settings section of the
+# ls1_2"> "ssl!support_tls1_2"</a> from the Global Settings section of the
 # System tab will be enforced.
 #
 # [*ssl__trust_magic*]
@@ -776,6 +787,21 @@
 # [*syslog__msg_len_limit*]
 # Maximum length in bytes of a message sent to the remote syslog. Messages
 # longer than this will be truncated before they are sent.
+#
+# [*tcp__close_with_rst*]
+# Whether or not connections from clients should be closed with a RST packet,
+# rather than a FIN packet. This avoids the TIME_WAIT state, which on rare
+# occasions allows wandering duplicate packets to be safely ignored.
+#
+# [*tcp__mss*]
+# The maximum TCP segment size. This will place a maximum on the size of TCP
+# segments that are sent by this machine, and will advertise to the client
+# this value as the maximum size of TCP segment to send to this machine.
+# Setting this to zero causes the default maximum TCP segment size to be
+# advertised and used.
+#
+# [*tcp__nagle*]
+# Whether or not Nagle's algorithm should be used for TCP connections.
 #
 # [*tcp__proxy_close*]
 # If set to "Yes" the traffic manager will send the client FIN to the back-end
@@ -872,17 +898,10 @@ define brocadevtm::virtual_servers (
   $ensure,
   $basic__pool,
   $basic__port,
-  $basic__add_cluster_ip                     = true,
-  $basic__add_x_forwarded_for                = false,
-  $basic__add_x_forwarded_proto              = false,
-  $basic__autodetect_upgrade_headers         = true,
   $basic__bandwidth_class                    = undef,
-  $basic__bypass_data_plane_acceleration     = false,
-  $basic__close_with_rst                     = false,
-  $basic__completionrules                    = '[]',
+  $basic__completion_rules                   = '[]',
   $basic__connect_timeout                    = 10,
   $basic__enabled                            = false,
-  $basic__ftp_force_server_secure            = true,
   $basic__glb_services                       = '[]',
   $basic__listen_on_any                      = true,
   $basic__listen_on_hosts                    = '[]',
@@ -895,15 +914,21 @@ define brocadevtm::virtual_servers (
   $basic__request_rules                      = '[]',
   $basic__response_rules                     = '[]',
   $basic__slm_class                          = undef,
-  $basic__so_nagle                           = false,
-  $basic__ssl_client_cert_headers            = 'none',
   $basic__ssl_decrypt                        = false,
-  $basic__ssl_honor_fallback_scsv            = 'use_default',
-  $basic__strip_x_forwarded_proto            = true,
   $basic__transparent                        = false,
-  $basic__udp_end_transaction                = 'one_response',
   $aptimizer__enabled                        = false,
   $aptimizer__profile                        = '[]',
+  $auth__saml_idp                            = undef,
+  $auth__saml_nameid_format                  = 'none',
+  $auth__saml_sp_acs_url                     = undef,
+  $auth__saml_sp_entity_id                   = undef,
+  $auth__saml_time_tolerance                 = 5,
+  $auth__session_cookie_attributes           = 'HttpOnly; SameSite=Strict',
+  $auth__session_cookie_name                 = 'VS_SamlSP_Auth',
+  $auth__session_log_external_state          = false,
+  $auth__session_timeout                     = 7200,
+  $auth__type                                = 'none',
+  $auth__verbose                             = false,
   $connection__keepalive                     = true,
   $connection__keepalive_timeout             = 10,
   $connection__max_client_buffer             = 65536,
@@ -925,6 +950,7 @@ define brocadevtm::virtual_servers (
   $dns__zones                                = '[]',
   $ftp__data_source_port                     = 0,
   $ftp__force_client_secure                  = true,
+  $ftp__force_server_secure                  = true,
   $ftp__port_range_high                      = 0,
   $ftp__port_range_low                       = 0,
   $ftp__ssl_data                             = true,
@@ -935,12 +961,17 @@ define brocadevtm::virtual_servers (
   $gzip__max_size                            = 10000000,
   $gzip__min_size                            = 1000,
   $gzip__no_size                             = true,
+  $http__add_cluster_ip                      = true,
+  $http__add_x_forwarded_for                 = false,
+  $http__add_x_forwarded_proto               = false,
+  $http__autodetect_upgrade_headers          = true,
   $http__chunk_overhead_forwarding           = 'lazy',
   $http__location_regex                      = undef,
   $http__location_replace                    = undef,
   $http__location_rewrite                    = 'if_host_matches',
   $http__mime_default                        = 'text/plain',
   $http__mime_detect                         = false,
+  $http__strip_x_forwarded_proto             = true,
   $http2__connect_timeout                    = 0,
   $http2__data_frame_size                    = 4096,
   $http2__enabled                            = true,
@@ -959,12 +990,6 @@ define brocadevtm::virtual_servers (
   $kerberos_protocol_transition__enabled     = false,
   $kerberos_protocol_transition__principal   = undef,
   $kerberos_protocol_transition__target      = undef,
-  $l4accel__rst_on_service_failure           = false,
-  $l4accel__service_ip_snat                  = false,
-  $l4accel__state_sync                       = false,
-  $l4accel__tcp_msl                          = 8,
-  $l4accel__timeout                          = 1800,
-  $l4accel__udp_count_requests               = false,
   $log__client_connection_failures           = false,
   $log__enabled                              = false,
   $log__filename                             = '%zeushome%/zxtm/log/%v.log',
@@ -973,6 +998,7 @@ define brocadevtm::virtual_servers (
   $log__server_connection_failures           = false,
   $log__session_persistence_verbose          = false,
   $log__ssl_failures                         = false,
+  $log__ssl_resumption_failures              = false,
   $recent_connections__enabled               = true,
   $recent_connections__save_all              = false,
   $request_tracing__enabled                  = false,
@@ -992,8 +1018,11 @@ define brocadevtm::virtual_servers (
   $sip__transaction_timeout                  = 30,
   $smtp__expect_starttls                     = true,
   $ssl__add_http_headers                     = false,
+  $ssl__cipher_suites                        = undef,
   $ssl__client_cert_cas                      = '[]',
+  $ssl__client_cert_headers                  = 'none',
   $ssl__elliptic_curves                      = '[]',
+  $ssl__honor_fallback_scsv                  = 'use_default',
   $ssl__issued_certs_never_expire            = '[]',
   $ssl__issued_certs_never_expire_depth      = 1,
   $ssl__ocsp_enable                          = false,
@@ -1002,24 +1031,25 @@ define brocadevtm::virtual_servers (
   $ssl__ocsp_stapling                        = false,
   $ssl__ocsp_time_tolerance                  = 30,
   $ssl__ocsp_timeout                         = 10,
-  $ssl__prefer_sslv3                         = false,
   $ssl__request_client_cert                  = 'dont_request',
   $ssl__send_close_alerts                    = true,
   $ssl__server_cert_alt_certificates         = '[]',
   $ssl__server_cert_default                  = undef,
   $ssl__server_cert_host_mapping             = '[]',
+  $ssl__session_cache_enabled                = 'use_default',
+  $ssl__session_tickets_enabled              = 'use_default',
   $ssl__signature_algorithms                 = undef,
-  $ssl__ssl_ciphers                          = undef,
-  $ssl__ssl_support_ssl2                     = 'use_default',
-  $ssl__ssl_support_ssl3                     = 'use_default',
-  $ssl__ssl_support_tls1                     = 'use_default',
-  $ssl__ssl_support_tls1_1                   = 'use_default',
-  $ssl__ssl_support_tls1_2                   = 'use_default',
+  $ssl__support_ssl3                         = 'use_default',
+  $ssl__support_tls1                         = 'use_default',
+  $ssl__support_tls1_1                       = 'use_default',
+  $ssl__support_tls1_2                       = 'use_default',
   $ssl__trust_magic                          = false,
   $syslog__enabled                           = false,
   $syslog__format                            = '%h %l %u %t \"%r\" %s %b \"%{Referer}i\" \"%{User-agent}i\"',
   $syslog__ip_end_point                      = undef,
   $syslog__msg_len_limit                     = 1024,
+  $tcp__close_with_rst                       = false,
+  $tcp__nagle                                = false,
   $tcp__proxy_close                          = false,
   $transaction_export__brief                 = false,
   $transaction_export__enabled               = true,
@@ -1047,7 +1077,7 @@ define brocadevtm::virtual_servers (
   vtmrest { "virtual_servers/${name}":
     ensure   => $ensure,
     before   => Class[brocadevtm::purge],
-    endpoint => "https://${ip}:${port}/api/tm/4.0/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/6.0/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/virtual_servers.erb'),

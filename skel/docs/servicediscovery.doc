@@ -1,0 +1,22 @@
+#
+# Service Discovery Plugins
+# The "conf/servicediscovery" directory contains plugins for use with Service
+# Discovery for pool nodes.
+#
+# === Parameters
+#
+# === Examples
+#
+# <CLASS-OR-TYPE-DECLARATION>
+#     ensure => present,
+# }
+#
+#
+# === Authors
+#
+# Mark Boddington <mbodding@brocade>
+#
+# === Copyright
+#
+# Copyright 2015 Brocade
+#

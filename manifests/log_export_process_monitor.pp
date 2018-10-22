@@ -11,7 +11,7 @@ class brocadevtm::log_export_process_monitor (
   $basic__files          = '["%ZEUSHOME%/zxtm/log/procmon*"]',
   $basic__history        = 'none',
   $basic__history_period = 10,
-  $basic__metadata       = '[{"name":"sourcetype","value":"zxtm_procmon_log"},{"name":"source","value":"procmonlog"}]',
+  $basic__metadata       = '[{"name":"source","value":"procmonlog"},{"name":"sourcetype","value":"zxtm_procmon_log"}]',
   $basic__note           = 'Log files maintained by the traffic manager\'s internal health montior.',
 ){
   include brocadevtm
@@ -26,7 +26,7 @@ class brocadevtm::log_export_process_monitor (
   vtmrest { 'log_export/Process%20Monitor':
     ensure   => $ensure,
     before   => Class[brocadevtm::purge],
-    endpoint => "https://${ip}:${port}/api/tm/4.0/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/6.0/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/log_export.erb'),

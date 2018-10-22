@@ -23,7 +23,7 @@ class brocadevtm::aptimizer_profiles_sharepoint_2013_custom_website (
   vtmrest { 'aptimizer/profiles/SharePoint%202013%20Custom%20Website':
     ensure   => $ensure,
     before   => Class[brocadevtm::purge],
-    endpoint => "https://${ip}:${port}/api/tm/4.0/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/6.0/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/aptimizer_profiles.erb'),

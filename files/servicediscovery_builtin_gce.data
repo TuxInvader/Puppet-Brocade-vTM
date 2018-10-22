@@ -1,0 +1,147 @@
+#!/bin/sh
+
+if [ -z "$ZEUSHOME" ]
+then
+   # Have a good guess, we live in $ZEUSHOME/zxtm/conf/servicediscovery
+   OLD_PWD=`pwd`
+   cd `dirname $0`/../../..
+   if [ -d 'zxtm/bin' ]
+   then
+      ZEUSHOME=`pwd`
+      export ZEUSHOME
+   fi
+   cd $OLD_PWD
+fi
+
+if [ ! -z "$ZEUSHOME" ]
+then
+   PROG=$ZEUSHOME/perl/miniperl
+else
+   echo "Failed to determine ZEUSHOME" >2
+   exit 1
+fi
+
+exec $PROG -x $0 ${1+"$@"}
+#!perl -w
+#line 27
+
+BEGIN { unshift @INC, "$ENV{ZEUSHOME}/zxtm/lib/perl",
+     "$ENV{ZEUSHOME}/zxtmadmin/lib/perl", "$ENV{ZEUSHOME}/perl" }
+
+use strict;
+use Getopt::Long qw( GetOptions );
+use JSON;
+
+use Zeus::ZXTM::GCEUtils qw( gcloud_compute gcloudInstances );
+
+my $output = { "version" => 1,
+               "nodes" => [],
+               "code" => 200 };
+
+sub output_json()
+{
+   print encode_json( $output );
+}
+
+sub error($$)
+{
+   my( $code, $msg ) = @_;
+   $output->{'error'} = $msg;
+   $output->{'code'} = $code;
+   delete( $output->{'nodes'} );
+   output_json();
+   exit( 1 );
+}
+
+my $opts = {};
+if( !GetOptions( $opts, 
+                 'name|n=s',
+                 'zone|z:s',
+                 'region|r:s',
+                 'port|p:i',
+               )
+   ) {
+   error( 400, "Invalid arguments for GCE Service Discovery Script" );
+}
+
+my $gcloud = `which gcloud`;
+if( !$gcloud ) {
+   error( 403, 'Cannot find "gcloud" executable, ensure it is installed and accessible via the $PATH' );
+}
+
+my $name = $opts->{'name'};
+my $zone = $opts->{'zone'} || '';
+my $region = $opts->{'region'} || '';
+my $port = $opts->{'port'} || 80;
+
+if( !$name ) {
+   error( 400, "Invalid arguments for GCE Service Discovery Script: '--name' required." );
+}
+
+if( $zone && $region ) {
+   error( 400, "Invalid arguments for GCE Service Discovery Script: Must specify only one of '--zone' or '--region'." );
+}
+
+if( !$zone && !$region ) {
+   my( $success, $all_instance_groups_gcloud ) = gcloud_compute( 'instance-groups', 'list' );
+   if( !$success ) {
+      $all_instance_groups_gcloud =~ s/\n/ /g;
+      error( 400, $all_instance_groups_gcloud );
+   }
+   my $all_instance_groups = decode_json( $all_instance_groups_gcloud );
+   my $found = 0;
+   foreach my $group ( @$all_instance_groups ) {
+      if( $group->{'name'} ne $name ) {
+         next;
+      } else {
+         $found = 1;
+         if( exists( $group->{'zone'} ) ) {
+            $zone = $group->{'zone'};
+         } elsif( exists( $group->{'region'} ) ) {
+            $region = $group->{'region'};
+         } else {
+            error( 500, "No region or zone reported by gcloud for $name" );
+         }
+      }
+   }
+   if( !$found ) {
+      error( 404, "Cannot locate instance group '$name'" );
+   }
+}
+
+my @cmd_args = ( $name );
+if( $zone ) {
+   push( @cmd_args, "--zone=$zone" );
+} elsif( $region ) {
+   push( @cmd_args, "--region=$region" );
+}
+
+my $all_instances = gcloudInstances();
+
+my( $success, $instances_in_group_gcloud ) = gcloud_compute( 'instance-groups', 'list-instances', @cmd_args );
+if( !$success ) {
+   $instances_in_group_gcloud =~ s/\n/ /g;
+   error( 400, $instances_in_group_gcloud );
+}
+my $instances_in_group_json = decode_json( $instances_in_group_gcloud );
+my @instances_in_group;
+foreach my $instance ( @$instances_in_group_json ) {
+   my $instance_name = $instance->{'instance'};
+   $instance_name =~ s|.+/([^/]+)$|$1|;
+   push( @instances_in_group, $instance_name );
+}
+
+if( !scalar( @instances_in_group ) ) {
+   error( 204, "No instances in group '$name'" );
+}
+
+foreach my $instance ( @instances_in_group ) {
+   my $node_data = { "ip" => $all_instances->{$instance}->{'networkInterfaces'}->[0]->{'external_ip'},
+                     "port" => $port,
+                   };
+   push( @{$output->{'nodes'}}, $node_data );
+}
+
+output_json();
+
+exit 0;

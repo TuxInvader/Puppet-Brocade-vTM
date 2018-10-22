@@ -23,7 +23,7 @@ class brocadevtm::user_groups_admin (
   vtmrest { 'user_groups/admin':
     ensure   => $ensure,
     before   => Class[brocadevtm::purge],
-    endpoint => "https://${ip}:${port}/api/tm/4.0/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/6.0/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/user_groups.erb'),

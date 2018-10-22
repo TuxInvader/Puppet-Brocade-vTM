@@ -25,7 +25,7 @@ class brocadevtm::monitors_dns (
   $rtsp__body_regex      = undef,
   $rtsp__path            = '/',
   $rtsp__status_regex    = '^[234][0-9][0-9]$',
-  $script__arguments     = '[{"name":"response_addr","description":"Address to expect in DNS response","value":""},{"name":"request_host","description":"The DNS monitor sends a DNS query to the DNS server running on port 53 on the monitored node.<br>Hostname to look up in DNS:","value":""}]',
+  $script__arguments     = '[{"name":"request_host","description":"The DNS monitor sends a DNS query to the DNS server running on the monitored node.<br>Hostname to look up in DNS:","value":""},{"name":"response_addr","description":"Address to expect in DNS response","value":""}]',
   $script__program       = 'dns.pl',
   $sip__body_regex       = undef,
   $sip__status_regex     = '^[234][0-9][0-9]$',
@@ -48,7 +48,7 @@ class brocadevtm::monitors_dns (
   vtmrest { 'monitors/DNS':
     ensure   => $ensure,
     before   => Class[brocadevtm::purge],
-    endpoint => "https://${ip}:${port}/api/tm/4.0/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/6.0/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/monitors.erb'),

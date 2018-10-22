@@ -1,0 +1,434 @@
+#!/bin/sh
+# Copyright (C) 2017-2018, Pulse Secure LLC. All rights reserved.
+#
+# This script uses dig to find IP addresses for a hostname and
+# returns them as a JSON string to be used as pool nodes by the 
+# Virtual Traffic Manager service discovery feature.
+#
+# Arguments:
+#    --hostname=<hostname>    The name to resolve
+#    --port=<port>            Port number, defaults to 80 if omitted
+#    --ipv6                   Return AAAA records as well as A records
+#    --nameservers=<ns1>[,..<nsN>] Specify nameservers to use
+#
+# It caches the addresses in $ZEUSHOME/zxtm/internal/<hostname>.cache and 
+# augments current DNS query results with results from previous calls until
+# their TTLs expire. 
+#
+# It returns an interval-override to the Service Discovery plugin runner
+# of 1/3 of the minimum TTL of the DNS results, or 10 seconds if that is
+# longer.
+
+if [ -z "$ZEUSHOME" ]
+then
+   # Have a good guess, we live in $ZEUSHOME/zxtm/conf/servicediscovery
+   OLD_PWD=`pwd`
+   cd `dirname $0`/../../..
+   if [ -d 'zxtm/bin' ]
+   then
+      ZEUSHOME=`pwd`
+      export ZEUSHOME
+   fi
+   cd $OLD_PWD
+fi
+
+if [ ! -z "$ZEUSHOME" ]
+then
+   PROG=$ZEUSHOME/perl/miniperl
+else
+   echo "Failed to determine ZEUSHOME" >2
+   exit 1
+fi
+
+exec $PROG -x $0 ${1+"$@"}
+###############################################################################
+#!perl -w
+#line 46
+
+BEGIN { unshift @INC, "$ENV{ZEUSHOME}/zxtm/lib/perl",
+     "$ENV{ZEUSHOME}/zxtmadmin/lib/perl", "$ENV{ZEUSHOME}/perl" }
+
+use JSON;
+use FileHandle;
+use Getopt::Long qw( GetOptions );
+use Zeus::Execute qw( execute );
+
+use strict;
+
+# Plugin arguments
+my $opts = {};
+my $hostname;
+my $ipv4;
+my $ipv6;
+
+# Output hash to be printed by output_json
+my $output = { 'version' => 1,
+               'nodes' => [],
+               'code' => 200 };
+
+my $CACHE_DIR = "$ENV{ZEUSHOME}/zxtm/internal/servicediscovery";
+my $CACHE_FILE;
+my $SIGNATURE = '';
+my $MIN_POLL_INTERVAL = 10;
+my $INTERVAL = $MIN_POLL_INTERVAL;
+my @NAMESERVERS;
+
+# Temporary store for the most recent `dig` (each entry is ip->ttl)
+my %dig_response;
+
+my $dig = `which dig`;
+
+#-----------------------------------------------------------------------------#
+# Utilities
+#-----------------------------------------------------------------------------#
+
+sub output_json()
+{
+   if( !$output->{'error'} ) {
+      $output->{'interval_override'} = int( $INTERVAL );
+   }
+   print encode_json( $output );
+}
+
+sub error($$)
+{
+   my( $code, $msg ) = @_;
+   $output->{'error'} = $msg;
+   $output->{'code'} = $code;
+   delete( $output->{'nodes'} );
+   output_json();
+   exit( 1 );
+}
+
+sub verbose($)
+{
+   my( $msg ) = @_;
+   if( !$opts->{'verbose'} ) {
+      return;
+   }
+   if( $msg !~ /\n$/ ) {
+      $msg .= "\n";
+   }
+   if( open( my $log_fh, '>>', "$ENV{ZEUSHOME}/zxtm/log/dns-plugin.log" ) ) {
+      my ($sec,$min,$hour,$mday,$mon,$year) = localtime(time);
+      my $datestamp = sprintf('%d-%02d-%02d %02d:%02d:%02d',
+                               $year + 1900, $mon + 1, $mday, $hour, $min, $sec);
+      $log_fh->print( '[' . $datestamp . "] $msg" );
+      close( $log_fh );
+   }
+}
+
+# Find the actual hostname based on the one provided (might be a CNAME)
+# Return ($is_ipv4, $is_ipv6) and append errors to the specifed ref
+sub fix_hostname($;$)
+{
+   my( $errors_ref, $nameserver ) = @_;
+
+   my $is_ipv4;
+   my $is_ipv6;
+
+   my @dig_cmd = ( $dig );
+   if( $nameserver ) {
+      push( @dig_cmd, "\@$nameserver" );
+   }
+   push( @dig_cmd, ( '+noall', '+answer', 'ANY', $hostname ) );
+
+   my( $exit, $stdout, $stderr ) = execute( \@dig_cmd );
+   if( $exit || !$stdout ) {
+      if( !$stderr ) {
+         $stderr = '';
+      } else {
+         chomp( $stderr );
+      }
+      verbose( "ERROR: (1) Dig returned error; check nameservers for reachability. $stderr" );
+      if( $stderr ) {
+         ${$errors_ref} .= "Error: '$stderr'; ";
+      }
+   } elsif( $stdout =~ /^$hostname\s+\d+\s+\S+\s+CNAME\s+(\S+)/m ) {
+      my $new_hostname = $1;
+      # e.g. "icarus.olympus.com.    86400   IN      CNAME   mthomson-00.olympus.com."
+      verbose( "$hostname is a CNAME, resolved to $new_hostname" );
+      $hostname = $new_hostname;
+   } else {
+      foreach my $line ( split( "\n", $stdout ) ) {
+         if( $line =~ /^$hostname\s+\d+\s+\S+\s+(A+)/ ) {
+            my $record_type = $1;
+            # e.g. "mthomson-00.olympus.com. 86400 IN      A       10.62.167.31"
+            # No more CNAMEs, we must have reached the bottom
+            if( $record_type eq 'A' ) {
+               $is_ipv4 = 1;
+            } elsif( $record_type eq 'AAAA' ) {
+               $is_ipv6 = 1;
+            }
+         }
+      }
+   }
+
+   return( $is_ipv4, $is_ipv6 );
+}
+
+# Get the smallest TTL, and update $INTERVAL
+# $INTERVAL is set to max((smallest_TTL / 3) + 1, $MIN_POLL_INTERVAL)
+sub update_interval()
+{
+   my @ttls = sort( values( %dig_response ) );
+   my $smallest_ttl = $ttls[0] / 3;
+   $smallest_ttl++;
+   if( $smallest_ttl < $MIN_POLL_INTERVAL ) {
+      $smallest_ttl = $MIN_POLL_INTERVAL;
+   }
+
+   $INTERVAL = $smallest_ttl;
+   verbose( "Setting poll interval to $INTERVAL" );
+}
+
+# This function resolves the hostname, updates the cache file, and
+# re-calculates $INTERVAL from the freshly received A records' TTL values.
+sub update_cache()
+{
+   %dig_response = ();
+
+   verbose( "Starting authoritative DNS query loop for $hostname" );
+   my $dig_errors = '';
+   my @records;
+   if( $ipv4 ) {
+      push( @records, 'A' );
+   }
+   if( $ipv6 ) {
+      push( @records, 'AAAA' );
+   }
+   foreach my $r ( @records ) {
+      if( ! scalar( @NAMESERVERS ) ) {
+         # A dummy empty nameserver so we can still use the for-loop
+         @NAMESERVERS = ( '' );
+      }
+      foreach my $ns ( @NAMESERVERS ) {
+         my @cmd = ( $dig,
+                     $ns ? "\@$ns" : (),
+                     '+noall',
+                     '+answer',
+                     $r,
+                     $hostname
+                   );
+         my( $exit, $stdout, $stderr ) = execute( \@cmd );
+         if( $exit || !$stdout ) {
+            if( !$stderr ) {
+               $stderr = '';
+            }
+            verbose( "ERROR: (2) Dig returned error; check nameservers for reachability. $stderr" );
+            if( $stderr ) {
+               $dig_errors .= "Error: '$stderr'; ";
+            }
+         } else {
+            foreach my $line ( split( '\n', $stdout ) ) {
+               # e.g. "mthomson-00.olympus.com. 86400 IN      A       10.62.167.31"
+               if( $line =~ /^\S+\s+(\S+)\s+\S+\s+$r\s+(.+)$/ ) {
+                  $dig_response{$2} = $1;
+               }
+            }
+         }
+      }
+   }
+   if( !scalar( keys( %dig_response ) ) ) {
+      error( 409, "Dig failed to resolve hostname; check nameservers for reachability. $dig_errors" );
+   }
+
+   update_interval();
+
+   my @cache;
+   if( open( my $cache_fh, '<', $CACHE_FILE ) ) {
+      @cache = <$cache_fh>;
+      close( $cache_fh );
+   }
+
+   # Go through the cached entries, and keep them only if:
+   # - Expiry time is in the future; and
+   # - There's no fresh result for this entry in %dig_response
+   verbose( "Starting cache expiration loop" );
+   my $now = time();
+   my $new_cache = $SIGNATURE . "\n";
+   foreach my $cache_record ( @cache ) {
+      if( $cache_record =~ /^(.+?);(\d+)$/ ) {
+         my( $ip, $expiry ) = ( $1, $2 );
+         if( !exists( $dig_response{$ip} ) && $expiry > $now ) {
+            # We didn't get a result for this IP in our most recent dig, but
+            # it's still valid. Preserve it.
+            verbose( "Retaining cache value for $ip ($expiry)" );
+            $new_cache .= "$ip;$expiry\n";
+         } else {
+            verbose( "Disregarding previous cached value for $ip" );
+         }
+      }
+   }
+   foreach my $dig_ip ( sort( keys( %dig_response ) ) ) {
+      my $death_time = $now + $dig_response{$dig_ip};
+      $new_cache .= "$dig_ip;$death_time\n";
+   }
+   if( open( my $cache_fh, '>', $CACHE_FILE ) ) {
+      $cache_fh->print( $new_cache );
+      close( $cache_fh );
+   } else {
+      error( 403, "Failed to save DNS response cache for $hostname" );
+   }
+}
+
+#-----------------------------------------------------------------------------#
+# Main
+#-----------------------------------------------------------------------------#
+
+if( !$dig ) {
+   error( 403, 'Cannot find "dig" executable, cannot resolve DNS hostnames' );
+}
+chomp( $dig );
+
+if( !GetOptions( $opts, 
+                 'hostname|h=s',
+                 'port|p:i',
+                 'nameservers|n:s',
+                 'ipv4|4',
+                 'ipv6|6',
+                 'verbose|v',
+               )
+   ) {
+   error( 400, "Invalid arguments for DNS Resolver Plugin" );
+}
+
+$hostname = $opts->{'hostname'};
+if( !$hostname ) {
+   error( 400, "No hostname provided for DNS Resolution" );
+}
+
+my $port = $opts->{'port'} || 80;
+
+$ipv4 = $opts->{'ipv4'};
+$ipv6 = $opts->{'ipv6'};
+if( !$ipv4 && !$ipv6 ) {
+   verbose( "Defaulting to both IPv4 and IPv6 (none specified)" );
+   $ipv4 = 1;
+   $ipv6 = 1;
+}
+
+# Get a list of nameservers, might be comma or space separated
+my $nameservers_arg = $opts->{'nameservers'};
+if( $nameservers_arg ) {
+   @NAMESERVERS = split( /(?:,\s*)|(?:\s+)/, $nameservers_arg );
+}
+
+# Create signature line for the cache file (e.g. "ipv4+ipv6:ns.olympus.com.")
+if( $ipv4 ) {
+   $SIGNATURE = 'ipv4';
+}
+if( $ipv6 ) {
+   if( $ipv4 ) {
+      $SIGNATURE .= '+';
+   }
+   $SIGNATURE .= 'ipv6';
+}
+$SIGNATURE .= ':';
+if( scalar( @NAMESERVERS ) ) {
+   $SIGNATURE .= join( ',', @NAMESERVERS );
+}
+
+# Ensure our hostname is accurate (might be a CNAME)
+if( $hostname !~ /\.$/ ) {
+   $hostname .= '.';
+}
+# If CNAME, do nested lookups until we find the actual hostname
+my $found_ipv4;
+my $found_ipv6;
+my $dig_errors = '';
+my $attempt = 0;
+while( !($ipv4 && $found_ipv4) && !($ipv6 && $found_ipv6) && $attempt < 5 ) {
+   $attempt++;
+   if( scalar( @NAMESERVERS ) ) {
+      foreach my $ns ( @NAMESERVERS ) {
+         my( $is_ipv4, $is_ipv6 ) = fix_hostname( \$dig_errors, $ns );
+         $found_ipv4 ||= $is_ipv4;
+         $found_ipv6 ||= $is_ipv6;
+      }
+   } else {
+      my( $is_ipv4, $is_ipv6 ) = fix_hostname( \$dig_errors );
+      $found_ipv4 ||= $is_ipv4;
+      $found_ipv6 ||= $is_ipv6;
+   }
+}
+
+if( !($ipv4 && $found_ipv4) && !($ipv6 && $found_ipv6) ) {
+   if( $found_ipv4 && $ipv6 ) {
+      error( 409, "Found IPv4 address for $hostname, but running in IPv6-only mode" );
+   } elsif( $found_ipv6 && $ipv4 ) {
+      error( 409, "Found IPv6 address for $hostname, but running in IPv4-only mode" );
+   }
+   error( 409, "Dig failed to resolve hostname; check nameservers for reachability. $dig_errors" );
+}
+
+# Determine nameservers (if not specified)
+if( !scalar( @NAMESERVERS ) ) {
+   my( $exit, $stdout, $stderr ) = execute( [ $dig, '+short', 'NS', $hostname ] );
+   if( $exit || !$stdout ) {
+      if( !$stderr ) {
+         $stderr = '';
+      }
+      verbose( "Did not find any nameservers, using default. ($stdout,$stderr)" );
+   } else {
+      foreach my $line ( split( '\n', $stdout ) ) {
+         push( @NAMESERVERS, $line );
+      }
+   }
+}
+verbose( "Nameservers for $hostname are: @NAMESERVERS" ) if( scalar( @NAMESERVERS ) );
+
+if( ! -d $CACHE_DIR && ! mkdir( $CACHE_DIR ) ) {
+   error( 403, "Could not create directory for DNS Cache" );
+}
+$CACHE_FILE = "$CACHE_DIR/${hostname}cache.$SIGNATURE";
+
+my @cache_contents;
+if( open( my $cache_fh, '<', $CACHE_FILE ) ) {
+   @cache_contents = <$cache_fh>;
+   close( $cache_fh );
+}
+
+if( scalar( @cache_contents ) ) {
+   my $cache_sig = $cache_contents[0];
+   chomp( $cache_sig );
+   if( $cache_sig ne $SIGNATURE ) {
+      verbose( "Cache file \"$CACHE_FILE\" does not match arguments, deleting." );
+      unlink( $CACHE_FILE );
+   }
+}
+
+if( ! -e $CACHE_FILE ) {
+   # First time running the script, do the cache update a couple of extra
+   # times to create a larger initial set
+   update_cache();
+   sleep( 1 );
+   update_cache();
+   sleep( 1 );
+}
+update_cache();
+
+if( open( my $cache_fh, '<', $CACHE_FILE ) ) {
+   @cache_contents = <$cache_fh>;
+   close( $cache_fh );
+} else {
+   error( 410, "Failed to create or locate cached responses to DNS query" );
+}
+
+my @nodes;
+foreach my $line ( @cache_contents ) {
+   if( $line =~ /^(.+?);\d+$/ ) {
+      push( @nodes, $1 );
+   }
+}
+
+if( !scalar( @nodes ) ) {
+   error( 404, "No addresses found for $hostname" );
+}
+
+foreach my $node ( @nodes ) {
+   push( @{$output->{'nodes'}}, { 'ip' => $node, 'port' => $port } );
+}
+
+output_json();
+exit 0;

@@ -5,12 +5,6 @@
 #
 # === Parameters
 #
-# [*basic__backend_traffic_ips*]
-# IP addresses associated with the Traffic IP group that can be used for
-# communication with back-end servers.
-# Type:array
-# Properties:
-#
 # [*basic__enabled*]
 # If set to "No", the traffic IP group will be disabled and none of the
 # traffic IP addresses will be raised.
