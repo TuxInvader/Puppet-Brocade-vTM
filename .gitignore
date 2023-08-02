@@ -7,6 +7,10 @@
 /.bundle/
 /.idea/
 /.vagrant/
+bin/metadata-json-lint
+bin/puppet
+bin/puppet-lint
+bin/rubocop
 /coverage/
 /doc/
 /Gemfile.local
