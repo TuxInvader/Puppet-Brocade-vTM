@@ -178,15 +178,15 @@
 #
 # [*connection__max_client_buffer*]
 # The amount of memory, in bytes, that the virtual server should use to store
-# data sent by the client. Larger values will use more memory, but will
-# minimise the number of "read()" and "write()" system calls that the traffic
-# manager must perform.
+# data sent by the client through one TCP connection or HTTP/2 stream.  Larger
+# values will use more memory, but will minimise the number of "read()" and
+# "write()" system calls that the traffic manager must perform.
 #
 # [*connection__max_server_buffer*]
 # The amount of memory, in bytes, that the virtual server should use to store
-# data returned by the server.  Larger values will use more memory, but will
-# minimise the number of "read()" and "write()" system calls that the traffic
-# manager must perform.
+# data returned by the server through one TCP connection.  Larger values will
+# use more memory, but will minimise the number of "read()" and "write()"
+# system calls that the traffic manager must perform.
 #
 # [*connection__max_transaction_duration*]
 # The total amount of time a transaction can take, counted from the first byte
@@ -415,6 +415,30 @@
 # class with "http!max_header_length" configured is associated with this
 # service then that setting will take precedence.
 #
+# [*http2__http2_client_buffer_multiplier*]
+# The amount of memory, in multiples of the value specified by
+# "max_client_buffer", that the virtual server should use to store data sent
+# by a client through a HTTP/2 connection. The value specified can be between
+# 0 and 200. The value of "0" means unlimited. This setting limits buffer size
+# for a HTTP/2 connection and does not affect buffer size for HTTP/1
+# connections or TCP stream connections. The number of HTTP/2 streams that can
+# be opened in a single HTTP/2 connection is given by the
+# "http2!max_concurrent_streams". An overall cap to the amount of memory
+# allocated for buffers for all TCP connections is given by the global
+# "max_tcp_buff_mem" setting.
+#
+# [*http2__http2_server_buffer_multiplier*]
+# The amount of memory, in multiples of the value specified by
+# "max_server_buffer", that the virtual server should use to store data sent
+# to a client through HTTP/2 connection. The value specified can be between 0
+# and 200. The value of "0" means unlimited. This setting limits buffer size
+# for a HTTP/2 connection and does not affect buffer size for HTTP/1
+# connections or TCP stream connections. The number of HTTP/2 streams that can
+# be opened in a single HTTP/2 connection is given by the
+# "http2!max_concurrent_streams". An overall cap to the amount of memory
+# allocated for buffers for all TCP connections is given by the global
+# "max_tcp_buff_mem" setting.
+#
 # [*http2__idle_timeout_no_streams*]
 # The time, in seconds, to wait for a new HTTP/2 request on a previously used
 # HTTP/2 connection that has no open HTTP/2 streams. If an HTTP/2 request is
@@ -575,6 +599,10 @@
 # The virtual server should discard a SIP transaction when no further messages
 # have been seen within this time.
 #
+# [*sip__udp_associate_by_source*]
+# Require that SIP datagrams which are part of the same transaction are
+# received from the same address and port.
+#
 # [*smtp__expect_starttls*]
 # Whether or not the traffic manager should expect the connection to start off
 # in plain text and then upgrade to SSL using STARTTLS when handling SMTP
@@ -583,6 +611,32 @@
 # [*ssl__add_http_headers*]
 # Whether or not the virtual server should add HTTP headers to each request to
 # show the SSL connection parameters.
+#
+# [*ssl__ca_sites*]
+# This is table 'ca_sites'
+# Type:array
+# Properties:{"host"=>{"description"=>"The 'host' key gives the hostname or IP
+# destination address used to match incoming TLS connections to keys of table
+# 'ca_sites'. The host can be a specific DNS name for use with the SNI
+# extension, a specific destination IP address when no SNI matches, or either
+# of those with wildcard */? characters.", "type"=>"string"},
+# "cert_headers"=>{"description"=>"Which parts of the client certificate, if
+# any, should be inserted into requests to a back-end node, as header fields.
+# The same fields as for \"ssl_client_cert_headers\" are made available, and
+# optionally the base64 encoded certificate itself.", "type"=>"string",
+# "enum"=>["all", "none", "simple"]}, "client_cas"=>{"description"=>"The
+# certificate authorities used to verify client certificates for a particular
+# destination site IP or SNI hostname. The specific site replaces the \"*\"
+# (asterisk) in the key name, the value must be a valid file name in the
+# \"conf/ssl/cas\" directory. The key can be specified multiple times to cover
+# multiple IP addresses or SNI hostnames.", "type"=>"array",
+# "uniqueItems"=>true, "items"=>{"type"=>"string"}},
+# "request_cert"=>{"description"=>"Whether or not the virtual server should
+# request an identifying certificate from each client connecting to particular
+# destination IP address or SNI hostname. If a client certificate is requested
+# this setting also determines whether the TLS handshake can continue
+# successfully if the client does not present a certificate.",
+# "type"=>"string", "enum"=>["dont_request", "request", "require"]}}
 #
 # [*ssl__cipher_suites*]
 # The SSL/TLS cipher suites to allow for connections to this virtual server.
@@ -765,6 +819,13 @@
 # ls1_2"> "ssl!support_tls1_2"</a> from the Global Settings section of the
 # System tab will be enforced.
 #
+# [*ssl__support_tls1_3*]
+# Whether or not TLSv1.3 is enabled for this virtual server. Choosing the
+# global setting means the value of configuration key <a
+# href="?fold_open=SSL%20Configuration&section=Global%20Settings#a_ssl!support_t
+# ls1_3"> "ssl!support_tls1_3"</a> from the Global Settings section of the
+# System tab will be enforced.
+#
 # [*ssl__trust_magic*]
 # If the traffic manager is receiving traffic sent from another traffic
 # manager, then enabling this option will allow it to decode extra information
@@ -842,8 +903,15 @@
 #
 # [*udp__port_smp*]
 # Whether or not UDP datagrams should be distributed across all traffic
-# manager processes. This setting is not recommended if the traffic manager
-# will be handling connection-based UDP protocols.
+# manager processes, if this behaviour is not normally selected automatically
+# due to other settings.
+#
+# [*udp__rbuff_size*]
+# If this setting is non-zero, the virtual server will set the socket receive
+# buffer size to this number of bytes. If set, this will override the <a
+# href="?fold_open=System Tuneables&section=Global Settings">so_rbuff_size</a>
+# setting. An OS-specified limit on socket buffer sizes such as given by
+# "sysctl net.core.rmem_max" can be exceeded using this setting.
 #
 # [*udp__response_datagrams_expected*]
 # The virtual server should discard any UDP connection and reclaim resources
@@ -851,9 +919,22 @@
 # request/response protocols this can be often set to "1".  If set to "-1",
 # the connection will not be discarded until the "timeout" is reached.
 #
+# [*udp__smp_mode*]
+# Whether the traffic manager should try to use SO_REUSEPORT for distributing
+# incoming UDP datagrams across multiple processes (if kernel support is
+# detected) or whether the legacy (pre-20.2) multi-processing mode should be
+# used.
+#
 # [*udp__timeout*]
 # The virtual server should discard any UDP connection and reclaim resources
 # when no further UDP traffic has been seen within this time.
+#
+# [*udp__wbuff_size*]
+# If this setting is non-zero, the virtual server will set the socket send
+# buffer size to this number of bytes. If set, this will override the <a
+# href="?fold_open=System Tuneables&section=Global Settings">so_wbuff_size</a>
+# setting. An OS-specified limit on socket buffer sizes such as given by
+# "sysctl net.core.wmem_max" can be exceeded using this setting.
 #
 # [*web_cache__control_out*]
 # The "Cache-Control" header to add to every cached HTTP response, "no-cache"
@@ -980,6 +1061,8 @@ define brocadevtm::virtual_servers (
   $http2__headers_index_default              = true,
   $http2__headers_index_whitelist            = '[]',
   $http2__headers_size_limit                 = 262144,
+  $http2__http2_client_buffer_multiplier     = 0,
+  $http2__http2_server_buffer_multiplier     = 0,
   $http2__idle_timeout_no_streams            = 120,
   $http2__idle_timeout_open_streams          = 600,
   $http2__max_concurrent_streams             = 200,
@@ -1016,8 +1099,10 @@ define brocadevtm::virtual_servers (
   $sip__streaming_timeout                    = 60,
   $sip__timeout_messages                     = true,
   $sip__transaction_timeout                  = 30,
+  $sip__udp_associate_by_source              = true,
   $smtp__expect_starttls                     = true,
   $ssl__add_http_headers                     = false,
+  $ssl__ca_sites                             = '[]',
   $ssl__cipher_suites                        = undef,
   $ssl__client_cert_cas                      = '[]',
   $ssl__client_cert_headers                  = 'none',
@@ -1043,11 +1128,12 @@ define brocadevtm::virtual_servers (
   $ssl__support_tls1                         = 'use_default',
   $ssl__support_tls1_1                       = 'use_default',
   $ssl__support_tls1_2                       = 'use_default',
+  $ssl__support_tls1_3                       = 'use_default',
   $ssl__trust_magic                          = false,
   $syslog__enabled                           = false,
   $syslog__format                            = '%h %l %u %t \"%r\" %s %b \"%{Referer}i\" \"%{User-agent}i\"',
   $syslog__ip_end_point                      = undef,
-  $syslog__msg_len_limit                     = 1024,
+  $syslog__msg_len_limit                     = 2048,
   $tcp__close_with_rst                       = false,
   $tcp__nagle                                = false,
   $tcp__proxy_close                          = false,
@@ -1057,8 +1143,11 @@ define brocadevtm::virtual_servers (
   $transaction_export__http_header_blacklist = '["Authorization"]',
   $udp__end_point_persistence                = true,
   $udp__port_smp                             = false,
+  $udp__rbuff_size                           = 0,
   $udp__response_datagrams_expected          = 1,
+  $udp__smp_mode                             = 'auto',
   $udp__timeout                              = 7,
+  $udp__wbuff_size                           = 0,
   $web_cache__control_out                    = undef,
   $web_cache__enabled                        = false,
   $web_cache__error_page_time                = 30,
@@ -1077,7 +1166,7 @@ define brocadevtm::virtual_servers (
   vtmrest { "virtual_servers/${name}":
     ensure   => $ensure,
     before   => Class[brocadevtm::purge],
-    endpoint => "https://${ip}:${port}/api/tm/6.0/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/8.3/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/virtual_servers.erb'),

@@ -51,7 +51,7 @@ class brocadevtm::event_types_all_custom_trafficscript_events (
   vtmrest { 'event_types/All%20Custom%20TrafficScript%20Events':
     ensure   => $ensure,
     before   => Class[brocadevtm::purge],
-    endpoint => "https://${ip}:${port}/api/tm/6.0/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/8.3/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/event_types.erb'),

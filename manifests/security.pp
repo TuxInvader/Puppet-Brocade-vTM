@@ -64,7 +64,7 @@ class brocadevtm::security (
   $basic__access            = '[]',
   $ssh_intrusion__bantime   = 600,
   $ssh_intrusion__blacklist = '[]',
-  $ssh_intrusion__enabled   = false,
+  $ssh_intrusion__enabled   = true,
   $ssh_intrusion__findtime  = 600,
   $ssh_intrusion__maxretry  = 6,
   $ssh_intrusion__whitelist = '[]',
@@ -81,7 +81,7 @@ class brocadevtm::security (
   vtmrest { 'security':
     ensure   => $ensure,
     before   => Class[brocadevtm::purge],
-    endpoint => "https://${ip}:${port}/api/tm/6.0/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/8.3/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/security.erb'),

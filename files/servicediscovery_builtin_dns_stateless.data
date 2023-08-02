@@ -1,0 +1,406 @@
+#!/bin/sh
+# Copyright (C) 2018, Pulse Secure, LLC. All rights reserved.
+#
+# This script uses "dig" to first resolve the DNS SRV record for the
+# given service name record and then resolves the hostnames contained in
+# the SRV record to IPv4 and IPv6 addresses.
+# Alternatively, it can directly resolve a DNS Address / CNAME record,
+# creating nodes for each address.
+#
+# Arguments:
+#    --servicename=<svc>    The service name to resolve,
+#                           e.g. "_ldap._tcp.example.com"
+#  or
+#    --service=<service>    The service type to resolve, e.g. "ldap"
+#    --protocol=<protocol>  The service protocol to resolve, e.g "tcp"
+#  or
+#    --hostname=<host>      A hostname which has address or CNAME records
+#
+#    --domain=<domain>      The domain to append, e.g. "example.com"
+#    --nameserver=<ns>      Specify nameservers to use (may use multiple times)
+#
+#    --port                 Port to use for all nodes, overriding the port in
+#                           an SRV record. Required when using --hostname
+#
+#    --ipv4                 Resolve service target as an IPv4 address
+#    --ipv6                 Resolve service target as an IPv6 address
+#                           By default, both IPv4 (A) and IPv6 (AAAA)
+#                           address records are resolved.
+#    --all-addresses        An SRV record normally corresponds to a single
+#                           node in a pool. However the target hostname may
+#                           resolve to multiple IP addresses. If so, specifying
+#                           this argument will create one pool node per address.
+#                           Otherwise, the first address found is used.
+#    --min-poll-interval=<N>The next poll of DNS is calculated by finding the
+#                           lowest TTL of the SRV and Address records that
+#                           make up the service definition. This argument may
+#                           be used to set a lower limit, i.e "do not poll more
+#                           frequently than N seconds". An upper limit is
+#                           enforced by the pool's service discovery
+#                           configuration.
+#    --no-search            Do not search domains, all names are fully qualified
+#    --search-domain=<dom>  Use this search domain instead of /etc/resolv.conf
+#    --nameserver-port      Use this port instead of port 53 for DNS queries
+if [ -z "$ZEUSHOME" ]
+then
+   # Have a good guess, we live in $ZEUSHOME/zxtm/conf/servicediscovery
+   OLD_PWD=`pwd`
+   cd `dirname $0`/../../..
+   if [ -d 'zxtm/bin' ]
+   then
+      ZEUSHOME=`pwd`
+      export ZEUSHOME
+   fi
+   cd $OLD_PWD
+fi
+
+if [ ! -z "$ZEUSHOME" ]
+then
+   PROG=$ZEUSHOME/perl/miniperl
+else
+   echo "Failed to determine ZEUSHOME" >&2
+   exit 1
+fi
+
+exec $PROG -x $0 ${1+"$@"}
+###############################################################################
+#!perl -w
+#line 69
+
+BEGIN { unshift @INC, "$ENV{ZEUSHOME}/zxtm/lib/perl",
+     "$ENV{ZEUSHOME}/zxtmadmin/lib/perl", "$ENV{ZEUSHOME}/perl" }
+
+use JSON;
+use Getopt::Long qw( );
+use Zeus::Execute qw( );
+
+use strict;
+
+my $DNSLOOKUP = "dig";
+my $SER_DISCO_VERSION = 1;
+
+sub error($$)
+{
+   my( $code, $error ) = @_;
+   my %output = ( code => $code, error => $error,
+                  version => $SER_DISCO_VERSION );
+   print( encode_json( \%output ) );
+   exit( 1 );
+}
+
+sub result($$)
+{
+   my( $nodes, $ttl ) = @_;
+   my %output = ( code => 200, nodes => $nodes, version => $SER_DISCO_VERSION );
+   if( defined( $ttl ) ) {
+      # A DNS response may contain a TTL of zero (BIND returns such results for
+      # a cached response with between 0 and 1 seconds remaining). However the
+      # plugin API requires a minimum of 1 second in interval_override.
+      $output{'interval_override'} = 0 + max( 1, $ttl );
+   }
+   print( encode_json( \%output ), "\n" );
+   exit( 0 );
+}
+
+sub min($$)
+{
+   my( $a, $b ) = @_;
+   if( !defined( $a ) ) {
+      return $b;
+   } elsif( !defined( $b ) ) {
+      return $a;
+   }
+   return ( $a < $b ) ? $a : $b;
+}
+
+sub max($$)
+{
+   my( $a, $b ) = @_;
+   if( !defined( $a ) ) {
+      return $b;
+   } elsif( !defined( $b ) ) {
+      return $a;
+   }
+   return ( $a > $b ) ? $a : $b;
+}
+
+sub run_dig_command
+{
+   my @command = @_;
+   my( $exit, $stdout, $stderr ) = Zeus::Execute::execute( \@command );
+   if( $exit ) {
+      error( 502, "dig exited with $exit: $stdout $stderr\n" );
+   }
+   my $results = {};
+   my $section = 'header';
+   foreach my $line( split( /^/, $stdout ) ) {
+      chomp( $line );
+      if( $line =~ /\Q->>HEADER<<-\E.*status: ([^,]+),/ ) {
+         # ;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 50036
+         # extract the status (NOERROR, NXDOMAIN...)
+         $results->{'header'} = { 'status' => $1 };
+      } elsif( $line =~ /^;; (\S+) SECTION:/ ) {
+         # ;; ANSWER SECTION:
+         # The section corresponds to DNS response sections:
+         # answer, authority, additional
+         # and it is important which sections a record appears in.
+         $section = lc( $1 );
+         $results->{$section} = {};
+      }
+      next if( $line =~ /^(;|$)/ ); # comments, blank
+      my( $host, $ttl, $af, $rrtype, $rr ) = split( /\s+/, $line, 5 );
+      $results->{$section}->{$rrtype}->{$host} //= [];
+      push( @{$results->{$section}->{$rrtype}->{$host}}, { 'ttl' => $ttl, 'rr' => $rr } );
+   }
+   return $results;
+}
+
+# Plugin arguments
+my $arg_servicename;
+my $arg_hostname;
+my $arg_port;
+my $arg_service = '';
+my $arg_protocol = '';
+my $arg_domain;
+my $arg_ipv4;
+my $arg_ipv6;
+my $arg_all_addresses;
+my $arg_min_poll_interval;
+my $arg_nameservers;
+my $arg_nameserverport;
+my $arg_search = 1;
+my $arg_searchdomain;
+
+# Other globals
+my $min_ttl;
+my $cname_recursion = 0;
+
+if( !Getopt::Long::GetOptions( 'servicename=s' => \$arg_servicename,
+                               'protocol=s' => \$arg_protocol,
+                               'service=s' => \$arg_service,
+                               'domain=s' => \$arg_domain,
+                               'hostname=s' => \$arg_hostname,
+                               'port=i' => \$arg_port,
+                               'ipv4!' => \$arg_ipv4,
+                               'ipv6!' => \$arg_ipv6,
+                               'all-addresses!' => \$arg_all_addresses,
+                               'nameserver=s@' => \$arg_nameservers,
+                               'nameserverport=i' => \$arg_nameserverport,
+                               'min-poll-interval=i' => \$arg_min_poll_interval,
+                               'search!' => \$arg_search,
+                               'search-domain=s' => \$arg_searchdomain ) ) {
+   error( 400, 'Invalid arguments for DNS Active Directory Plugin' );
+}
+
+if( $arg_hostname ) {
+   if( $arg_servicename || $arg_protocol || $arg_service ) {
+      error( 400, "Hostname and service cannot be used together. Either use ".
+         "--hostname to specify a host with multiple address records, ".
+         "or use --servicename to specify a service with SRV records, ".
+         "or use --service and --protocol to construct a service name." );
+   }
+   $arg_all_addresses //= 1;
+   if( !$arg_port ) {
+      error( 400, "When using --hostname, --port must be used to specify the ".
+         "service port. DNS address records do not contain port information." );
+   }
+} elsif( !$arg_servicename ) {
+   if( $arg_protocol && $arg_service ) {
+      $arg_servicename = "_$arg_service._$arg_protocol";
+   } else {
+      error( 400, 'No service name provided for DNS Resolution. '.
+         'Provide either the service name to resolve (--servicename=_ldap._tcp.example.com), '.
+         'or the service and protocol components (--service=ldap --protocol=tcp --domain=example.com)' );
+   }
+} elsif( $arg_protocol || $arg_service ) {
+   error( 400, "Specify either the service name (--servicename=$arg_servicename), ".
+      "or the service and protocol components to generate one ".
+      "(--service=$arg_service --protocol=$arg_protocol), but not both." );
+}
+
+if( $arg_domain ) {
+   # Append the domain - optional, as you may want to use search paths
+   if( $arg_servicename ) {
+      $arg_servicename .= ".$arg_domain";
+   } elsif( $arg_hostname ) {
+      $arg_hostname .= ".$arg_domain";
+   }
+}
+
+if( !$arg_ipv4 && !$arg_ipv6 ) {
+   $arg_ipv4 = 1;
+   $arg_ipv6 = 1;
+}
+
+my @base_command = ( $DNSLOOKUP );
+foreach my $nameserver ( @$arg_nameservers ) {
+   push( @base_command, '@' . $nameserver );
+}
+if( $arg_nameserverport ) {
+   # for non standard DNS service, e.g. unprivileged testing
+   push( @base_command, ( '-p', $arg_nameserverport ) );
+}
+
+if( $arg_search ) {
+   if( $arg_searchdomain ) {
+      push( @base_command, "+domain=$arg_searchdomain" );
+   } else {
+      push( @base_command, "+search" );
+   }
+}
+
+if( $arg_hostname ) {
+   create_nodes_from_hostname();
+} elsif( $arg_servicename ) {
+   create_nodes_from_service();
+}
+error( 500, "No host or service name" ); # Should be caught in argument checks
+
+sub create_nodes_from_service
+{
+   my $srv_answer = run_dig_command( @base_command, '+ndots=3', '-t', 'srv', '-q', $arg_servicename );
+
+   # The "answer" section contains SRV records
+   my @services;
+   foreach my $host( keys( %{$srv_answer->{'answer'}->{'SRV'}} ) ) {
+      foreach my $record( @{$srv_answer->{'answer'}->{'SRV'}->{$host}} ) {
+         $min_ttl = min( $record->{'ttl'}, $min_ttl );
+         push( @services, $record->{'rr'} );
+      }
+   }
+   if( scalar( @services ) < 1 ) {
+      my $query_status = $srv_answer->{'header'}->{'status'};
+      if( $query_status ) {
+         error( 404, "Service not found: $query_status" );
+      } else {
+         error( 500, "Failed to parse '$DNSLOOKUP' output" );
+      }
+   }
+
+   my @nodes;
+   my $permit_empty_nodes = 0;
+   my $host_query_status = '';
+   foreach my $service ( @services ) {
+      my( $priority, $weight, $port, $hostname ) = split( /\s+/, $service );
+      if( $arg_port ) {
+         $port = $arg_port;
+      }
+
+      if( $hostname eq '.' ) {
+         $permit_empty_nodes = 1;
+         next; # rfc2782: no service (a way of specifying the empty set)
+      }
+
+      my @ips;
+      # The "additional" section will usually contain the addresses, it is
+      # a predicted set of next questions.
+      if( $arg_ipv4 && exists( $srv_answer->{'additional'}->{'A'}->{$hostname} ) ) {
+         foreach my $record( @{$srv_answer->{'additional'}->{'A'}->{$hostname}} ) {
+            $min_ttl = min( $record->{'ttl'}, $min_ttl );
+            push( @ips, $record->{'rr'} );
+         }
+      }
+      if( $arg_ipv6 && exists( $srv_answer->{'additional'}->{'AAAA'}->{$hostname} ) ) {
+         foreach my $record( @{$srv_answer->{'additional'}->{'AAAA'}->{$hostname}} ) {
+            $min_ttl = min( $record->{'ttl'}, $min_ttl );
+            push( @ips, $record->{'rr'} );
+         }
+      }
+      if( !scalar( @ips ) ) {
+         # not pushed in additional section, look it up
+         my( $host_ips, $host_status ) = resolve_host( $hostname );
+         if( !$host_query_status || $host_query_status eq 'NOERROR' ) {
+            $host_query_status = $host_status;
+         }
+         push( @ips, @$host_ips );
+      }
+
+      # Priority and Weight are not supported by version 1
+      foreach my $ip ( @ips ) {
+         push( @nodes, { 'ip' => $ip, port => int( $port ) } );
+         last if( !$arg_all_addresses );
+      }
+   }
+
+   if( scalar( @nodes ) == 0 && !$permit_empty_nodes ) {
+      error( 502, "Failed to resolve hostnames in SRV record: $host_query_status" );
+   }
+
+   result( \@nodes, max( $arg_min_poll_interval, $min_ttl ) );
+}
+
+sub create_nodes_from_hostname
+{
+   my( $ips, $status ) = resolve_host( $arg_hostname );
+   if( scalar( @$ips ) ) {
+   } elsif( $status eq 'NXDOMAIN' ) {
+      # No nodes (yet, or scaled down to zero, or...)
+      result( [], undef );
+   } else {
+      error( 502, "Failed to resolve host name: $status" );
+   }
+   my @nodes;
+   foreach my $ip ( @$ips ) {
+      push( @nodes, { 'ip' => $ip, port => int( $arg_port ) } );
+      last if( !$arg_all_addresses );
+   }
+   
+   result( \@nodes, max( $arg_min_poll_interval, $min_ttl ) );
+}
+
+sub resolve_host
+{
+   my( $hostname ) = @_;
+   my @ips;
+   my $status;
+   # Note that some DNS servers do not support or permit 'ANY'
+   if( $arg_ipv4 ) {
+      my $address_result = run_dig_command( @base_command, '+noauthority', '+noadditional', '-t', 'A', $hostname );
+      if( !$status || $status eq 'NOERROR' ) {
+         $status = $address_result->{'header'}->{'status'};
+      }
+      foreach my $host( keys( %{$address_result->{'answer'}->{'A'}} ) ) {
+         foreach my $record( @{$address_result->{'answer'}->{'A'}->{$host}} ) {
+            $min_ttl = min( $record->{'ttl'}, $min_ttl );
+            push( @ips, $record->{'rr'} );
+         }
+      }
+   }
+   if( $arg_ipv6 && ( $arg_all_addresses || !scalar( @ips ) ) ) {
+      my $address_result = run_dig_command( @base_command, '+noauthority', '+noadditional', '-t', 'AAAA', $hostname );
+      if( !$status || $status eq 'NOERROR' ) {
+         $status = $address_result->{'header'}->{'status'};
+      }
+      foreach my $host( keys( %{$address_result->{'answer'}->{'AAAA'}} ) ) {
+         foreach my $record( @{$address_result->{'answer'}->{'AAAA'}->{$host}} ) {
+            $min_ttl = min( $record->{'ttl'}, $min_ttl );
+            push( @ips, $record->{'rr'} );
+         }
+      }
+   }
+   if( !scalar( @ips ) ) {
+      if( $cname_recursion > 8 ) {
+         error( 502, "CNAME more than 8 levels deep, possible loop." );
+      }
+      # Check for CNAME
+      my $cname_result = run_dig_command( @base_command, '-t', 'CNAME', $hostname );
+      foreach my $host( keys( %{$cname_result->{'answer'}->{'CNAME'}} ) ) {
+         foreach my $record( @{$cname_result->{'answer'}->{'CNAME'}->{$host}} ) {
+            # Ignore TTL in CNAME, as a durable CNAME may be used to point to
+            # an ephemeral pool of addresses.
+            my $canonical_host = $record->{'rr'};
+            # Could not find a DNS server that pushes A records for the canonical
+            # host, so not implemented using the additional section here.
+            $cname_recursion++;
+            my( $cn_ips, $cn_status ) = resolve_host( $canonical_host );
+            if( !$status || $status eq 'NOERROR' ) {
+               $status = $cn_status;
+            }
+            push( @ips, @$cn_ips );
+            $cname_recursion--;
+         }
+      }
+   }
+   return ( \@ips, $status );
+}
+

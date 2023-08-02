@@ -79,6 +79,13 @@
 # [*ldap__server*]
 # The IP or hostname of the LDAP server.
 #
+# [*ldap__ssl*]
+# The type of TLS encryption, if any, to use. Usually STARTTLS will be used
+# with port 389, and LDAPS with port 636. A Certificate Authority that the
+# LDAP server's certificate chains back to must be present in the "Admin
+# Certificate Authorities and Certificate Revocation Lists Catalog" under "SSL
+# catalogs", otherwise the connection will fail.
+#
 # [*ldap__timeout*]
 # Connection timeout in seconds.
 #

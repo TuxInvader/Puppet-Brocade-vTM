@@ -31,6 +31,19 @@
 # subnet, specified as a prefix length, are sent to the same node. If set to
 # 0, requests from different IPv6 addresses will be load-balanced individually.
 #
+# [*basic__transparent_always_set_cookie*]
+# Whether or not the cookie should be inserted in every response sent to the
+# client when using transparent session affinity. If set to "No" then the
+# cookie is inserted only if the corresponding request did not already contain
+# a matching cookie.
+#
+# [*basic__transparent_directives*]
+# The cookie directives to include in the cookie sent when using transparent
+# session affinity. If more than one directive is included, the semi-colon
+# separator between them must be included in this string. The semi-colon
+# separator between the cookie value and the first directive should not be
+# included in this string.
+#
 # [*basic__type*]
 # The type of session persistence to use.
 #
@@ -55,14 +68,16 @@
 #
 define brocadevtm::persistence (
   $ensure,
-  $basic__cookie                  = undef,
-  $basic__delete                  = true,
-  $basic__failure_mode            = 'new_node',
-  $basic__note                    = undef,
-  $basic__subnet_prefix_length_v4 = 0,
-  $basic__subnet_prefix_length_v6 = 0,
-  $basic__type                    = 'ip',
-  $basic__url                     = undef,
+  $basic__cookie                        = undef,
+  $basic__delete                        = true,
+  $basic__failure_mode                  = 'new_node',
+  $basic__note                          = undef,
+  $basic__subnet_prefix_length_v4       = 0,
+  $basic__subnet_prefix_length_v6       = 0,
+  $basic__transparent_always_set_cookie = false,
+  $basic__transparent_directives        = undef,
+  $basic__type                          = 'ip',
+  $basic__url                           = undef,
 ){
   include brocadevtm
   $ip              = $brocadevtm::rest_ip
@@ -76,7 +91,7 @@ define brocadevtm::persistence (
   vtmrest { "persistence/${name}":
     ensure   => $ensure,
     before   => Class[brocadevtm::purge],
-    endpoint => "https://${ip}:${port}/api/tm/6.0/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/8.3/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/persistence.erb'),

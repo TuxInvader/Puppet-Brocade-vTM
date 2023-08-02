@@ -80,6 +80,13 @@
 # [*ldap__server*]
 # The IP or hostname of the LDAP server.
 #
+# [*ldap__ssl*]
+# The type of TLS encryption, if any, to use. Usually STARTTLS will be used
+# with port 389, and LDAPS with port 636. A Certificate Authority that the
+# LDAP server's certificate chains back to must be present in the "Admin
+# Certificate Authorities and Certificate Revocation Lists Catalog" under "SSL
+# catalogs", otherwise the connection will fail.
+#
 # [*ldap__timeout*]
 # Connection timeout in seconds.
 #
@@ -174,6 +181,7 @@ define brocadevtm::user_authenticators (
   $ldap__search_dn             = undef,
   $ldap__search_password       = undef,
   $ldap__server                = undef,
+  $ldap__ssl                   = 'none',
   $ldap__timeout               = 30,
   $radius__fallback_group      = undef,
   $radius__group_attribute     = 1,
@@ -205,7 +213,7 @@ define brocadevtm::user_authenticators (
   vtmrest { "user_authenticators/${name}":
     ensure   => $ensure,
     before   => Class[brocadevtm::purge],
-    endpoint => "https://${ip}:${port}/api/tm/6.0/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/8.3/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/user_authenticators.erb'),

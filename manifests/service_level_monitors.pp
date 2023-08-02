@@ -11,8 +11,8 @@
 # A description for the SLM class.
 #
 # [*basic__response_time*]
-# Responses that arrive within this time limit, expressed in milliseconds, are
-# treated as conforming.
+# Responses that start being sent to the client within this time limit,
+# expressed in milliseconds, are treated as conforming.
 #
 # [*basic__serious_threshold*]
 # When the percentage of conforming responses drops below this level, a
@@ -56,7 +56,7 @@ define brocadevtm::service_level_monitors (
   vtmrest { "service_level_monitors/${name}":
     ensure   => $ensure,
     before   => Class[brocadevtm::purge],
-    endpoint => "https://${ip}:${port}/api/tm/6.0/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/8.3/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/service_level_monitors.erb'),

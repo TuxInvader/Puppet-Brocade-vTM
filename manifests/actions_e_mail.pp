@@ -7,7 +7,7 @@
 class brocadevtm::actions_e_mail (
   $ensure                      = present,
   $basic__note                 = undef,
-  $basic__syslog_msg_len_limit = 1024,
+  $basic__syslog_msg_len_limit = 2048,
   $basic__timeout              = 60,
   $basic__type                 = 'email',
   $basic__verbose              = false,
@@ -42,7 +42,7 @@ class brocadevtm::actions_e_mail (
   vtmrest { 'actions/E-Mail':
     ensure   => $ensure,
     before   => Class[brocadevtm::purge],
-    endpoint => "https://${ip}:${port}/api/tm/6.0/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/8.3/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/actions.erb'),

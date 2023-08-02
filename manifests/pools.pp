@@ -212,6 +212,14 @@
 # How long the pool should wait for a response from the node before either
 # discarding the request or trying another node (retryable requests only).
 #
+# [*connection__max_transactions_per_node*]
+# The maximum number of concurrent transactions allowed to each back-end node
+# in this pool per machine. A value of 0 means unlimited transactions. Idle
+# connections kept alive for reuse do not count against this limit. A
+# transaction begins by allocating a connection for sending the request, and
+# ends (for the purposes of queuing) after a complete response has been
+# received from the node.
+#
 # [*connection__queue_timeout*]
 # The maximum time to keep a connection queued in seconds.
 #
@@ -328,6 +336,14 @@
 # for this pool which are Pulse Secure vTMs, whose virtual servers have the
 # "ssl_trust_magic" setting enabled.
 #
+# [*ssl__middlebox_compatibility*]
+# Whether or not TLS 1.3 middlebox compatibility mode as described in RFC 8446
+# appendix D.4 will be used in connections to pool nodes. Choosing the global
+# setting means the value of configuration key <a
+# href="?fold_open=SSL%20Configuration&section=Global%20Settings#a_ssl!middlebox
+# _compatibility"> "ssl!middlebox_compatibility"</a> from the Global Settings
+# section of the System tab will be enforced.
+#
 # [*ssl__send_close_alerts*]
 # Whether or not to send an SSL/TLS "close alert" when initiating a socket
 # disconnection.
@@ -345,11 +361,11 @@
 # section of the System tab will be enforced.
 #
 # [*ssl__session_tickets_enabled*]
-# Whether or not SSL session tickets will be used for this pool if the session
-# cache is also enabled. Choosing the global setting means the value of the
-# configuration key <a
+# Whether or not SSL session tickets, including TLS >= 1.3 PSKs, will be used
+# for this pool if the session cache is also enabled. Choosing the global
+# setting means the value of the configuration key <a
 # href="?fold_open=SSL%20Configuration&section=Global%20Settings#a_ssl!client_ca
-# che!tickets_enabled"> "ssl!client_cache!enabled"</a> from the Global
+# che!tickets_enabled"> "ssl!client_cache!tickets_enabled"</a> from the Global
 # Settings section of the System tab will be enforced.
 #
 # [*ssl__signature_algorithms*]
@@ -358,6 +374,11 @@
 # use the globally configured preference list, "signature_algorithms" in the
 # "ssl" section of the "global_settings" resource.  See there and in the
 # online help for how to specify SSL signature algorithms.
+#
+# [*ssl__ssl_fixed_client_certificate*]
+# An entry in the SSL client certificates catalog, containing a certificate
+# and private key to be used whenever client authentication is requested. If
+# set, this overrides server request parameters.
 #
 # [*ssl__strict_verify*]
 # Whether or not strict certificate verification should be performed. This
@@ -391,6 +412,13 @@
 # means the value of the configuration key <a
 # href="?fold_open=SSL%20Configuration&section=Global%20Settings#a_ssl!support_t
 # ls1_2"> "ssl!support_tls1_2"</a> from the Global Settings section of the
+# System tab will be enforced.
+#
+# [*ssl__support_tls1_3*]
+# Whether or not TLSv1.3 is enabled for this pool. Choosing the global setting
+# means the value of the configuration key <a
+# href="?fold_open=SSL%20Configuration&section=Global%20Settings#a_ssl!support_t
+# ls1_3"> "ssl!support_tls1_3"</a> from the Global Settings section of the
 # System tab will be enforced.
 #
 # [*tcp__nagle*]
@@ -471,6 +499,7 @@ define brocadevtm::pools (
   $connection__max_connections_per_node     = 0,
   $connection__max_queue_size               = 0,
   $connection__max_reply_time               = 30,
+  $connection__max_transactions_per_node    = 0,
   $connection__queue_timeout                = 10,
   $dns_autoscale__enabled                   = false,
   $dns_autoscale__hostnames                 = '[]',
@@ -497,16 +526,19 @@ define brocadevtm::pools (
   $ssl__elliptic_curves                     = '[]',
   $ssl__enable                              = false,
   $ssl__enhance                             = false,
+  $ssl__middlebox_compatibility             = 'use_default',
   $ssl__send_close_alerts                   = true,
   $ssl__server_name                         = false,
   $ssl__session_cache_enabled               = 'use_default',
   $ssl__session_tickets_enabled             = 'use_default',
   $ssl__signature_algorithms                = undef,
+  $ssl__ssl_fixed_client_certificate        = undef,
   $ssl__strict_verify                       = false,
   $ssl__support_ssl3                        = 'use_default',
   $ssl__support_tls1                        = 'use_default',
   $ssl__support_tls1_1                      = 'use_default',
   $ssl__support_tls1_2                      = 'use_default',
+  $ssl__support_tls1_3                      = 'use_default',
   $tcp__nagle                               = true,
   $udp__accept_from                         = 'dest_only',
   $udp__accept_from_mask                    = undef,
@@ -524,7 +556,7 @@ define brocadevtm::pools (
   vtmrest { "pools/${name}":
     ensure   => $ensure,
     before   => Class[brocadevtm::purge],
-    endpoint => "https://${ip}:${port}/api/tm/6.0/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/8.3/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/pools.erb'),

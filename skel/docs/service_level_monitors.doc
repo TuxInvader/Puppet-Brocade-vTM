@@ -10,8 +10,8 @@
 # A description for the SLM class.
 #
 # [*basic__response_time*]
-# Responses that arrive within this time limit, expressed in milliseconds, are
-# treated as conforming.
+# Responses that start being sent to the client within this time limit,
+# expressed in milliseconds, are treated as conforming.
 #
 # [*basic__serious_threshold*]
 # When the percentage of conforming responses drops below this level, a

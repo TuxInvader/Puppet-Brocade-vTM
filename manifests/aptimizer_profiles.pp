@@ -62,7 +62,7 @@ define brocadevtm::aptimizer_profiles (
   vtmrest { "aptimizer/profiles/${name}":
     ensure   => $ensure,
     before   => Class[brocadevtm::purge],
-    endpoint => "https://${ip}:${port}/api/tm/6.0/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/8.3/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/aptimizer_profiles.erb'),

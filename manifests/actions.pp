@@ -116,7 +116,7 @@ define brocadevtm::actions (
   $ensure,
   $basic__type,
   $basic__note                 = undef,
-  $basic__syslog_msg_len_limit = 1024,
+  $basic__syslog_msg_len_limit = 2048,
   $basic__timeout              = 60,
   $basic__verbose              = false,
   $email__from                 = 'vTM@%hostname%',
@@ -150,7 +150,7 @@ define brocadevtm::actions (
   vtmrest { "actions/${name}":
     ensure   => $ensure,
     before   => Class[brocadevtm::purge],
-    endpoint => "https://${ip}:${port}/api/tm/6.0/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/8.3/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/actions.erb'),

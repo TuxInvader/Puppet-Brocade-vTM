@@ -1,12 +1,12 @@
 # === Define: brocadevtm::license_keys
 #
 # License
-# A license key is a encoded text file that controls what functionality is
+# A license key is an encoded text file that controls what functionality is
 # available from each traffic manager in the cluster. Every production traffic
 # manager must have a valid licence key in order to function; a traffic
-# manager without a license will operate in developer mode, allowing
-# developers to trial a wide range of functionality, but placing restrictions
-# on bandwidth.
+# manager without a license will operate as Community Edition, which provides
+# most of the functionality, but places restrictions on bandwidth and cluster
+# size.
 #
 # === Parameters
 #
@@ -41,7 +41,7 @@ define brocadevtm::license_keys (
   vtmrest { "license_keys/${name}":
     ensure   => $ensure,
     before   => Class[brocadevtm::purge],
-    endpoint => "https://${ip}:${port}/api/tm/6.0/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/8.3/config/active",
     username => $user,
     password => $pass,
     content  => $content,

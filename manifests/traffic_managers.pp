@@ -44,9 +44,9 @@
 # [*basic__cloud_platform*]
 # Cloud platform where the traffic manager is running.
 #
-# [*basic__developer_mode_accepted*]
-# Whether user has accepted the Developer mode and will not be prompted for
-# uploading license key
+# [*basic__community_edition_accepted*]
+# Whether user has accepted the Community Edition and will not be prompted for
+# uploading a license key
 #
 # [*basic__disk_serious*]
 # The percentage level of disk usage that triggers a SERIOUS event log entry
@@ -100,6 +100,12 @@
 # [*basic__use_mx*]
 # Which polling method to use.  The default for your platform is almost always
 # the optimal choice.
+#
+# [*admin__hsts_enable*]
+# Whether or not HSTS (RFC 6797) is enabled for admin server connections.
+#
+# [*admin__hsts_max_age*]
+# The number of seconds that the HSTS header field max-age will be set to
 #
 # [*appliance__disable_cloud_init*]
 # Whether to disable the cloud-init service
@@ -202,12 +208,18 @@
 # [*appliance__manageec2conf*]
 # Whether or not the software manages the EC2 config.
 #
+# [*appliance__managegceroutes*]
+# Whether or not the software manages the GCE routing.
+#
 # [*appliance__manageiptrans*]
 # Whether or not the software manages the IP transparency
 #
 # [*appliance__managereservedports*]
 # Whether or not the software manages the system configuration for reserved
 # ports
+#
+# [*appliance__manageresolved*]
+# Whether or not the software manages resolved.
 #
 # [*appliance__managereturnpath*]
 # Whether or not the software manages return path routing. If disabled, the
@@ -367,8 +379,7 @@
 #
 # [*iptrans__iptables_enabled*]
 # Whether IP transparency may be used via netfilter/iptables. This requires
-# Linux 2.6.24 and the iptables socket extension. For older Linux versions,
-# the "ztrans" kernel module may be used instead.
+# the iptables socket extension.
 #
 # [*iptrans__routing_table*]
 # The special routing table ID to use for IP transparency rules
@@ -387,8 +398,16 @@
 # [*remote_licensing__email_address*]
 # The e-mail address sent as part of a remote licensing request.
 #
+# [*remote_licensing__is_template*]
+# Whether this appliance is a 'template' or not. A template will not attempt
+# self-registration, and is intended to be cloned. Guest customization always
+# resets this to false.
+#
 # [*remote_licensing__message*]
 # A free-text field sent as part of a remote licensing request.
+#
+# [*remote_licensing__registration_identifier*]
+# A registration identifier for Services Director use.
 #
 # [*rest_api__bind_ips*]
 # A list of IP Addresses which the REST API will listen on for connections.
@@ -444,6 +463,9 @@
 # The username required for SNMPv3 commands.  (If empty, all SNMPv3 commands
 # will be rejected).
 #
+# [*soap__max_requests*]
+# The maximum SOAP requests before the SOAP processes restarts.
+#
 # === Examples
 #
 # brocadevtm::traffic_managers { 'example':
@@ -475,6 +497,8 @@ define brocadevtm::traffic_managers (
   $basic__restServerPort                  = 0,
   $basic__trafficip                       = '[]',
   $basic__updaterIP                       = '0.0.0.0',
+  $admin__hsts_enable                     = false,
+  $admin__hsts_max_age                    = 31536000,
   $appliance__disable_kpti                = false,
   $appliance__dnscache                    = true,
   $appliance__dnssec                      = 'no',
@@ -486,7 +510,7 @@ define brocadevtm::traffic_managers (
   $appliance__ip                          = '[]',
   $appliance__ipmi_lan_access             = false,
   $appliance__ipmi_lan_addr               = undef,
-  $appliance__ipmi_lan_gateway            = undef,
+  $appliance__ipmi_lan_gateway            = '0.0.0.0',
   $appliance__ipmi_lan_ipsrc              = 'static',
   $appliance__ipmi_lan_mask               = undef,
   $appliance__ipv4_forwarding             = false,
@@ -494,6 +518,7 @@ define brocadevtm::traffic_managers (
   $appliance__licence_agreed              = false,
   $appliance__manageazureroutes           = true,
   $appliance__manageec2conf               = true,
+  $appliance__managegceroutes             = true,
   $appliance__manageiptrans               = true,
   $appliance__managereservedports         = true,
   $appliance__managereturnpath            = true,
@@ -548,7 +573,7 @@ define brocadevtm::traffic_managers (
   vtmrest { "traffic_managers/${name}":
     ensure   => $ensure,
     before   => Class[brocadevtm::purge],
-    endpoint => "https://${ip}:${port}/api/tm/6.0/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/8.3/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/traffic_managers.erb'),

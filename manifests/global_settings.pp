@@ -58,6 +58,10 @@
 # How much delay in milliseconds between starvation checks do we allow before
 # we assume that the machine or its HyperVisor are overloaded.
 #
+# [*basic__http2_conn_frame_queue_limit*]
+# Maximum number of queued HTTP/2 frames per connection before the connection
+# is closed. Intended to protect against CVE-2019-9514 and similar exploits.
+#
 # [*basic__http2_no_cipher_blacklist_check*]
 # Disable the cipher blacklist check in HTTP2 (mainly intended for testing
 # purposes)
@@ -75,6 +79,15 @@
 # [*basic__max_fds*]
 # The maximum number of file descriptors that your traffic manager will
 # allocate.
+#
+# [*basic__max_tcp_buff_mem*]
+# The maximum amount of memory allowed to be used to buffer network data in
+# user space for all TCP connections. The TCP data buffered are either
+# received from clients but before sending to pool nodes, or recevied from
+# pool nodes but before sending to clients. This is specified as either a
+# percentage of system RAM, "5%" for example, or an absolute size such as
+# "1024MB" and "2GB". A numeric value without suffix MB, GB or % defaults to
+# MB. A value of "800" means 800MB. A value of "0" means unlimited.
 #
 # [*basic__monitor_memory_size*]
 # The maximum number of each of nodes, pools or locations that can be
@@ -154,10 +167,6 @@
 # and internal connections will accept. To accept any size of handshake
 # message the key should be set to the value "0".
 #
-# [*admin__ssl_prevent_timing_side_channels*]
-# Take performance degrading steps to prevent exposing timing side-channels
-# with SSL3 and TLS used by the admin server and internal connections.
-#
 # [*admin__ssl_signature_algorithms*]
 # The SSL signature algorithms preference list for admin and internal
 # connections using TLS version 1.2 or higher. For information on supported
@@ -177,6 +186,10 @@
 #
 # [*admin__support_tls1_2*]
 # Whether or not TLS1.2 support is enabled for admin server and internal
+# connections.
+#
+# [*admin__support_tls1_3*]
+# Whether or not TLS1.3 support is enabled for admin server and internal
 # connections.
 #
 # [*appliance__bootloader_password*]
@@ -355,6 +368,13 @@
 # under some very specific conditions. However, in general it is recommended
 # that this be set to 'false'.
 #
+# [*connection__udp_read_multiple*]
+# Whether or not the traffic manager should try to read multiple UDP packets
+# from clients each time the kernel reports data received from clients. This
+# can improve performance for the situation with high UDP traffic throughput
+# from clients to the traffic manager. Therefore, in general it is recommended
+# that this be set to 'Yes'.
+#
 # [*dns__checktime*]
 # How often to check the DNS configuration for changes.
 #
@@ -393,7 +413,8 @@
 # is usually defined in /etc/resolv.conf
 #
 # [*ec2__access_key_id*]
-# Amazon EC2 Access Key ID.
+# Deprecated: This key is unused. Amazon authentication credentials are now
+# extracted from IAM Roles assigned to an EC2 instance.
 #
 # [*ec2__action_timeout*]
 # How long, in seconds, the traffic manager should wait while associating or
@@ -415,7 +436,8 @@
 # URL for the Amazon EC2 endpoint, "https://ec2.amazonaws.com/" for example.
 #
 # [*ec2__secret_access_key*]
-# Amazon EC2 Secret Access Key.
+# Deprecated: This key is unused. Amazon authentication credentials are now
+# extracted from IAM Roles assigned to an EC2 instance.
 #
 # [*ec2__verify_query_server_cert*]
 # Whether to verify Amazon EC2 endpoint's certificate using CA(s) present in
@@ -478,6 +500,12 @@
 # [*fault_tolerance__multicast_address*]
 # The multicast address and port to use to exchange cluster heartbeat messages.
 #
+# [*fault_tolerance__multicast_version*]
+# The multicast version to be use ("1", "2" or "3") for cluster heartbeat
+# messages. A value of "0" will let the operating system choose (but note that
+# Linux often gets this wrong). This setting is only supported when using 2.6
+# versions of the Linux kernel.
+#
 # [*fault_tolerance__routing_sw_run_ribd*]
 # Whether the ribd routing daemon is to be run. The routing software needs to
 # be restarted for this change to take effect.
@@ -518,6 +546,10 @@
 # drop root privileges, if "Yes" some or all privileges may be retained in
 # order to bind to low ports.
 #
+# [*gce__action_timeout*]
+# How long, in seconds, the traffic manager should wait while associating or
+# disassociating an External IP to a NIC on the instance.
+#
 # [*glb__verbose*]
 # Write a message to the logs for every DNS query that is load balanced,
 # showing the source IP address and the chosen datacenter.
@@ -534,17 +566,21 @@
 # clients that send very long lines but never any payload data.
 #
 # [*ip__appliance_returnpath*]
-# A table of MAC to IP address mappings for each router where return path
-# routing is required.
+# A table of MAC address/network interface to IP address mappings for each
+# router where return path routing is required.
 # Type:array
-# Properties:{"mac"=>{"description"=>"The MAC address of a router the software
-# is connected to.", "type"=>"string"}, "ipv4"=>{"description"=>"The MAC
-# address to IPv4 address mapping of a router the software is connected to.
-# The \"*\" (asterisk) in the key name is the MAC address, the value is the IP
-# address.", "type"=>"string", "default"=>""}, "ipv6"=>{"description"=>"The
-# MAC address to IPv6 address mapping of a router the software is connected
-# to. The \"*\" (asterisk) in the key name is the MAC address, the value is
-# the IP address.", "type"=>"string", "default"=>""}}
+# Properties:{"mac"=>{"description"=>"The MAC address/network interface of a
+# router the software is connected to.", "type"=>"string"},
+# "ipv4"=>{"description"=>"The MAC address/network interface to IPv4 address
+# mapping of a router the software is connected to. The value is the IPv4
+# address, the \"*\" (asterisk) in the key name is the MAC address and an
+# optional network interface name, for example, 00:50:56:a6:24:3d or
+# 00:50:56:a6:24:3d#eth0.", "type"=>"string", "default"=>""},
+# "ipv6"=>{"description"=>"The MAC address/network interface to IPv6 address
+# mapping of a router the software is connected to. The value is the IPv6
+# address, the \"*\" (asterisk) in the key name is the MAC address and an
+# optional network interface name, for example, 00:50:56:a6:24:3d or
+# 00:50:56:a6:24:3d#eth0.", "type"=>"string", "default"=>""}}
 #
 # [*java__classpath*]
 # CLASSPATH to use when starting the Java runner.
@@ -744,6 +780,16 @@
 # currently active connections and saved connections. If set to "0" all active
 # and saved connection will be displayed on the Connections page.
 #
+# [*remote_licensing__comm_channel_enabled*]
+# Whether to create a Communications Channel agent to send and receive
+# messages from the Services Director Registration Server. This will be
+# disabled when performing self-registration with a Services Director which
+# does not support this feature.
+#
+# [*remote_licensing__comm_channel_port*]
+# The port number the Services Director instance is using for access to the
+# traffic manager Communications Channel.
+#
 # [*remote_licensing__owner*]
 # The Owner of a Services Director instance, used for self-registration.
 #
@@ -762,6 +808,10 @@
 #
 # [*remote_licensing__server_certificate*]
 # The certificate of a Services Director instance, used for self-registration.
+#
+# [*remote_licensing__server_certificate_secondary*]
+# A secondary certificate of a Services Director instance, used while the
+# Services Director is renewing its primary certificate.
 #
 # [*rest_api__auth_timeout*]
 # The length of time after a successful request that the authentication of a
@@ -797,6 +847,10 @@
 #
 # [*rest_api__http_session_timeout*]
 # Maximum time in seconds to keep an idle session open for.
+#
+# [*rest_api__maxfds*]
+# Maximum number of file descriptors that the REST API will allocate. The REST
+# API must be restarted for a change to this setting to take effect.
 #
 # [*rest_api__proxy_map*]
 # A set of symlinks that the REST API maps to actual directories. Used to add
@@ -891,29 +945,44 @@
 # Banner text to be displayed on all Admin Server pages.
 #
 # [*session__asp_cache_size*]
-# The maximum number of entries in the ASP session cache.  This is used for
-# storing session mappings for ASP session persistence. Approximately 100
-# bytes will be pre-allocated per entry.
-#
-# [*session__ip_cache_size*]
-# The maximum number of entries in the IP session cache.  This is used to
-# provide session persistence based on the source IP address. Approximately
+# The maximum number of entries in the ASP session persistence cache.  This is
+# used for storing session mappings for ASP session persistence. Approximately
 # 100 bytes will be pre-allocated per entry.
 #
+# [*session__ip_cache_expiry*]
+# IP session persistence cache expiry time in seconds. A session will not be
+# reused if the time since it was last used exceeds this value. 0 indicates no
+# expiry timeout.
+#
+# [*session__ip_cache_size*]
+# The maximum number of entries in the IP session persistence cache.  This is
+# used to provide session persistence based on the source IP address.
+# Approximately 100 bytes will be pre-allocated per entry.
+#
+# [*session__j2ee_cache_expiry*]
+# J2EE session persistence cache expiry time in seconds. A session will not be
+# reused if the time since it was last used exceeds this value. 0 indicates no
+# expiry timeout.
+#
 # [*session__j2ee_cache_size*]
-# The maximum number of entries in the J2EE session cache.  This is used for
-# storing session mappings for J2EE session persistence. Approximately 100
-# bytes will be pre-allocated per entry.
+# The maximum number of entries in the J2EE session persistence cache.  This
+# is used for storing session mappings for J2EE session persistence.
+# Approximately 100 bytes will be pre-allocated per entry.
 #
 # [*session__ssl_cache_size*]
 # The maximum number of entries in the SSL session persistence cache. This is
 # used to provide session persistence based on the SSL session ID.
 # Approximately 200 bytes will be pre-allocated per entry.
 #
+# [*session__universal_cache_expiry*]
+# Universal session persistence cache expiry time in seconds. A session will
+# not be reused if the time since it was last used exceeds this value. 0
+# indicates no expiry timeout.
+#
 # [*session__universal_cache_size*]
-# The maximum number of entries in the global universal session cache.  This
-# is used for storing session mappings for universal session persistence.
-# Approximately 100 bytes will be pre-allocated per entry.
+# The maximum number of entries in the global universal session persistence
+# cache.  This is used for storing session mappings for universal session
+# persistence.  Approximately 100 bytes will be pre-allocated per entry.
 #
 # [*snmp__user_counters*]
 # The number of user defined SNMP counters. Approximately 100 bytes will be
@@ -943,7 +1012,7 @@
 # [*ssl__cache_size*]
 # How many entries the SSL session ID cache should hold. This cache is used to
 # cache SSL sessions to help speed up SSL handshakes when performing SSL
-# decryption. Each entry will allocate approximately 1.5kB of metadata.
+# decryption. Each entry will allocate approximately 1.75kB of metadata.
 #
 # [*ssl__cipher_suites*]
 # The SSL/TLS cipher suites preference list for SSL/TLS connections, unless
@@ -968,8 +1037,8 @@
 # depending upon the server behavior.
 #
 # [*ssl__client_cache_tickets_enabled*]
-# Whether or not session tickets may be requested and stored in the SSL client
-# cache.
+# Whether or not session tickets, including TLS >= 1.3 PSKs, may be requested
+# and stored in the SSL client cache.
 #
 # [*ssl__crl_mem_size*]
 # How much shared memory to allocate for loading Certificate Revocation Lists.
@@ -1004,10 +1073,20 @@
 # Whether or not SSL3 and TLS1 use one-byte fragments as a BEAST
 # countermeasure.
 #
+# [*ssl__log_keys*]
+# Whether SSL connection key logging should be available via the
+# ssl.sslkeylogline() TrafficScript function. If this setting is disabled then
+# ssl.sslkeylogline() will always return the empty string.
+#
 # [*ssl__max_handshake_message_size*]
 # The maximum size (in bytes) of SSL handshake messages that SSL connections
 # will accept. To accept any size of handshake message the key should be set
 # to the value "0".
+#
+# [*ssl__middlebox_compatibility*]
+# Whether or not TLS 1.3 middlebox compatibility mode as described in RFC 8446
+# appendix D.4 will be used in connections to pool nodes, unless overridden by
+# pool settings.
 #
 # [*ssl__min_rehandshake_interval*]
 # If SSL3/TLS re-handshakes are supported, this defines the minimum time
@@ -1067,10 +1146,6 @@
 # Whether the OCSP response signature should be verified before the OCSP
 # response is cached.
 #
-# [*ssl__prevent_timing_side_channels*]
-# Take performance degrading steps to prevent exposing timing side-channels
-# with SSL3 and TLS.
-#
 # [*ssl__signature_algorithms*]
 # The SSL/TLS signature algorithms preference list for SSL/TLS connections
 # using TLS version 1.2 or higher, unless overridden by virtual server or pool
@@ -1087,6 +1162,9 @@
 #
 # [*ssl__support_tls1_2*]
 # Whether or not TLS1.2 support is enabled.
+#
+# [*ssl__support_tls1_3*]
+# Whether or not TLS1.3 support is enabled.
 #
 # [*ssl__tickets_enabled*]
 # Whether or not session tickets will be issued to and accepted from clients
@@ -1195,9 +1273,12 @@
 # [*ssl_hardware__queuelen*]
 # The maximum number of requests that will be queued to the accelerator device.
 #
+# [*telemetry__autotest_schedule*]
+# Instruct the telemetry system to use an extra fast schedule for autotesting
+#
 # [*telemetry__enabled*]
-# Allow the reporting of anonymized usage data to Pulse Secure for product
-# improvement and customer support purposes.
+# Allow the reporting of anonymized usage data for product improvement and
+# customer support purposes.
 #
 # [*telemetry__internal_use*]
 # Tag exported data with an arbitrary string, to mark is as not being "real"
@@ -1307,6 +1388,10 @@
 # match the server name, is self-signed, is expired, is revoked, or has an
 # unknown CA.
 #
+# [*watchdog__timeout*]
+# The maximum time in seconds a process can fail to update its heartbeat,
+# before the watchdog considers it to have stalled.
+#
 # [*web_cache__avg_path_length*]
 # The estimated average length of the path (including query string) for
 # resources being cached. An amount of memory equal to this figure multiplied
@@ -1394,6 +1479,9 @@
 # Add an X-Cache-Info header to every HTTP response, showing whether the
 # request and/or the response was cacheable.
 #
+# [*zoneinfo__directory*]
+# The directory containing the OS-supplied timezone database ("zoneinfo")
+#
 # === Examples
 #
 # class {'brocadevtm::global_settings':
@@ -1418,6 +1506,7 @@ class brocadevtm::global_settings (
   $basic__cluster_identifier                   = undef,
   $basic__license_servers                      = '[]',
   $basic__max_fds                              = 1048576,
+  $basic__max_tcp_buff_mem                     = '0',
   $basic__monitor_memory_size                  = 4096,
   $basic__rate_class_limit                     = 25000,
   $basic__shared_pool_size                     = '10MB',
@@ -1428,18 +1517,18 @@ class brocadevtm::global_settings (
   $basic__tip_class_limit                      = 10000,
   $admin__honor_fallback_scsv                  = true,
   $admin__ssl3_allow_rehandshake               = 'rfc5746',
-  $admin__ssl3_ciphers                         = 'SSL_RSA_WITH_AES_128_GCM_SHA256,SSL_RSA_WITH_AES_128_CBC_SHA256,SSL_RSA_WITH_AES_128_CBC_SHA,SSL_RSA_WITH_AES_256_GCM_SHA384,SSL_RSA_WITH_AES_256_CBC_SHA256,SSL_RSA_WITH_AES_256_CBC_SHA,SSL_RSA_WITH_3DES_EDE_CBC_SHA,SSL_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,SSL_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,SSL_ECDHE_ECDSA_WITH_AES_128_CBC_SHA,SSL_DHE_DSS_WITH_AES_128_CBC_SHA,SSL_DHE_DSS_WITH_AES_256_CBC_SHA,SSL_DHE_DSS_WITH_3DES_EDE_CBC_SHA',
+  $admin__ssl3_ciphers                         = undef,
   $admin__ssl3_diffie_hellman_key_length       = 'dh_2048',
   $admin__ssl3_min_rehandshake_interval        = 1000,
   $admin__ssl_elliptic_curves                  = '[]',
   $admin__ssl_insert_extra_fragment            = false,
   $admin__ssl_max_handshake_message_size       = 10240,
-  $admin__ssl_prevent_timing_side_channels     = false,
   $admin__ssl_signature_algorithms             = undef,
   $admin__support_ssl3                         = false,
   $admin__support_tls1                         = true,
   $admin__support_tls1_1                       = true,
   $admin__support_tls1_2                       = true,
+  $admin__support_tls1_3                       = true,
   $appliance__bootloader_password              = undef,
   $appliance__return_path_routing_enabled      = false,
   $aptimizer__max_dependent_fetch_size         = '2MB',
@@ -1462,6 +1551,7 @@ class brocadevtm::global_settings (
   $connection__listen_queue_size               = 0,
   $connection__max_accepting                   = 0,
   $connection__multiple_accept                 = false,
+  $connection__udp_read_multiple               = true,
   $dns__max_ttl                                = 86400,
   $dns__min_ttl                                = 86400,
   $dns__negative_expiry                        = 60,
@@ -1527,6 +1617,8 @@ class brocadevtm::global_settings (
   $recent_connections__max_per_process         = 500,
   $recent_connections__retain_time             = 60,
   $recent_connections__snapshot_size           = 500,
+  $remote_licensing__comm_channel_enabled      = true,
+  $remote_licensing__comm_channel_port         = 8102,
   $remote_licensing__owner                     = undef,
   $remote_licensing__owner_secret              = undef,
   $remote_licensing__policy_id                 = undef,
@@ -1535,6 +1627,7 @@ class brocadevtm::global_settings (
   $rest_api__auth_timeout                      = 120,
   $rest_api__enabled                           = true,
   $rest_api__http_max_header_length            = 4096,
+  $rest_api__maxfds                            = 1048576,
   $rest_api__replicate_absolute                = 20,
   $rest_api__replicate_lull                    = 5,
   $rest_api__replicate_timeout                 = 10,
@@ -1556,9 +1649,12 @@ class brocadevtm::global_settings (
   $security__track_unknown_users               = false,
   $security__ui_page_banner                    = undef,
   $session__asp_cache_size                     = 32768,
+  $session__ip_cache_expiry                    = 0,
   $session__ip_cache_size                      = 32768,
+  $session__j2ee_cache_expiry                  = 0,
   $session__j2ee_cache_size                    = 32768,
   $session__ssl_cache_size                     = 32768,
+  $session__universal_cache_expiry             = 0,
   $session__universal_cache_size               = 32768,
   $snmp__user_counters                         = 10,
   $soap__idle_minutes                          = 10,
@@ -1577,7 +1673,9 @@ class brocadevtm::global_settings (
   $ssl__elliptic_curves                        = '[]',
   $ssl__honor_fallback_scsv                    = true,
   $ssl__insert_extra_fragment                  = false,
+  $ssl__log_keys                               = false,
   $ssl__max_handshake_message_size             = 10240,
+  $ssl__middlebox_compatibility                = true,
   $ssl__min_rehandshake_interval               = 1000,
   $ssl__ocsp_cache_size                        = 2048,
   $ssl__ocsp_stapling_default_refresh_interval = 60,
@@ -1585,12 +1683,12 @@ class brocadevtm::global_settings (
   $ssl__ocsp_stapling_mem_size                 = '1MB',
   $ssl__ocsp_stapling_time_tolerance           = 30,
   $ssl__ocsp_stapling_verify_response          = false,
-  $ssl__prevent_timing_side_channels           = false,
   $ssl__signature_algorithms                   = undef,
   $ssl__support_ssl3                           = false,
   $ssl__support_tls1                           = true,
   $ssl__support_tls1_1                         = true,
   $ssl__support_tls1_2                         = true,
+  $ssl__support_tls1_3                         = true,
   $ssl__tickets_enabled                        = true,
   $ssl__tickets_reissue_policy                 = 'never',
   $ssl__tickets_ticket_expiry                  = 14400,
@@ -1624,6 +1722,7 @@ class brocadevtm::global_settings (
   $transaction_export__endpoint                = undef,
   $transaction_export__tls                     = true,
   $transaction_export__tls_verify              = true,
+  $watchdog__timeout                           = 5,
   $web_cache__avg_path_length                  = 512,
   $web_cache__disk                             = false,
   $web_cache__disk_dir                         = '%zeushome%/zxtm/internal',
@@ -1646,7 +1745,7 @@ class brocadevtm::global_settings (
   vtmrest { 'global_settings':
     ensure   => $ensure,
     before   => Class[brocadevtm::purge],
-    endpoint => "https://${ip}:${port}/api/tm/6.0/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/8.3/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/global_settings.erb'),
