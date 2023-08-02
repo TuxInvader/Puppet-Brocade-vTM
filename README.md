@@ -1,25 +1,17 @@
-# Pulse Secure vTM ( Virtual Traffic Manager ) module for Puppet
+# Zeus ZXTM ( Zeus eXtensible Traffic Manager ) module for Puppet
 
-> **THIS MODULE HAS MOVED!** Please plan to migrate to the new pulsevtm module instead.
->
->
-> This release VTM 18.2 (2.600.x) will be the last version released on this account.
-> Search the puppet forge for pulse-pulsevtm or see the links below:
->
->   https://github.com/pulse-vadc/puppet-vtm
->
->   https://forge.puppet.com/pulse
-
-This is a puppet module for configuring the Pulse Secure vTM - formerly:
+This is a puppet module for configuring the Zeus eXtensible Traffic Manager (ZXTM) - more recently:
 	
 	Zeus Load Balancer
-	Zeus eXtensible Traffic Manager (ZXTM)
 	Zeus Traffic Manager
 
 	Riverbed Stingray
 	Riverbed SteelApp
 
     Brocade vTM
+    Pulse Secure VTM
+    Ivanti vADC
+
 
 #### IMPORTANT - Puppet Version Notice
 Puppet changed the way escapes were handled in single quoted strings from puppet version 4.
@@ -52,6 +44,7 @@ However if you want access to all features of your current vTM, then use the lat
 | 17.3 | 5.0 | 1.500.x | 2.500.x |
 | 17.4 | 5.1 | 1.501.x | 2.501.x |
 | 18.1 | 5.2 | 1.502.x | 2.502.x |
+| 21.3 | 8.3 |  n/a    | 2.803.x |
 
 See notes on Module versioning below....
 
