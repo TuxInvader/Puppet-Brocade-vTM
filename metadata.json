@@ -1,8 +1,8 @@
 {
   "name": "tuxinvader-brocadevtm",
   "version": "2.600.1",
-  "author": "mbodding @ Pulse Secure",
-  "summary": "Configure and Manage Brocade vTM Application Delivery Controllers",
+  "author": "TuxInvader @ Github",
+  "summary": "Configure and Manage Zeus ZXTM Application Delivery Controllers",
   "license": "MIT",
   "source": "https://github.com/TuxInvader/Puppet-Brocade-vTM",
   "project_page": "https://github.com/TuxInvader/Puppet-Brocade-vTM",
@@ -13,28 +13,14 @@
       "version_requirement": ">=3.2.0 <5.0.0"
     }
   ],
-  "data_provider": null,
-  "tags": [
-    "vtm",
-    "vadc",
-    "steelapp",
-    "stingray",
-    "zxtm",
-    "brocade",
-    "zeus",
-    "riverbed",
-    "adc",
-    "loadbalancer",
-    "load balancer"
-  ],
   "operatingsystem_support": [
     {
       "operatingsystem": "RedHat",
       "operatingsystemrelease": [
-        "4",
-        "5",
         "6",
-        "7"
+        "7",
+        "8",
+        "9"
       ]
     },
     {
@@ -43,7 +29,8 @@
         "4",
         "5",
         "6",
-        "7"
+        "7",
+        "8"
       ]
     },
     {
@@ -80,9 +67,10 @@
     {
       "operatingsystem": "Ubuntu",
       "operatingsystemrelease": [
-        "10.04",
-        "12.04",
-        "14.04"
+        "16.04",
+        "18.04",
+        "20.04",
+        "22.04"
       ]
     },
     {
@@ -113,5 +101,27 @@
         "7.1"
       ]
     }
-  ]
+  ],
+  "requirements": [
+    {
+      "name": "puppet",
+      "version_requirement": ">= 7.24 < 9.0.0"
+    }
+  ],
+  "tags": [
+    "vtm",
+    "vadc",
+    "steelapp",
+    "stingray",
+    "zxtm",
+    "brocade",
+    "zeus",
+    "riverbed",
+    "adc",
+    "loadbalancer",
+    "load balancer",
+    "pulse secure",
+    "pulse",
+    "ivanti"
+  ],
 }
